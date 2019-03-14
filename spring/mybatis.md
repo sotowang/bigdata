@@ -234,11 +234,11 @@ MyBatis 的 二级缓存非常强大，它不同于一级缓存只存在于 SqlS
 
 # mybatis 和 hibernate 的区别有哪些？
 
-mybatis 有哪些执行器（Executor）？
+# mybatis 有哪些执行器（Executor）？
 
-mybatis 分页插件的实现原理是什么？
+# mybatis 分页插件的实现原理是什么？
 
-mybatis 如何编写一个自定义插件？
+# mybatis 如何编写一个自定义插件？
 
 
 
