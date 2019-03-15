@@ -35,7 +35,6 @@ com.java.dbtest.oracleConnection
 
 举多个例子，大家如果接触过spring，会发现当你配置各种各样的bean时，是以配置文件的形式配置的，你需要用到哪些bean就配哪些，spring容器就会根据你的需求去动态加载，你的程序就能健壮地运行。
 
-
 ---
 
 # 深入解析Java反射（1） - 基础
@@ -108,8 +107,8 @@ public static Class<?> forName(String className)
 比如在 JDBC 开发中常用此方法加载数据库驱动:
 ...java
  Class.forName(driver);
- ```
- 
+```
+
 (2)直接获取某一个对象的 class，比如:
 
 ```
@@ -306,7 +305,7 @@ public static void testArray() throws ClassNotFoundException {
     
 其中的Array类为java.lang.reflect.Array类。我们通过Array.newInstance()创建数组对象，它的原型是:
     
- ```
+```
  public static Object newInstance(Class<?> componentType, int length)
         throws NegativeArraySizeException {
         return newArray(componentType, length);
@@ -315,7 +314,7 @@ public static void testArray() throws ClassNotFoundException {
     
 而 newArray 方法是一个 native 方法，它在 HotSpot JVM 里的具体实现我们后边再研究，这里先把源码贴出来：
     
-```    
+ ```
 private static native Object newArray(Class<?> componentType, int length)
         throws NegativeArraySizeException;
 ```    
@@ -363,3 +362,5 @@ arrayOop Reflection::reflect_new_array(oop element_mirror, jint length, TRAPS) {
 
 
 
+
+```
