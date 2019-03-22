@@ -29,6 +29,7 @@ com.java.dbtest.oracleConnection
 ```
 
 这两个类我们要用，这时候我们的程序就写得比较动态化，通过
+
 >Class tc = Class.forName("com.java.dbtest.TestConnection");
 
 通过类的全类名让jvm在服务器中找到并加载这个类，而如果是oracle则传入的参数就变成另一个了。这时候就可以看到反射的好处了，这个动态性就体现出java的特性了！
@@ -101,17 +102,18 @@ Java 反射主要提供以下功能：
 
 (1) 使用 Class 类的 forName 静态方法:
 
-```
+```java
 public static Class<?> forName(String className)
 ...
-比如在 JDBC 开发中常用此方法加载数据库驱动:
-...java
+
+//比如在 JDBC 开发中常用此方法加载数据库驱动:
+//...java
  Class.forName(driver);
 ```
 
 (2)直接获取某一个对象的 class，比如:
 
-```
+```java
 Class<?> klass = int.class;
 Class<?> classInt = Integer.TYPE;
 ```
@@ -142,7 +144,7 @@ Object str = c.newInstance();
 
 * 先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建实例。这种方法可以用指定的构造器构造类的实例。
 
-```
+```java
 //获取String所对应的Class对象
 Class<?> c = String.class;
 //获取String类带一个String参数的构造器
@@ -169,13 +171,15 @@ public Method[] getMethods() throws SecurityException
 
 * getMethod 方法返回一个特定的方法，其中第一个参数为方法名称，后面的参数为方法的参数对应Class的对象。
 
-```	
+
+
+```
 public Method getMethod(String name, Class<?>... parameterTypes)
 ```
 
 只是这样描述的话可能难以理解，我们用例子来理解这三个方法：
 
-```
+```java
 package org.ScZyhSoft.common;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -210,7 +214,7 @@ class methodClass {
 
 程序运行的结果如下:
 
-```
+```java
 getMethods获取的方法：
 public int org.ScZyhSoft.common.methodClass.add(int,int)
 public int org.ScZyhSoft.common.methodClass.sub(int,int)
@@ -234,7 +238,7 @@ public int org.ScZyhSoft.common.methodClass.sub(int,int)
 
 获取类构造器的用法与上述获取方法的用法类似。主要是通过Class类的getConstructor方法得到Constructor类的一个实例，而Constructor类有一个newInstance方法可以创建一个对象实例:
 
-```
+```java
 public T newInstance(Object ... initargs)
 ```
 
@@ -252,7 +256,7 @@ getFileds 和 getDeclaredFields 方法用法同上（参照 Method）。
 ### 调用方法
 当我们从类中获取了一个方法后，我们就可以用 invoke() 方法来调用这个方法。invoke 方法的原型为:
 
-```
+```java
 public Object invoke(Object obj, Object... args)
         throws IllegalAccessException, IllegalArgumentException,
            InvocationTargetException
@@ -260,7 +264,7 @@ public Object invoke(Object obj, Object... args)
 
 下面是一个实例：
 
-```
+```java
 public class test1 {
     public static void main(String[] args) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Class<?> klass = methodClass.class;
@@ -288,7 +292,7 @@ class methodClass {
 
 数组在Java里是比较特殊的一种类型，它可以赋值给一个Object Reference。下面我们看一看利用反射创建数组的例子：
 
-```
+```java
 public static void testArray() throws ClassNotFoundException {
         Class<?> cls = Class.forName("java.lang.String");
         Object array = Array.newInstance(cls,25);
@@ -302,28 +306,28 @@ public static void testArray() throws ClassNotFoundException {
         System.out.println(Array.get(array,3));
     }
 ```
-    
+
 其中的Array类为java.lang.reflect.Array类。我们通过Array.newInstance()创建数组对象，它的原型是:
     
-```
+```java
  public static Object newInstance(Class<?> componentType, int length)
         throws NegativeArraySizeException {
         return newArray(componentType, length);
     }
- ```
-    
+```
+
 而 newArray 方法是一个 native 方法，它在 HotSpot JVM 里的具体实现我们后边再研究，这里先把源码贴出来：
     
- ```
+ ```java
 private static native Object newArray(Class<?> componentType, int length)
         throws NegativeArraySizeException;
-```    
+ ```
 
 源码目录：
 
 > openjdk\hotspot\src\share\vm\runtime\reflection.cpp
-    
-```
+
+```c++
 arrayOop Reflection::reflect_new_array(oop element_mirror, jint length, TRAPS) {
   if (element_mirror == NULL) {
     THROW_0(vmSymbols::java_lang_NullPointerException());
@@ -362,5 +366,7 @@ arrayOop Reflection::reflect_new_array(oop element_mirror, jint length, TRAPS) {
 
 
 
+
+```
 
 ```
