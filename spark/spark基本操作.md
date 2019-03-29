@@ -37,7 +37,7 @@ val c = b.reduceByKey(_+_)
 > http://sotowang-pc:4040/jobs/
 
 
-#### 配置文件
+# 配置文件
 /conf/spark-env.sh
 
 ```
@@ -50,11 +50,11 @@ export SPARK_WORKER_INSTANCES=1
 
 
 
-#### 启动
+# 启动
 >./start-master.sh 	
 
-#### 基本RDD转换运算
-##### 创建intRDD
+# 基本RDD转换运算
+## 创建intRDD
 *  创建intRDD
 
 ```
@@ -79,7 +79,7 @@ val stringRDD = sc.parallelize(List("Apple","Orange","Banna","Grape","Apple"))
 stringRDD.collect()
 ```
 
-##### map运算
+## map运算
 * 具名函数语句
 
 ```
@@ -105,14 +105,14 @@ intRDD.map(x => x+1).collect()
 intRDD.map(_+1).collect()
 ```
 
-##### map字符串运算
+## map字符串运算
 * 将stringRDD所有字符串元素前面加上fruit:,来产生一个RDD
 
 ```
 stringRDD.map(x=>"fruit:"+x).collect
 ```
 
-##### filter 数字运算
+## filter 数字运算
 * 让intRdd 筛选数字小于3
 
 ```
@@ -125,13 +125,13 @@ intRDD.filter(x=>x<3).collect
 intRDD.filter(_ < 3).collect
 ```
 
-##### filter 字符串运算
+## filter 字符串运算
 
 ```
 stringRDD.filter(x=>x.contains("ra")).collect()
 ```
 
-##### distince运算
+## distince运算
 >distinct运算会删除重复元素
 
 * 删除intRDD重复元素
@@ -146,7 +146,7 @@ intRDD.distinct().collect()
 stringRDD.distinct().collect()
 ```
 
-##### randomSplit运算
+## randomSplit运算
 * 以随机数数的方式按照4:6分割两个RDD
 
 ```
@@ -160,7 +160,7 @@ sRDD(0).collect
 sRDD(1).collect
 ```
 
-##### groupBy运算
+## groupBy运算
 * 使用groupBy运算将整个集合分成奇数与偶数
 
 ```
@@ -181,8 +181,8 @@ gRDD(0)
 gRDD(1)
 ```
 
-#### 多个RDD转换运算
-##### 创建3个范例RDD
+## 多个RDD转换运算
+### 创建3个范例RDD
 * 创建3个范例RDD
 
 ```
@@ -191,7 +191,7 @@ val intRDD2 = sc.parallelize(List(5,6))
 val intRDD3 = sc.parallelize(List(2,7))
 ```
 
-##### union并集运算
+### union并集运算
 * 使用union函数进行并集运算
 
 ```
@@ -204,28 +204,28 @@ intRDD1.union(intRDD2).union(intRDD3).collect()
 (intRDD1 ++ intRDD2 ++ intRDD3).collect()
 ```
 
-##### intersection交集运算
+### intersection交集运算
 * 将intRDD1，intRDD2进行交集运算
 
 ```
 intRDD1.intersection(intRDD2).collect()
 ```
 
-##### subtract差集运算
+### subtract差集运算
 
 ```
 intRDD1.subtract(intRDD2).collect
 ```
 
-##### 笛卡尔乘积运算
+### 笛卡尔乘积运算
 * 进行cartesian 笛卡尔乘积运算
 
 ```
 intRDD1.cartesian(intRDD2).collect()
 ```
 
-#### 基本动作运算
-##### 读取元素
+## 基本动作运算
+### 读取元素
 * 读取第一条元素
 
 ```
@@ -250,7 +250,7 @@ intRDD.takeOrdered(3)
 intRDD.takeOrdered(3)(Ordering[Int].reverse)
 ```
 
-##### 统计功能
+### 统计功能
 * 统计
 
 ```
@@ -293,29 +293,29 @@ intRDD.sum
 intRDD.mean
 ```
 
-#### RDD Key-Value 基本“转换”运算
-##### 创建范例Key-Value RDD
+## RDD Key-Value 基本“转换”运算
+### 创建范例Key-Value RDD
 * 创建范例Key-Value RDD
 
 ```
 val kvRDD1 = sc.parallelize(List((3,4),(3,6),(5,6),(1,2)))
 ```
 
-##### 列出keys的值
+### 列出keys的值
 * 列出kvRDD1所有的Key值
 
 ```
 kvRDD1.keys.collect()
 ```
 
-##### 列出values的值
+### 列出values的值
 * 列出kvRDD1所有的values值
 
 ```
 kvRDD1.values.collect()
 ```
 
-##### 使用filter筛选key运算
+### 使用filter筛选key运算
 * 使用filter筛选出key<5
 
 ```
@@ -324,7 +324,7 @@ case (key,value)=>key<5
 }.collect()
 ```
 
-##### 使用filter筛选value运算
+### 使用filter筛选value运算
 * 使用filter筛选出value<5
 
 ```
@@ -333,14 +333,14 @@ case (key,value)=>value<5
 }.collect()
 ```
 
-##### mapValues运算
+### mapValues运算
 * 将每一组(Key,Value)的value值进行平方运算
 
 ```
 kvRDD1.mapValues(x=>x*x).collect
 ```
 
-##### sortByKey从小到大按照Key排序
+### sortByKey从小到大按照Key排序
 * 从小到大按照Key排序
 
 ```
@@ -348,14 +348,14 @@ kvRDD1.sortByKey(true).collect()
 kvRDD1.sortByKey().collect()  //默认参数为true
 ```
 
-##### sortByKey从大到小按照Key排序
+### sortByKey从大到小按照Key排序
 * 从大到小按照Key排序
 
 ```
 kvRDD1.sortByKey(false).collect()
 ```
 
-##### reduceByKey
+### reduceByKey
 * 使用匿名函数reduceByKey命令
 
 ```
@@ -368,8 +368,8 @@ kvRDD1.reduceByKey((x,y)=>x+y).collect
 kvRDD1.reduceByKey(_+_).collect
 ```
 
-#### 多个RDD Key-Value "转换" 运算
-##### Key-Value RDD范例
+## 多个RDD Key-Value "转换" 运算
+### Key-Value RDD范例
 * 创建范例Key-value RDD
 
 ```
@@ -377,36 +377,36 @@ val  kvRDD1 = sc.parallelize(List((3,4),(3,6),(5,6),(1,2)))
 val  kvRDD2 = sc.parallelize(List((3,8)))
 ```
 
-##### Key-Value RDD hoin运算
+### Key-Value RDD join运算
 > join运算可以将两个RDD按照相同的key值join起来
 
 ```
 kvRDD1.join(kvRDD2).foreach(println)
 ```
 
-##### Key-Value leftOuterJoin运算
+### Key-Value leftOuterJoin运算
 * kvRDD1 left join kvRDD2并且输出每一条数据
 
 ```
 kvRDD1.leftOuterJoin(kvRDD2).foreach(println)
 ```
 
-##### Key-Value rightOuterJoin运算
+### Key-Value rightOuterJoin运算
 * kvRDD1 right join kvRDD2并且输出每一条数据
 
 ```
 kvRDD1.rightOuterJoin(kvRDD2).foreach(println)
 ```
 
-##### Key-Value subtractByKey运算
+### Key-Value subtractByKey运算
 * kvRDD1 subtract kvRDD2
 
 ```
 kvRDD1.subtractByKey(kvRDD2).collect
 ```
 
-#### Key-Value "动作"运算
-##### Key-Valuefirst 运算
+## Key-Value "动作"运算
+### Key-Valuefirst 运算
 * 读取第一条数据
 
 ```
@@ -419,7 +419,7 @@ kvRDD1.first()
 kvRDD1.take(2)
 ```
 
-##### 读取第一条数据的元素
+### 读取第一条数据的元素
 * 读取第一条数据
 
 ```
@@ -438,21 +438,21 @@ kvFirst._1
 kvFirst._2
 ```
 
-##### Key-Value countByKey运算
+### Key-Value countByKey运算
 * 计算每一个Key值的条数
 
 ```
 kvRDD1.countByKey()
 ```
 
-##### Key-Value collectAsMap运算
+### Key-Value collectAsMap运算
 *  创建Key-Value对照表
 
 ```
 var KV=kvRDD1.collectAsMap()
 ```
 
-##### 使用对照表转换数据
+### 使用对照表转换数据
 * 使用对照表转换数据
 
 ```
@@ -460,7 +460,7 @@ KV(3)
 KV(1)
 ```
 
-##### Key-Value lookup运算
+### Key-Value lookup运算
 * 输入key值3,找到2条(3,4),(3,6)
 
 ```
@@ -468,8 +468,8 @@ kvRDD1.lookup(3)
 kvRDD1.lookup(5)
 ```
 
-#### Broadcast 广播变量
-##### 不使用Broadcast 广播变量的范例
+# Broadcast 广播变量
+## 不使用Broadcast 广播变量的范例
 * 先创建kvFruit
 
 ```
@@ -494,7 +494,7 @@ val fruitIds = sc.parallelize(List(2,4,1,3))
 val fruitNames = fruitIds.map(x=>fruitMap(x)).collect
 ```
 
-##### 使用Broadcast广播变量的范例
+## 使用Broadcast广播变量的范例
 >使用规则:	
 >1. 可以使用SparkContext.broadcase([初始值])创建
 >2. 使用.value方法来读取广播变量的值
@@ -530,21 +530,21 @@ val fruitIds = sc.parallelize(List(2,4,1,3))
 val fruitNames = fruitIds.map(x=>bcFruitMap.value(x)).collect
 ```
 
-#### accumulator累加器
-##### accumulator 累加器范例
+# accumulator累加器
+## accumulator 累加器范例
 * 创建范例RDD
 
 ```
 val intRDD = sc.parallelize(List(3,1,2,5,5))
 ```
 
-*创建total累加器
+* 创建total累加器
 
 ```
 val total = sc.accumulator(0.0)
 ```
 
-*创建num累加器
+* 创建num累加器
 
 ```
 val num = sc.accumulator(0)
@@ -571,11 +571,11 @@ println("total="+total.value+",num="+ num.value)
 val avg = total.value/num.value
 ```
 
-#### RDD Persistence持久化
-##### RDD Persistence介绍
+# RDD Persistence持久化
+## RDD Persistence介绍
 > 可以人用于将需要重复运算的RDD存储在内存中,以便大幅提升运算效率
 
-##### RDD.persist() 范例
+## RDD.persist() 范例
 * 创建范例RDD
 
 ```
@@ -594,7 +594,7 @@ intRddMemory.persist()
 intRddMemory.unpersist()
 ```
 
-##### RDD.persist 设置存储等级范例
+## RDD.persist 设置存储等级范例
 * 设置存储等级必须先导入相关链接库
 
 ```
@@ -619,8 +619,8 @@ intRddMemoryAndDisk.persist(StorageLevel.MEMORY_AND_DISK)
 intRddMemoryAndDisk.unpersist()
 ```
 
-#### 使用Spark创建WordCount
-#### 执行WordCount spark命令
+# 使用Spark创建WordCount
+## 执行WordCount spark命令
 * 读取文本文件
 
 ```
@@ -645,8 +645,8 @@ val countsRDD = stringRDD.map(word => (word,1)).reduceByKey(_+_)
 countsRDD.saveAsTextFile("file:///home/sotowang/Desktop/output.txt")
 ```
 
-### Spark Streaming
-#### linux 定时执行Python脚本
+# Spark Streaming
+# linux 定时执行Python脚本
 
 ```
 crontab -e
