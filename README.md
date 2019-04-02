@@ -3,7 +3,7 @@
 * [JVM](https://github.com/sotowang/bigdata/tree/master/JVM)
 * [spring](https://github.com/sotowang/bigdata/blob/master/spring/spring.md)
 * 书目
-  * 《Java编程思想》
+  * 《**Java编程思想**》
 
   * **《Mybatis从入门到精通》**
 
