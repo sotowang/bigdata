@@ -43,6 +43,7 @@ hadoop-env.sh core-site.xml hdfs-site.xml mapred-site.xml
 
 ## 3、请列出你所知道的hadoop调度器，并简要说明其工作方法。
 
+```
 比较流行的三种调度器有：默认调度器FIFO，计算能力调度器Capacity Scheduler，公平调度器Fair Scheduler
 1) 默认调度器FIFO
 hadoop中默认的调度器，采用先进先出的原则
@@ -50,6 +51,9 @@ hadoop中默认的调度器，采用先进先出的原则
 选择占用资源小，优先级高的先执行
 3) 公平调度器Fair Scheduler
 同一队列中的作业公平共享队列中所有资源
+```
+
+
 
 ## 4、Hive有那些方式保存元数据的，各有那些特点。
 
