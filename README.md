@@ -23,7 +23,7 @@
 
   * **《Hadoop大数据挖掘从入门到进阶实战》**
 
-  * 《Spark与Hadoop大数据分析》
+  * 《**Spark与Hadoop大数据分析**》
 
   * **《Java网络编程案例教程》**
 
@@ -31,8 +31,8 @@
 
   * **《Java程序员面试宝典》**
 
-  * 《Spring Data JPA从入门到精通》
+  * 《**Spring Data JPA从入门到精通**》
 
-  * 《Spring Boot 企业级应用开发实战》
+  * 《**Spring Boot 企业级应用开发实战**》
 
      
