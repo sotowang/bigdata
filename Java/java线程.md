@@ -294,3 +294,23 @@ public static ExecutorService newSingleThreadExecutor() {
 ```
 
 还有一个`Executors.newSingleThreadScheduledExecutor()`结合了3和4，就不介绍了，基本不用。
+
+
+
+# **创建多线程的方式有哪几种？**
+
+方式一：继承Thread类
+
+方式二：实现Runnable接口
+
+方式三：实现Callable接口
+
+方式四：使用线程池的方式
+
+## **解决线程安全问题有几种方式？**
+
+方式一：使用同步代码块
+
+方式二：使用同步方法
+
+方式三：使用ReentrantLock
