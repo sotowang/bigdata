@@ -8,6 +8,8 @@
 
 # 描述Yarn执行一个任务的过程？
 
+[YARN](<https://blog.csdn.net/weixin_35353187/article/details/84729049>)
+
 1）客户端client向ResouceManager提交Application，ResouceManager接受Application
 并根据集群资源状况选取一个node来启动Application的任务调度器driver（ApplicationMaster）
 2）ResouceManager找到那个node，命令其该node上的nodeManager来启动一个新的
@@ -55,5 +57,9 @@ ApplicationMaster负责销毁，在Hadoop Mapreduce不可以复用，在spark on
 
  ![167964803287336123.jpg](https://i.loli.net/2019/05/21/5ce3a4eed1bfa51728.jpg)
 
+# Executor启动时，资源通过哪几个参数指定？
 
+1)num-executors是executor的数量
+2)executor-memory 是每个executor使用的内存
+3)executor-cores 是每个executor分配的CPU
 
