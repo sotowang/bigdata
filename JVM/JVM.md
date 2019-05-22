@@ -330,7 +330,7 @@ Java堆中划分出一块内存来作为句柄池，引用中存储对象的句�
 
 * 引用计数器算法算是一种古老的java垃圾回收算法，目前很多版本的java（jdk1.8也已废弃）已经废弃掉这种算法了。
 
->定义：给每个对象分配一个计数器，当有引用指向这个对象时，计数器加1，当指向该对象的引用失效时，计数器减一。最后如果该对象的计算器为0时，java垃圾回收器会认为该对象是可回收的。	
+	定义：给每个对象分配一个计数器，当有引用指向这个对象时，计数器加1，当指向该对象的引用失效时，计数器减一。最后如果该对象的计算器为0时，java垃圾回收器会认为该对象是可回收的。	
 
 缺陷：
 * 每次对象被引用时，都需要去更新计数器，有一点时间开销。
@@ -372,7 +372,7 @@ public class GCTest {
 
 ##### 判定垃圾对象之可达性分析算法
 这个算法的基本思路就是通过一系列的称谓“GC Roots"的对象作为起始点，从这些节点开始向下搜索，搜索所有走过的路径为引用链，当一个对象到GC Roots没有任何引用链相连时，则证明此对象时不可用的：
- 
+
 注：Java语言中，可作为GC Roots的对象包括下面几种：
 
 ```
@@ -500,7 +500,7 @@ ParNew收集器其实就是Serial收集器的多线程版本。新生代并行�
 Parallel Scavenge的特点：	
 	Parallel Scavenge关注与其他收集器不同，CMS等收集器的关注点是尽可能地缩短垃圾收集时用户线程的停顿时间，而Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量，	
     所谓的吞吐量就是CPU用于运行用户代码的时间与CPU总耗时间的比值，即吞吐量 = 运行用户代码时间/(运行用户代码时间+垃圾收集时间)。
-    
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180101182807174-1429867127.png)	
 
 参数控制：	
@@ -540,9 +540,9 @@ Eden与Survivor区比例（-XX:SurvivorRatio）、
 
 * 优点:并发收集、低停顿 
 * 缺点：产生大量空间碎片、并发阶段会降低吞吐量
-   
+  
 参数控制：
-   
+
    ```
 -XX:+UseConcMarkSweepGC  使用CMS收集器
 
@@ -551,7 +551,7 @@ Eden与Survivor区比例（-XX:SurvivorRatio）、
 -XX:+CMSFullGCsBeforeCompaction  设置进行几次Full GC后，进行一次碎片整理
 
 -XX:ParallelCMSThreads  设定CMS的线程数量（一般情况约等于可用CPU数量）
-```
+   ```
 
 ##### 垃圾收集器之G1收集器
 ###### 与CMS收集器相比G1收集器有以下特点：
@@ -602,13 +602,13 @@ public class Test02 {
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117000556006-540265788.png)	
 
 结果
- 
+
  ![111](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117000634678-1615632611.png)	
- 
+
 首先，-Xms、-Xmx分配用来设置进程堆内存的最小大小和最大大小。	
 -Xmn用来设置堆内新生代的大小。通过这个值我们也可以得到老生代的大小：-Xmx减去-Xmn	
  -XX:SurvivorRatio=8 表示	
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117001042896-1950461169.png)	
 
 结果解析：
@@ -632,12 +632,12 @@ public class Test02 {
 
  为了更好地适应内存情况，虚拟机不是要求对象必须到达阀值才可晋升老年代的，
  而是采用动态年龄判定的方法：
- 
+
  ```
 如果Servivor空间中相同年龄的对象大小大于Servivor空间的一半时，
 由于下一次的MinorGC时，这些对象如果仍然存活的话，复制到ToServivor空间时就放不下了。
 所以，在本次GC时就可以把这些对象以及年龄大于等于这些对象的直接进入老年代。
-```
+ ```
 
 在MinorGC时，如果Eden和FromServivor中存活的对象在复制到ToServivor时放不下了，也会直接分配到老年代。
 
@@ -685,16 +685,16 @@ public class Test02 {
 
  ```
 逃逸分析方法如果发现对象的内存存储结构不需要连续进行的话，就可以将对象的部分甚至全部都保存在CPU寄存器内，这样能大大提高访问速度。
-```
+ ```
 
 劣势：  
 
 ```
 栈上分配受限于栈的空间大小，一般自我迭代类的需求以及大的对象空间需求操作，将导致栈的内存溢出；故只适用于一定范围之内的内存范围请求。
- ```
- 
+```
+
  测试代码
- 
+
 ```
 package org.eds.homework.jvm;  
       
@@ -715,7 +715,7 @@ package org.eds.homework.jvm;
       
     }
 ```
-    
+
 进行逃逸分析的设置
 
 ```   
@@ -779,31 +779,31 @@ public class StackOnTest {
 #### jstack
 
  * jstack主要用来查看某个Java进程内的线程堆栈信息。语法格式如下：
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117160122021-1223434428.png)
- 
+
  * 命令行参数选项说明如下：
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117160148959-1153278721.png)
- 
+
 #### jstat：类装载、内存、垃圾收集、JIT编译的信息
- 
+
 * 语法格式如下：
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117161649021-2044620526.png)
- 
+
 * vmid是Java虚拟机ID，在Linux/Unix系统上一般就是进程ID。interval是采样时间间隔。count是采样数目。
- 
+
 结果
- 
+
  ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117164018537-326737841.png)
- 
+
  解释结果图各列含义
- 
+
  ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117164039615-1021194204.png)
- 
+
  #### jinfo：实时查看和调整虚拟机的各项参数
- 
+
 * jinfo使用介绍
 
 可以用来查看正在运行的Java应用程序的扩展参数，甚至支持在运行时，修改部分参数
@@ -813,7 +813,7 @@ public class StackOnTest {
 -flag [+|-]<name> pid：设置指定JVM参数的布尔值
 -flag <name>=<value> pid：设置指定JVM参数的值
 ```
- 
+
 ```
  public class JInfoTest {
     private static void s2() {
@@ -840,47 +840,47 @@ public class StackOnTest {
     }
 }
 ```
- 
+
 * 设置jvm启动参数，如下：
 
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117165938131-626106865.png)
- 
+
 * 运行程序，此时结果如下:
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117170014115-1375799516.png)
- 
+
 * 使用jinfo，修改jvm参数
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117170215131-914154505.png)
- 
+
 有一点必须注意：PrintGC必须开启，只开启PrintGCDetails、PrintGCTimeStamps不会输出GC，必须PrintGC同时开启
 
 * 查看控制台，结果如下：
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117170301568-489850263.png)
- 
+
  #### jmap
- 
+
 *  jmap是输出内存中对象的工具，甚至可以将VM 中的heap以二进制输出成文本。可以监控JAVA程序是否有内存泄漏。
- 
+
 两种使用方法：
- 
+
 ```
 jmap -histo PID在内存使用峰值前后分别dump一次，可以对比出GC回收了哪些对象。
 
 jmap -dump:format=b,file=f1 PID 将该内存heap输出到f1文件里，配合eclipse插件MemoryAnalyzer来使用
 ```
- 
+
  ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117174141740-93812621.png)
- 
+
  ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117174151412-1332197195.png)
- 
+
  #### 使用Jconsole监控线程
- 
+
  [Jconsole监控线程](https://www.cnblogs.com/shyroke/p/8305731.html)
- 
+
  * 监控线程情况，包括阻塞、死循环等
- 
+
 ```
 package jvm;
 
@@ -937,21 +937,21 @@ public class JStackTest {
     }
 }
 ```
- 
+
 * 运行程序，打开jconsole，结果如下图，此时只有main线程，且该线程状态为Runable，main线程阻塞因为正在等待用户输入（sc.next()；）。
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117201023990-1065766871.png)
- 
+
 * 在console输入一次之后，如下图
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117201309162-437429724.png)
- 
+
 * 再查看jconsole，结果如下，发现多了一个mythread01线程，且该线程也为Runable状态，查看代码发现该线程是死循环所以阻塞。
 
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117201402115-1912822456.png)
- 
+
 * 再在console输入一次，如下图
- 
+
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117201531896-559177314.png)
 
 * 再查看jconsole，结果如下，main线程已经执行完毕了，所以消失了。mythread01线程还在执行（死循环），多了mythread02线程，该线程为WATING状态
@@ -1147,8 +1147,8 @@ Minor GC 时发现 Survivor 空间放不下，而老年代的空闲也不够
 
 * 堆外内存（off-heap memory）介绍
 
-和堆内内存相对应，堆外内存就是把内存对象分配在Java虚拟机的堆以外的内存，这些内存直接受操作系统管理（而不是虚拟机），这样做的结果就是能够在一定程度上减少垃圾回收对应用程序造成的影响。	
-作为JAVA开发者我们经常用java.nio.DirectByteBuffer对象进行堆外内存的管理和使用，它会在对象创建的时候就分配堆外内存。	
+	堆内内存相对应，堆外内存就是把内存对象分配在Java虚拟机的堆以外的内存，这些内存直接受操作系统管理（而不是虚拟机），这样做的结果就是能够在一定程度上减少垃圾回收对应用程序造成的影响。	
+	为JAVA开发者我们经常用java.nio.DirectByteBuffer对象进行堆外内存的管理和使用，它会在对象创建的时候就分配堆外内存。	
 DirectByteBuffer类是在Java Heap外分配内存，对堆外内存的申请主要是通过成员变量unsafe来操作，下面介绍构造方法
 
 ```
@@ -1255,7 +1255,7 @@ at org.eclipse.jetty.io.nio.DirectNIOBuffer.<init>
 
 * 分析
 
-此时，看到上面的异常现象后，可以得知异常的原因是因为堆外内存不够引起。	
+	时，看到上面的异常现象后，可以得知异常的原因是因为堆外内存不够引起。	
 32位系统下，给Java堆分配的内存越大，堆外内存越小，因为总量是固定的，最大是2G。
 
 异常关键原因：
