@@ -64,19 +64,11 @@ push标志指示接收端应尽快将数据提交给应用层。如果send函数
 
 # TCP三次握手
 
-## 第一次
+**第一次握手**：主机A发送位码为syn＝1,随机产生seq number=10001的数据包到服务器，主机B由SYN=1知道，A要求建立联机，此时状态为SYN_SENT； 
+**第二次握手**：主机B收到请求后要确认联机信息，向A发送ack number=(主机A的seq+1),syn=1,ack=1,随机产生seq=20001的包，此时状态由LISTEN变为SYN_RECV； 
+**第三次握手**：主机A收到后检查ack number是否正确，即第一次发送的seq number+1,以及位码ack是否为1，若正确，主机A会再发送ack number=(主机B的seq+1),ack=1，主机B收到后确认seq值与ack=1则连接建立成功，双方状态ESTABLISHED。
 
-第一次握手：建立连接时，[客户端](https://baike.baidu.com/item/%E5%AE%A2%E6%88%B7%E7%AB%AF)发送[syn](https://baike.baidu.com/item/syn)包（syn=j）到[服务器](https://baike.baidu.com/item/%E6%9C%8D%E5%8A%A1%E5%99%A8)，并进入[SYN_SENT](https://baike.baidu.com/item/SYN_SENT)状态，等待服务器确认；SYN：同步序列编号（***Synchronize Sequence Numbers***）。
-
-## 第二次
-
-[第二次握手](https://baike.baidu.com/item/%E7%AC%AC%E4%BA%8C%E6%AC%A1%E6%8F%A1%E6%89%8B)：[服务器](https://baike.baidu.com/item/%E6%9C%8D%E5%8A%A1%E5%99%A8)收到[syn](https://baike.baidu.com/item/syn)包，必须确认客户的SYN（[ack](https://baike.baidu.com/item/ack)=j+1），同时自己也发送一个SYN包（syn=k），即SYN+ACK包，此时服务器进入[SYN_RECV](https://baike.baidu.com/item/SYN_RECV)状态；
-
-## 第三次
-
-第三次握手：[客户端](https://baike.baidu.com/item/%E5%AE%A2%E6%88%B7%E7%AB%AF)收到[服务](https://baike.baidu.com/item/%E6%9C%8D%E5%8A%A1)器的SYN+ACK包，向[服务器](https://baike.baidu.com/item/%E6%9C%8D%E5%8A%A1%E5%99%A8)发送确认包ACK([ack](https://baike.baidu.com/item/ack)=k+1），此包发送完毕，客户端和服务器进入[ESTABLISHED](https://baike.baidu.com/item/ESTABLISHED)（TCP连接成功）状态，完成三次握手。
-
-
+完成三次握手，主机A与主机B开始传送数据
 
 # 连接终止协议（四次挥手）
 
