@@ -1826,7 +1826,7 @@ null
 3、通过ClassLoader.loadClass()方法动态加载
 ```
 
-```
+```java
 package com.neo.classloader;
 public class loaderTest { 
         public static void main(String[] args) throws ClassNotFoundException { 
@@ -1877,7 +1877,7 @@ Class.forName(name,initialize,loader)带参函数也可控制是否加载static�
 
 ClassLoader源码分析：
 
-```
+```java
 public Class<?> loadClass(String name)throws ClassNotFoundException {
             return loadClass(name, false);
     }
@@ -1920,7 +1920,7 @@ public Class<?> loadClass(String name)throws ClassNotFoundException {
 通常情况下，我们都是直接使用系统类加载器。但是，有的时候，我们也需要自定义类加载器。
 比如应用是通过网络来传输 Java类的字节码，为保证安全性，这些字节码经过了加密处理，这时系统类加载器就无法对其进行加载，这样则需要自定义类加载器来实现。自定义类加载器一般都是继承自 ClassLoader类，从上面对 loadClass方法来分析来看，我们只需要重写 findClass 方法即可。下面我们通过一个示例来演示自定义类加载器的流程：
 
-```
+```java
 package com.neo.classloader;
 
 import java.io.*;
