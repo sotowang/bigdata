@@ -40,20 +40,6 @@
 1、无论接口还是抽象类，都无法直接实例化，其自身实例化需要靠实现类或子类来实现。
 2、接口和抽象类都必须实现其中的所有方法。
 
-# **Hashtable与HashMap的区别**
-
-```
-HashMap不是线程安全的，HashTable是线程安全。
-HashMap允许空（null）的键和值（key），HashTable则不允许。
-HashMap性能优于Hashtable。
-```
-
-Map
-
-1. Map是一个以键值对存储的接口。Map下有两个具体的实现，分别是HashMap和HashTable.
-2. HashMap是线程非安全的，HashTable是线程安全的，所以HashMap的效率高于HashTable.
-3. HashMap允许键或值为空，而HashTable不允许键或值为空.
-
 # List,Set,Collection,Collections
 
 1.List和Set都是接口，他们都继承于接口Collection,List是一个有序的可重复的集合，而Set的无序的不可重复的集合。Collection是集合的顶层接口，Collections是一个封装了众多关于集合操作的静态方法的工具类,因为构造方法是私有的，所以不能实例化。
