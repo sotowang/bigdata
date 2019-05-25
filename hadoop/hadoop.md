@@ -43,15 +43,17 @@ hadoop-env.sh core-site.xml hdfs-site.xml mapred-site.xml
 
 ## 3、请列出你所知道的hadoop调度器，并简要说明其工作方法。
 
-```
-比较流行的三种调度器有：默认调度器FIFO，计算能力调度器Capacity Scheduler，公平调度器Fair Scheduler
-1) 默认调度器FIFO
+**1) 默认调度器FIFO**
+
 hadoop中默认的调度器，采用先进先出的原则
-2) 计算能力调度器Capacity Scheduler
+
+**2) 计算能力调度器Capacity Scheduler**
+
 选择占用资源小，优先级高的先执行
-3) 公平调度器Fair Scheduler
+
+**3) 公平调度器Fair Scheduler**
+
 同一队列中的作业公平共享队列中所有资源
-```
 
 
 
@@ -106,7 +108,11 @@ BloomFilter最常见的作用是：判断某个元素是否在一个集合里面
 
 
 
+# **如何查看当前系统都有哪些进程？**
 
+答：
+
+ps -aux 或者ps -elf
 
 
 
