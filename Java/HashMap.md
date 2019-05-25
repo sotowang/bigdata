@@ -28,7 +28,7 @@ HashMap 底层是基于 **`数组 + 链表`** 组成的，不过在 jdk1.7 和
 
 ![img](https://i.loli.net/2019/05/08/5cd1d2c1c1cd7.jpg)
 
-原理上来说：ConcurrentHashMap 采用了分段锁技术，其中 Segment 继承于 ReentrantLock。不会像 HashTable 那样不管是 put 还是 get 操作都需要做同步处理，理论上 ConcurrentHashMap 支持 CurrencyLevel (Segment 数组数量)的线程并发。每当一个线程占用锁访问一个 Segment 时，不会影响到其他的 Segment。
+原理上来说：ConcurrentHashMap 采用了分段锁技术，其中 Segment 继承于 ReentrantLock。不会像 HashTable 那样不管是 put 还是 get 操作都需要做同步处理，理论上 ConcurrentHashMap 支持 CurrencyLevel (**Segment 数组数量**)的线程并发。每当一个线程占用锁访问一个 Segment 时，不会影响到其他的 Segment。
 
 ### HashMap的扩容
 
@@ -52,9 +52,23 @@ static int indexFor(int h, int length) {
 
 https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4631373中提出Java的%、/操作比&慢10倍左右，因此**采用&运算会提高性能**。
 
-通过限制length是一个2的幂数，h & (length-1)和h % length结果是一致的。这就是为什么要限制容量必须是一个2的幂的原因
+**通过限制length是一个2的幂数，h & (length-1)和h % length结果是一致的。这就是为什么要限制容量必须是一个2的幂的原因**
 
+## **Hashtable与HashMap的区别**
 
+HashMap不是线程安全的，HashTable是线程安全。
+
+HashMap允许空（null）的键和值（key），HashTable则不允许。
+
+HashMap性能优于Hashtable。
+
+Map
+
+1. Map是一个以键值对存储的接口。Map下有两个具体的实现，分别是HashMap和HashTable.
+2. HashMap是线程非安全的，HashTable是线程安全的，所以HashMap的效率高于HashTable.
+3. HashMap**允许键或值为空**，而HashTable不允许键或值为空.
+
+# 
 
 # HashSet
 
