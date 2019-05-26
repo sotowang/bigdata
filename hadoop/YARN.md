@@ -10,10 +10,9 @@
 
 [YARN](<https://blog.csdn.net/weixin_35353187/article/details/84729049>)
 
-1）客户端client向ResouceManager提交Application，ResouceManager接受Application
-并根据集群资源状况选取一个node来启动Application的任务调度器driver（ApplicationMaster）
-2）ResouceManager找到那个node，命令其该node上的nodeManager来启动一个新的
-JVM进程运行程序的driver（ApplicationMaster）部分，driver（ApplicationMaster）启动时会首先向ResourceManager注册，说明由自己来负责当前程序的运行
+1）客户端client向ResouceManager提交Application，ResouceManager接受Application并根据集群资源状况选取一个node来启动Application的任务调度器driver（ApplicationMaster）
+
+2）ResouceManager找到那个node，命令其该node上的nodeManager来启动一个新的JVM进程运行程序的driver（ApplicationMaster）部分，driver（ApplicationMaster）启动时会首先向ResourceManager注册，说明由自己来负责当前程序的运行
 3）driver（ApplicationMaster）开始下载相关jar包等各种资源，基于下载的jar等信息决定向ResourceManager申请具体的资源内容。
 4）ResouceManager接受到driver（ApplicationMaster）提出的申请后，会最大化的满足
 资源分配请求，并发送资源的元数据信息给driver（ApplicationMaster）；
@@ -22,6 +21,7 @@ JVM进程运行程序的driver（ApplicationMaster）部分，driver（Applicati
 6）NodeManager收到driver发来的指令，启动container，container启动后必须向driver（ApplicationMaster）注册。
 7）driver（ApplicationMaster）收到container的注册，开始进行任务的调度和计算，直到
 任务完成。
+
 补充：如果ResourceManager第一次没有能够满足driver（ApplicationMaster）的资源请求
 ，后续发现有空闲的资源，会主动向driver（ApplicationMaster）发送可用资源的元数据信息
 
