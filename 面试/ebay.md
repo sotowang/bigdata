@@ -14,11 +14,29 @@
 
 #  数据库中group by的用法
 
-List种类
+# List种类
 
-List公共api
+LinkedList，ArrayList，Vector
 
-Map中key类型
+# List公共api
+
+添加方法是：.add(e)；　　
+
+获取方法是：.get(index)；　　
+
+删除方法是：.remove(index)； 按照索引删除；
+
+按照元素内容删除；
+
+.remove(Object o)； 
+
+方法：.contains（Object o）； 返回true或者false
+
+
+
+
+
+# Map中key类型
 
 不使用锁，达到锁的功能
 
