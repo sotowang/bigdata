@@ -32,25 +32,21 @@ LinkedList，ArrayList，Vector
 
 方法：.contains（Object o）； 返回true或者false
 
-
-
-
-
 # Map中key类型
 
-不使用锁，达到锁的功能
+# 不使用锁，达到锁的功能
 
-String a = "hello world" a在哪，“hello world”在哪？
+# String a = "hello world" a在哪，“hello world”在哪？
 
-Integer 和 int 区别
+# Integer 和 int 区别
 
-工厂模式
+# 工厂模式
 
-单例模式
+# 单例模式
 
-Junit
+# Junit单元测试
 
-Array和ArrayList的区别
+# Array和ArrayList的区别
 
 
 
