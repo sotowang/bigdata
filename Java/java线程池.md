@@ -1,3 +1,13 @@
+# Fork/Join框架
+
+把大任务分割成若干小任务并行，最终汇总每个小任务结果后得到大任务结果的框架。
+
+* Work-Stealing算法
+
+  某个线程从其他队列里窃取任务来执行
+
+
+
 # 线程的局部变量和成员变量
 
 [Java 多线程（四） 多线程访问成员变量与局部变量](https://www.cnblogs.com/mengdd/archive/2013/02/16/2913659.html)
@@ -13,15 +23,17 @@
 * 线程等待池，即线程队列BlockingQueue
 * 任务处理池（PoolWorker），即正在工作的Thread列表（HashSet<Worker）
 
-## 线程池的核心参数
+## ThreadPoolExecutor的构造函数
 
-* 核心池大小（corePoolSize）
+* **corePoolSize** 核心线程数量
 
   默认情况下，在创建了线程池后，线程池中的线程数为0，当有任务来之后，就会创建一个线程去执行任务，当线程池中的线程数目达到corePoolSize后，就会把到达的任务放到**缓存队列**当中。**核心线程在allowCoreThreadTimeout被设置为true时会超时退出，默认情况下不会退出**。
 
-* 最大处理线程池数（maxmimumPoolSize）
+* **maxmimumPoolSize** 最大线程池数
 
-  当线程数大于或等于核心线程，且任务队列已满时**，线程池会创建新的线程，直到线程数量达到maxPoolSize**。如果线程数已等于maxPoolSize，且任务队列已满，则已超出线程池的处理能力，线程池会拒绝处理任务而抛出异常。
+  * 线程不够用时能够创建的最大线程数
+
+* **workQueue**  任务等待队列
 
 * **keepAliveTime**
 
@@ -31,13 +43,21 @@
 
   是否允许核心线程空闲退出，默认值为false。
 
-* **queueCapacity**
+* **handler**
 
+## 新任务提交execute执行后的判断
 
+* 如果运行的线程少于corePoolSize，则创建新线程来处理任务，即使线程池中的其他线程是空闲的
+* 如果线程池中的线程数量大于等于corePoolSize且小于maximumPoolSize，则只有当workQueue满时才创建新的线程去处理任务
+* 如果徽墨的corePoolSize和maximumPoolSize相同，则创建的线程池的大小是固定的，这时如果有新任务提交，workQueue未满，则将请求放入workQueue中，等待有空闲的线程去从workQueue中取任务并处理
+* 如果运行的线程数量大于等于maximumPoolSize，这时如果workQueue已经满了，则通过handler所指定的策略来处理任务
 
-# [为什么用线程池](https://liuzho.github.io/2017/04/17/%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%8C%E8%BF%99%E4%B8%80%E7%AF%87%E6%88%96%E8%AE%B8%E5%B0%B1%E5%A4%9F%E4%BA%86/)
+# [为什么要使用线程池](https://liuzho.github.io/2017/04/17/%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%8C%E8%BF%99%E4%B8%80%E7%AF%87%E6%88%96%E8%AE%B8%E5%B0%B1%E5%A4%9F%E4%BA%86/)
 
 在Java中，**线程池的概念是Executor这个接口**，具体实现为ThreadPoolExecutor类，对线程池的配置，就是对ThreadPoolExecutor构造函数的参数的配置
+
+* 降低资源消耗
+* 提高线程的可管理性
 
 # 常见四种线程池
 
@@ -69,7 +89,7 @@
 ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads);
 
 //threadFactory => 创建线程的方法，这就是我叫你别理他的那个星期六！你还看！
-ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads, ThreadFactory threadFactory);
+ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads, ThreadFactory threadFactory;
 ```
 
 ## ScheduledThreadPool()
