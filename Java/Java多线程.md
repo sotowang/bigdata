@@ -43,3 +43,14 @@
 * 结束（Terminated）
   * 已终止线程的状态，线程已结束执行
 
+# sleep的wait的区别
+
+* sleep是Thread类的方法，wait是Object类中定义的方法
+* sleep()方法可以在任何地方使用
+* wait()方法只能在synchronized方法或synchronized块中使用
+
+**最本质区别**
+
+* Thread.sleep只会让出CPU，不会导致锁行为的改变
+* Object.wait不仅让出CPU，还会释放已占有的同步资源锁
+
