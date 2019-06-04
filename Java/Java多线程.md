@@ -54,3 +54,14 @@
 * Thread.sleep只会让出CPU，不会导致锁行为的改变
 * Object.wait不仅让出CPU，还会释放已占有的同步资源锁
 
+# notify和notifyAll的区别
+
+**锁池EntryList**
+
+**等待池WaitSet**
+
+* notifyAll 会让所有处于等待池的线程全部进入锁池去竞争获取锁的机会
+* notify只会随机选取一个处于等待池中的线程进入锁池去竞争获取锁的机会
+
+
+
