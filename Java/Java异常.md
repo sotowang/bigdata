@@ -32,7 +32,7 @@
 * ClassNotFoundException - 找不到指定class异常
 * IOException - IO操作异常
 
-# Error
+## Error
 
 * NoClassDefFoundError
   * 类依赖的class或者jar不存在
@@ -41,5 +41,19 @@
 * StackOverflowError - 深递归导致栈被耗尽而抛出的异常
 * OutOfMemoryError - 内存溢出异常
 
+# Java的异常处理机制
 
+* 抛出异常
+  * 创建异常对象，交由运行时系统处理
+* 捕获异常
+  * 寻找合适的异常处理器处理异常，否则终止运行
+
+# 高效主流的异常处理框架
+
+在用户看来，应用系统发生的所有异常都是应用系统内部的异常
+
+* 设计一个通用的继承自RuntimeException的异常来统一处理
+* 其余异常都统一转译为上述异常AppException
+* 在catch之后，抛出上述异常的子类，并提供足以定位的信息
+* 由前端接收AppException做统一处理
 
