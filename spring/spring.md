@@ -107,7 +107,11 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
   * 包含Bean的各种定义，便于实例化Bean
   * 建立Bean之间的依赖关系
   * Bean生命周期控制
-* ApplicationContext
+* ApplicationContext（继承多个接口）
+  * BeanFactory：能够管理，装配Bean
+  * ResourcePatternResolve：能够加载资源文件
+  * MessageSource：能够实现国际化等工能
+  * ApplicationEventPublisher：能够注册监听器，实现监听机制
 
 **BeanFactory与ApplicationContext比较**
 
