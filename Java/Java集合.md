@@ -1,4 +1,21 @@
-# HashMap
+# Collection
+
+* List
+  * ArrayList
+  * LinkedList
+  * Vector
+* Set
+  * HashSet
+    * 保证元素唯一性
+  * TreeSet
+    * 保证元素排序
+* Queue
+
+# Map
+
+# HashMap、HashTable、ConcurrentHashMap的区别
+
+## HashMap
 
 HashMap 底层是基于 **`数组 + 链表`** 组成的，不过在 jdk1.7 和 1.8 中具体实现稍有不同。
 
@@ -18,13 +35,13 @@ HashMap 底层是基于 **`数组 + 链表`** 组成的，不过在 jdk1.7 和
 
 因此通常建议能提前预估 HashMap 的大小最好，尽量的减少扩容带来的性能损耗。
 
-## 1.7 HashMap缺点
+### 1.7 HashMap缺点
 
 > 当 Hash 冲突严重时，在桶上形成的链表会变的越来越长，这样在查询时的效率就会越来越低；时间复杂度为 `O(N)`。
 
-因此 1.8 中重点优化了这个查询效率。
+因此 1.8 中使用了数组+链表+红黑树
 
-##  1.8 HashMap结构
+###  1.8 HashMap结构
 
 ![img](https://i.loli.net/2019/05/08/5cd1d2c1c1cd7.jpg)
 
@@ -54,6 +71,17 @@ https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4631373中提出Java的%、
 
 **通过限制length是一个2的幂数，h & (length-1)和h % length结果是一致的。这就是为什么要限制容量必须是一个2的幂的原因**
 
+### put方法的逻辑
+
+* 如果HashMap未被初始化过，则初始化
+* 对key求Hash值，然后再计算下标
+* 如果没有碰撞，直接放入桶中
+* 如果碰撞了，以链表的方式链接到后面
+* 如果链表长度超过阀值，就把链表转成红黑树
+* 如果链表长度低于6，就把红黑树转回链表
+* 如果节点已经存在就替换旧值
+* 如果桶满了（容量16*负载因子0.75），就需要resize（扩容2倍后重排）
+
 ## **Hashtable与HashMap的区别**
 
 HashMap不是线程安全的，HashTable是线程安全。
@@ -68,7 +96,7 @@ Map
 2. HashMap是线程非安全的，HashTable是线程安全的，所以HashMap的效率高于HashTable.
 3. HashMap**允许键或值为空**，而HashTable不允许键或值为空.
 
-# 
+
 
 # HashSet
 
@@ -76,9 +104,23 @@ Map
 
 由于 HashMap 的 put() 方法添加 key-value 对时，当新放入 HashMap 的 Entry 中 key 与集合中原有 Entry 的 key 相同（hashCode()返回值相等，通过 equals 比较也返回 true），新添加的 Entry 的 value 会将覆盖原来 Entry 的 value（HashSet 中的 value 都是`PRESENT`），但 key 不会有任何改变，因此**如果向 HashSet 中添加一个已经存在的元素时，新添加的集合元素将不会被放入 HashMap中，原来的元素也不会有任何改变，这也就满足了 Set 中元素不重复的特性。**
 
+# ConcurrentHashMap
 
+* Java5 使用segment分段锁
+* java8 CAS+synchronized使锁更细化
+* 数组+链表+红黑树
 
+## put方法的逻辑
 
+* 判断Node[] 数组是否初始化，没有则进行初始化操作
+* 通过hash定位数组索引坐标，是否有Node节点，如果没有，使用CAS进行添加（链表的头节点，添加失败则进入下次循环）
+* 检查到内部正在扩容，就帮助它一块扩容
+* 如果f!=null，则使用stnchronized锁住f元素（链表/红黑二叉树的头元素）
+  * 如果是Node（链表结构），则执行链表的添加操作
+  * 如果是TreeNode（树型结构）则执行树添加操作
+* 判断链表长度已经达到临界值8，当节点数超过这个值就需要把链表转换为树结构
 
+**总结**
 
-
+* 首先使用无锁操作CAS插入头节点，失败则循环重试
+* 若头节点已存在，则尝试获取头节点的同步锁，再进行操作
