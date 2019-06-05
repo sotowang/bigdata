@@ -1,3 +1,71 @@
+# 查找特定的文件
+
+>  find path [options] params
+
+```shell
+find ~ -name "target3.java"  //精确查找
+find ~ -name "target*"   // 模糊查找文件
+find ~ -iname "targer*"  //忽略大小写
+
+man find  //更多关于 find 的指令说明
+```
+
+# 检索文件内容
+
+>grep [options] pattern file
+
+```shell
+grep "hadoop" README*
+```
+
+# 管道操作符
+
+可将指令连接起来，前一个指令的输出作为后一个指令的输入
+
+```shell
+find ~ | grep "Hadoop"
+```
+
+*  管道只处理正确的输出，不执行错误的输出
+* 右边命令必须能够接收检索文件输入流，否则传递过程中数据会被抛弃
+* sed,awk,grep,cut,head,top,less,more,wc,join,sort,split
+
+> grep -o 只输出符合 RE 的字符串
+
+```shell
+grep 'partial\[true\]' *.info,log | grep -o 'engine\[[0-9a-z]\]'
+```
+
+>grep -v   //过滤掉指令本身
+
+```shell
+ps -ef | grep ’tomcat‘ | grep -v ’tomcat‘
+```
+
+
+
+# 对文件内容做统计
+
+> awk [options] 'cmd' file
+
+* 一次读取一行文本，按输入分隔符进行切片，切成多个组成部分
+* 将切片直接保存在内建的变量中，$1,$2...($0表示行的全部)
+* 支持对单个切片的判断，支持循环判断，默认分隔符为空格
+
+```shell
+awk '{print $1,$4}' README.txt  //打印第一个和第4个切片的内容
+```
+
+
+
+
+
+
+
+
+
+
+
 # **何看当前Linux系统有几颗物理CPU和每颗CPU的核数？**
 
 答：
