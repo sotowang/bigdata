@@ -56,13 +56,57 @@ ps -ef | grep ’tomcat‘ | grep -v ’tomcat‘
 awk '{print $1,$4}' README.txt  //打印第一个和第4个切片的内容
 ```
 
+```shell
+awk '$1=="tcp" && $2 == 1 {print $0}' netstat.txt
+```
 
+```shell
+awk '($1=="tcp" && $2 == 1) || NR==1 {print $0}' netstat.txt  //带有表头的数据
+```
 
+```shell
+awk -F "," '{print $2}' test.txt   //-F 以逗号为分隔符
+```
 
+```shell
+grep 'partial\[true\]' *.info,log | grep -o 'engine\[[0-9a-z]\]' |
+awk '{engineer[$1]++}END{for(i in enginearr) print i "\t" enginearr[i]}'
+```
 
+# 批量替换文件内容
 
+> sed [option] 'sed command' filename
 
+* 全名 stream editor ，流编辑器
+* 适合用于对文本的编辑
 
+```shell
+sed 's/^Str/String/' replace.java     //将Str打头的字符替换为String，不改变文档内容
+```
+
+```shell
+sed -i 's/^Str/String/' replace.java     //将Str打头的字符替换为String，改变文档内容
+```
+
+```shell
+sed -i 's/\.$/\;/' replace.java  //将 ’.‘ 替换为’；‘
+```
+
+```shell
+sed -i 's/Jack/me/' replace.java   //将Jack替换为me  但只能替换一个Jack
+```
+
+```shell
+sed -i 's/Jack/me/g' replace.java   //将所有Jack替换为me
+```
+
+```shell
+sed -i '/^ *$/d' replace.java   //删除空行
+```
+
+```shell
+sed -i 'Integer/d' replace.java //删除Integer所在行
+```
 
 
 
