@@ -1,8 +1,8 @@
-# [*Spring* IoC有什么好处呢？](https://www.zhihu.com/question/23277575/answer/169698662)
+# [ IOC](https://www.zhihu.com/question/23277575/answer/169698662)
 
-要了解**控制反转( Inversion of Control )**, 我觉得有必要先了解软件设计的一个重要思想：**依赖倒置原则（Dependency Inversion Principle ）**。
+**控制反转( Inversion of Control )**, 我觉得有必要先了解软件设计的一个重要思想：**依赖倒置原则（Dependency Inversion Principle ）**。
 
-## **什么是依赖倒置原则？**
+## 依赖倒置原则？
 
 假设我们设计一辆汽车：先设计轮子，然后根据轮子大小设计底盘，接着根据底盘设计车身，最后根据车身设计好整个汽车。这里就出现了一个“依赖”关系：汽车依赖车身，车身依赖底盘，底盘依赖轮子。
 
@@ -14,15 +14,13 @@
 
 <img src="https://pic2.zhimg.com/v2-e64bf72c5c04412f626b21753aa9e1a1_b.png" data-caption="" data-rawwidth="1504" data-rawheight="190" class="origin_image zh-lightbox-thumb" width="1504" data-original="https://pic2.zhimg.com/v2-e64bf72c5c04412f626b21753aa9e1a1_r.jpg">![img](https://pic2.zhimg.com/80/v2-e64bf72c5c04412f626b21753aa9e1a1_hd.png)
 
-这时候，上司再说要改动轮子的设计，我们就只需要改动轮子的设计，而不需要动底盘，车身，汽车的设计了。
+
 
 这时候，上司再说要改动轮子的设计，我们就只需要改动轮子的设计，而不需要动底盘，车身，汽车的设计了。
 
-**这就是依赖倒置原则——把原本的高层建筑依赖底层建筑“倒置”过来，变成底层建筑依赖高层建筑。高层建筑决定需要什么，底层去实现这样的需求，但是高层并不用管底层是怎么实现的。这样就不会出现前面的“牵一发动全身”的情况**。
+依赖倒置原则——把原本的高层建筑依赖底层建筑“倒置”过来，变成底层建筑依赖高层建筑。高层建筑决定需要什么，底层去实现这样的需求，但是高层并不用管底层是怎么实现的。这样就不会出现前面的“牵一发动全身”的情况。
 
-<img src="https://pic2.zhimg.com/v2-d53c75e91d959acbb0d95a835212ada5_b.png" data-caption="" data-rawwidth="600" data-rawheight="61" class="origin_image zh-lightbox-thumb" width="600" data-original="https://pic2.zhimg.com/v2-d53c75e91d959acbb0d95a835212ada5_r.jpg">
-
-## **依赖注入（Dependency Injection）**
+## 依赖注入
 
  **控制反转（Inversion of Control）** 就是依赖倒置原则的一种代码设计的思路。具体采用的方法就是所谓的**依赖注入（Dependency Injection）**。其实这些概念初次接触都会感到云里雾里的。说穿了，这几种概念的关系大概如下：
 
@@ -33,14 +31,6 @@
 ![img](https://pic4.zhimg.com/80/v2-8ec294de7d0f9013788e3fb5c76069ef_hd.png) 
 
   
-
- 
-
- 
-
- 
-
- 
 
 这样，就相当于上面第一个例子，**上层建筑依赖下层建筑**——每一个类的构造函数都直接调用了底层代码的构造函数。假设我们需要改动一下轮胎（Tire）类，把它的尺寸变成动态的，而不是一直都是30。我们需要这样改：
 
@@ -62,21 +52,28 @@
 
 <img src="https://pic2.zhimg.com/v2-99ad2cd809fcb86dd791ff7f65fb1779_b.png" data-caption="" data-rawwidth="1344" data-rawheight="1424" class="origin_image zh-lightbox-thumb" width="1344" data-original="https://pic2.zhimg.com/v2-99ad2cd809fcb86dd791ff7f65fb1779_r.jpg">
 
- 看到没？这里**我只需要修改轮胎类就行了，不用修改其他任何上层类。**这显然是更容易维护的代码。不仅如此，在实际的工程中，这种设计模式还有利于**不同组的协同合作和单元测试：**比如开发这四个类的分别是四个不同的组，那么只要定义好了接口，四个不同的组可以同时进行开发而不相互受限制；而对于单元测试，如果我们要写Car类的单元测试，就只需要Mock一下Framework类传入Car就行了，而不用把Framework, Bottom, Tire全部new一遍再来构造Car。
+ 看到没？这里**我只需要修改轮胎类就行了，不用修改其他任何上层类。**这显然是更容易维护的代码。不仅如此，在实际的工程中，这种设计模式还有利于**不同组的协同合作和单元测试：**比如开发这四个类的分别是四个不同的组，那么只要定义好了接口，四个不同的组可以同时进行开发而不相互受限制；而对于单元测试，如果我们要写Car类的单元测试，**就只需要Mock一下Framework类传入Car就行了**，而不用把Framework, Bottom, Tire全部new一遍再来构造Car。
+
+### 依赖注入方式
+
+* Setter
+* Interface
+* Constructor
+* Annotation
 
 这里我们是采用的**构造函数传入**的方式进行的依赖注入。其实还有另外两种方法：**Setter传递**和**接口传递**。这里就不多讲了，核心思路都是一样的，都是为了实现**控制反转**。
 
  ![preview](https://pic2.zhimg.com/v2-861683acac47577c81f2b7493dd05649_r.jpg)
 
- <img src="https://pic2.zhimg.com/v2-d53c75e91d959acbb0d95a835212ada5_b.png" data-caption="" data-rawwidth="600" data-rawheight="61" class="origin_image zh-lightbox-thumb" width="600" data-original="https://pic2.zhimg.com/v2-d53c75e91d959acbb0d95a835212ada5_r.jpg">
+ 
 
-## 什么是**控制反转容器(IoC Container)**呢？
+## 控制反转容器
 
-看到这里你应该能理解什么控制反转和依赖注入了。那什么是**控制反转容器(IoC Container)**呢？其实上面的例子中，对车类进行初始化的那段代码发生的地方，就是控制反转容器。
+什么是**控制反转容器(IoC Container)**呢？其实上面的例子中，对车类进行初始化的那段代码发生的地方，就是控制反转容器。
 
 ![img](https://pic3.zhimg.com/80/v2-c845802f9187953ed576e0555f76da42_hd.png) 
 
-显然你也应该观察到了，因为采用了依赖注入，在初始化的过程中就不可避免的会写大量的new。这里IoC容器就解决了这个问题。**这个容器可以自动对你的代码进行初始化，你只需要维护一个Configuration（可以是xml可以是一段代码），而不用每次初始化一辆车都要亲手去写那一大段初始化的代码**。这是引入IoC Container的第一个好处。
+因为采用了依赖注入，在初始化的过程中就不可避免的会写大量的new。这里IoC容器就解决了这个问题。**这个容器可以自动对你的代码进行初始化，你只需要维护一个Configuration（可以是xml可以是一段代码），而不用每次初始化一辆车都要亲手去写那一大段初始化的代码**。这是引入IoC Container的第一个好处。
 
 IoC Container的第二个好处是：**我们在创建实例的时候不需要了解其中的细节。**在上面的例子中，我们自己手动创建一个车instance时候，是从底层往上层new的：
 
@@ -96,9 +93,32 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
 
 实际项目中，有的Service Class可能是十年前写的，有几百个类作为它的底层。假设我们新写的一个API需要实例化这个Service，我们总不可能回头去搞清楚这几百个类的构造函数吧？IoC Container的这个特性就很完美的解决了这类问题——**因为这个架构要求你在写class的时候需要写相应的Config文件，所以你要初始化很久以前的Service类的时候，前人都已经写好了Config文件，你直接在需要用的地方注入这个Service就可以了**。这大大增加了项目的可维护性且降低了开发难度。
 
+# Spring IOC过程
+
+* 读取Bean配置信息
+* 根据Bean注册表实例化Bean
+* 将Bean实例放到Spring容器中
+* 使用Bean
+
+## Spring IOC容器的核心接口
+
+* BeanFactory  （Spring框架最核心的接口）
+  * 提供IOC的配置机制
+  * 包含Bean的各种定义，便于实例化Bean
+  * 建立Bean之间的依赖关系
+  * Bean生命周期控制
+* ApplicationContext
+
+**BeanFactory与ApplicationContext比较**
+
+* BeanFactory是Spring框架的基础设施，面向Spring
+* ApplicationContext面向使用Spring框架的开发者
+
+
+
 ---
 
-# [关于 Spring AOP (AspectJ) 你该知晓的一切](https://zhuanlan.zhihu.com/p/25522841)
+# [ Spring AOP (AspectJ)](https://zhuanlan.zhihu.com/p/25522841)
 
  OOP即面向对象的程序设计，谈起了OOP，我们就不得不了解一下POP即面向过程程序设计，它是以功能为中心来进行思考和组织的一种编程方式，强调的是系统的数据被加工和处理的过程，说白了就是注重功能性的实现，效果达到就好了，而OOP则注重封装，强调整体性的概念，以对象为中心，将对象的内部组织与外部环境区分开来。之前看到过一个很贴切的解释，博主把它们画成一幅图如下：
 
