@@ -49,8 +49,35 @@
 
 * 如果运行的线程少于corePoolSize，则创建新线程来处理任务，即使线程池中的其他线程是空闲的
 * 如果线程池中的线程数量大于等于corePoolSize且小于maximumPoolSize，则只有当workQueue满时才创建新的线程去处理任务
-* 如果徽墨的corePoolSize和maximumPoolSize相同，则创建的线程池的大小是固定的，这时如果有新任务提交，workQueue未满，则将请求放入workQueue中，等待有空闲的线程去从workQueue中取任务并处理
+* 如果设置的corePoolSize和maximumPoolSize相同，则创建的线程池的大小是固定的，这时如果有新任务提交，workQueue未满，则将请求放入workQueue中，等待有空闲的线程去从workQueue中取任务并处理
 * 如果运行的线程数量大于等于maximumPoolSize，这时如果workQueue已经满了，则通过handler所指定的策略来处理任务
+
+# 线程池状态
+
+* RUNNING 
+  * 能接受新提交的任务，并且也能处理阻塞队列中的任务
+* SHUTDOWN
+  * 不再接受新提交的任务。但可以处理存量任务
+* STOP
+  * 不再接受新提交的任务，也不处理存量任务
+* TIDYING
+  * 所有的任务都已终止
+* TERMINATED
+  * terminated() 方法执行完后进入该状态
+
+![深度截图_选择区域_20190605130036.png](https://i.loli.net/2019/06/05/5cf74c87a2e2989507.png)
+
+
+
+# 线程池大小
+
+* CPU密集型
+
+  * 线程数=按照核数或者核数+1设定
+* I/O密集型
+  * 线程数=CPU核数*(1+平均等待时间/平均工作时间)
+
+
 
 # [为什么要使用线程池](https://liuzho.github.io/2017/04/17/%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%8C%E8%BF%99%E4%B8%80%E7%AF%87%E6%88%96%E8%AE%B8%E5%B0%B1%E5%A4%9F%E4%BA%86/)
 
