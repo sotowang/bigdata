@@ -13,9 +13,7 @@
 
 # Map
 
-# HashMap、HashTable、ConcurrentHashMap的区别
-
-## HashMap
+# HashMap
 
 HashMap 底层是基于 **`数组 + 链表`** 组成的，不过在 jdk1.7 和 1.8 中具体实现稍有不同。
 
@@ -124,3 +122,13 @@ Map
 
 * 首先使用无锁操作CAS插入头节点，失败则循环重试
 * 若头节点已存在，则尝试获取头节点的同步锁，再进行操作
+
+
+
+# HashMap、HashTable、ConcurrentHashMap的区别
+
+* HashMap线程不安全，数组+链表+红黑树
+* HashTable线程案例。锁住整个对象，数组+链表
+* ConcurrentHashMap线程安全，CAS+同步锁，数组+链表+红黑树
+* HashMap的key和value可以为null，其他两个不行
+
