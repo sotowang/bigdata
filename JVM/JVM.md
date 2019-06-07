@@ -1,31 +1,51 @@
-### JDK（Java开发工具集）  JRE（Java Runtime Environment） JVM（Java Virtual Machine） 关系
-> JDK包含JRE  JRE包含JVM
+# 谈谈你对Java的理解
 
-![DeepinScreenshot_select-area_20190113201905.png](https://i.loli.net/2019/01/13/5c3b2ccc94278.png)
+* 平台无关性
+  * 编译时
+  * 运行时
+* GC
+* 语言特性
+  * 泛型
+  * 反射
+  * lambda表达式
+* 面向对象
+  * 封装
+  * 继承
+  * 多态
+* 类库
+* 异常处理
 
-#### 内存溢出问题的解决
+
+
+# JDK  JRE  JVM 关系
+
+JDK包含JRE  JRE包含JVM
+
+
+
+# 内存溢出问题的解决
 > -XX:+HeapDumpOnOutOfMemoryError
 
 ```
 如果发生了内存泄露，好重现的话打开JVM的HeapDumpOnOutOfMemoryError参数，待到有了Heap Dump再使用MAT等工具分析。
 ```
 
-#### JVM监控工具
+# JVM监控工具
 > jconsole
 
 [JVM内存区域详解（Eden Space、Survivor Space、Old Gen、Code Cache和Perm Gen）](https://blog.csdn.net/shiyong1949/article/details/52585256)
 
-#### Java虚拟机
+# Java虚拟机
 * Sun Classic VM(第一个Java虚拟机)   --->已过时
 * Exact VM  -->准确试内存管理
 * HotSpot VM  
 * KVM  -->在手机平台运行
 
-#### Java虚拟机内存管理
+# Java虚拟机内存管理
 ![Java虚拟机内存管理](https://images2017.cnblogs.com/blog/1072930/201712/1072930-20171229170534570-429539433.png)
 [https://www.cnblogs.com/shyroke/p/8146608.html](https://www.cnblogs.com/shyroke/p/8146608.html)
 
-##### 线程共享区	
+## 线程共享区	
 Java 堆
 
 ```
@@ -66,7 +86,7 @@ Java堆是垃圾收集器管理的主要区域，现在收集器基本采用分�
 当常量池无法再申请到内存时抛出OutOfMemoryError异常。
 ```
 
-##### 线程独占区	
+## 线程独占区	
 
 线程独占区之程序计数器
     
@@ -118,7 +138,7 @@ Java虚拟机栈与线程生命周期相同。
 本地方法栈也会抛出StackOverflowError异常和OutOfMemoryError异常。
 ```
 
-##### 直接内存（Direct Memory）
+## 直接内存（Direct Memory）
 
 ```
 直接内存并不是虚拟机运行时数据区的一部分，也不是虚拟机规范中定义的内存区域，但是也会导致OutOfMemoryError异常出现。
@@ -134,13 +154,13 @@ Java虚拟机栈与线程生命周期相同。
 
 ---
 
-#### 【深入理解JVM】：Java对象的创建、内存布局、访问定位
+## 【深入理解JVM】：Java对象的创建、内存布局、访问定位
 
 [java对象的结构和对象的访问定位](https://www.cnblogs.com/shyroke/p/8159094.html)	
 
 [Java对象的创建、内存布局、访问定位](https://blog.csdn.net/u011080472/article/details/51321769)
 
-##### 对象的创建
+## 对象的创建
 
 ```
 一个简单的创建对象语句Clazz instance = new Clazz();
@@ -240,7 +260,7 @@ init()方法还没有执行，所有的字段都还是零。
 这样一个真正可用的对象才算产生出来。
 ```
 
-##### 对象内存布局
+## 对象内存布局
 
 在HotSpot虚拟机中，对象在内存中存储的布局可以分为3块区域：
 		对象头(Header)、实例数据(Instance Data)和对齐填充(Padding)。
@@ -288,7 +308,7 @@ HotSpot虚拟机要求对象的起始地址必须是8字节的整数倍，
 因此，当对象实例数据部分没有对齐的时候，就需要通过对齐填充来补全。
 ```
 
-#### 对象访问定位
+## 对象访问定位
 
 ```
 Java程序需要通过栈上的引用数据来操作堆上的具体对象。
@@ -322,11 +342,11 @@ Java堆中划分出一块内存来作为句柄池，引用中存储对象的句�
 
 ---
 
-### 垃圾回收
+## 垃圾回收
 
 [垃圾回收之判定垃圾对象](https://www.cnblogs.com/shyroke/p/8159243.html)
 
-#####  判定垃圾对象之引用计数法
+###  判定垃圾对象之引用计数法
 
 * 引用计数器算法算是一种古老的java垃圾回收算法，目前很多版本的java（jdk1.8也已废弃）已经废弃掉这种算法了。
 
@@ -370,7 +390,7 @@ public class GCTest {
 
 ![](https://images2017.cnblogs.com/blog/1072930/201712/1072930-20171231231426601-602197925.png)
 
-##### 判定垃圾对象之可达性分析算法
+### 判定垃圾对象之可达性分析算法
 这个算法的基本思路就是通过一系列的称谓“GC Roots"的对象作为起始点，从这些节点开始向下搜索，搜索所有走过的路径为引用链，当一个对象到GC Roots没有任何引用链相连时，则证明此对象时不可用的：
 
 注：Java语言中，可作为GC Roots的对象包括下面几种：
@@ -391,11 +411,11 @@ public class GCTest {
 
 ---
 
-### 垃圾回收算法
+## 垃圾回收算法
 
 [垃圾回收算法](https://www.cnblogs.com/shyroke/p/8167777.html)
 
-#### 标记-清除算法
+### 标记-清除算法
 
 ```
 最基础的收集算法是“标记-清除”（Mark-Sweep）算法，
@@ -414,7 +434,7 @@ public class GCTest {
 
 ![](https://i.loli.net/2019/01/14/5c3c5bff5b1ed.jpeg)
 
-##### 复制算法
+### 复制算法
 为了解决效率问题，一种称为“复制”（Copying）的收集算法出现了，它将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这一块的内存用完了，就将还存活着的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。这样使得每次都是对其中的一块进行内存回收，内存分配时也就不用考虑内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单，运行高效。
 
 >只是这种算法的代价是将内存缩小为原来的一半，未免太高了一点。
@@ -436,7 +456,7 @@ public class GCTest {
 
 ![](http://static.zybuluo.com/Rico123/pml3jw51zgc8mqffpwt6793t/heap.bmp)
 
-##### 标记-整理算法
+### 标记-整理算法
 复制收集算法在对象存活率较高时就要执行较多的复制操作，效率将会变低。	
 更关键的是，如果不想浪费50%的空间，就需要有额外的空间进行分配担保，以应对被使用的内存中所有对象都100%存活的极端情况，所以在老年代一般不能直接选用这种算法。	
 根据老年代的特点，有人提出了另外一种“标记-整理”（Mark-Compact）算法，	
@@ -446,7 +466,7 @@ public class GCTest {
 
 ![20141102170015242.jpeg](https://i.loli.net/2019/01/14/5c3c6e58a317e.jpeg)
 
-##### 分代收集算法
+### 分代收集算法
 当前商业虚拟机的垃圾收集都采用“分代收集”（Generational Collection）算法，	
 这种算法并没有什么新的思想，只是根据对象的存活周期的不同将内存划分为几块。	
 一般是把Java堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。	
@@ -459,7 +479,7 @@ public class GCTest {
 
 [垃圾收集器](https://www.cnblogs.com/shyroke/p/8168057.html)
 
-##### 垃圾收集器之Serial
+#### 垃圾收集器之Serial
 > serial收集器是最基本发展最悠久的收集器。	
 > serial收集器是一个单线程的收集器，但他的“单线程”的意义并不仅仅只会使用一个cpu或者一条线程去完成垃圾收集工作，更重要的是在他进行垃圾收集时，必须暂停其他所有的工作线程，直到收集结束。
 
@@ -484,7 +504,7 @@ serial收集期对于运行在client模式下的虚拟机来说是一个很好�
 
 * 通过JVM参数-XX:+UseSerialGC可以使用串行垃圾回收器。
 
-##### 垃圾收集器之ParNew收集器
+#### 垃圾收集器之ParNew收集器
 >ParNew收集器是JAVA虚拟机中垃圾收集器的一种。	
 它是Serial收集器的多线程版本，除了使用多条线程进行垃圾收集之外，其余行为包括Serial收集器可用的所有控制参数	
 （例如：-XX:SurvivorRatio、 -XX:PretenureSizeThreshold、-XX:HandlePromotionFailure等）、收集算法、Stop The World、对象分配规则、回收策略等都与Serial收集器一致。	
@@ -495,7 +515,7 @@ ParNew收集器其实就是Serial收集器的多线程版本。新生代并行�
 -XX:+UseParNewGC  ParNew收集器
 -XX:ParallelGCThreads 限制线程数量
 
-##### 垃圾收集器之parallel 收集器
+#### 垃圾收集器之parallel 收集器
 > Parallel Scavenge收集器也是使用复制算法的收集器 	
 Parallel Scavenge的特点：	
 	Parallel Scavenge关注与其他收集器不同，CMS等收集器的关注点是尽可能地缩短垃圾收集时用户线程的停顿时间，而Parallel Scavenge收集器的目标则是达到一个可控制的吞吐量，	
