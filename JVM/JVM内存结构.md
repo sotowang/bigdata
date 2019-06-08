@@ -1,10 +1,69 @@
-# JVM内存结构
+# JVM三大性能调优参数
 
-[JVM内存结构](https://mp.weixin.qq.com/s?__biz=MzI4NDY5Mjc1Mg==&mid=2247483949&idx=1&sn=8b69d833bbc805e63d5b2fa7c73655f5&chksm=ebf6da52dc815344add64af6fb78fee439c8c27b539b3c0e87d8f6861c8422144d516ae0a837&scene=21#wechat_redirect)
+* -Xss 
+  * 每个线程的堆栈大小。
+* -Xms
+  * 堆的初始值
+* -Xmx
+  * 堆能达到的最大值
+
+# Java内存模型中堆和栈的区别
+
+**内存分配策略**
+
+* 静态存储
+  * 编译时确定每个数据目标在运行时的存储空间
+* 栈式存储
+  * 数据区需求在编译时未知，运行时模块入口前确定
+* 堆式存储
+  * 编译时或运行时模块入口都无法确定，动态分配
+
+**联系**
+
+* 引用对象，数组时，栈里定义变量保存堆中的目标的首地址
+
+**区别**
+
+* 管理方式
+  * 栈自动释放
+  * 堆需要GC
+* 空间大小
+  * 栈比堆小
+* 碎片相关
+  * 栈产生的碎片远小于堆
+* 分配方式
+  * 栈支持静态和动态分配
+  * 堆仅支持动态分配
+* 栈的效率比堆高
+
+# 元空间（metaSpace），堆，线程独占部分间的联系-内存角度
+
+* MetaSpace
+  * 类被加载进来时，MetaSpace保存Class对象信息，Method，属性信息
+* Java堆
+  * Java堆加载的是对象实例（Object），String实例（如果有）
+* 线程独占
+  * 虚拟机栈
+    * 地址引用（String，Object的）
+    * 局部变量（a,b,c）
+  * 本地栈
+  * 程序计数器
+
+# 不同JDK版本之间intern()方法的区别
+
+* JDK6
+  * 当调用intern方法时，如果字符串常量池先前已创建出该字符串对象，则返回池中的该字符串的引用。否则将此字符串对象添加到字符串常量池中，并且返回该字符串对象的引用。
+* JDK6+
+  * 当调用intern方法时，如果字符串常量池先前已创建出该字符串对象，则返回池中的该字符串的引用。否则，如果该字符串对象已经存在于Java堆中，则将堆中对此对象的引用添加到字符串常量池中，并且返回该引用；如果堆中不存在，则在池中创建该字符串并返回其引用。
+
+
+
+# 线程共享
+
+JVM内存结构](https://mp.weixin.qq.com/s?__biz=MzI4NDY5Mjc1Mg==&mid=2247483949&idx=1&sn=8b69d833bbc805e63d5b2fa7c73655f5&chksm=ebf6da52dc815344add64af6fb78fee439c8c27b539b3c0e87d8f6861c8422144d516ae0a837&scene=21#wechat_redirect)
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/PgqYrEEtEnoUSbbnzEiafyyQWUibOfnE3GicpdRQOuxWBrhB3Fic7MRf4z5ywT2RmCicibGibHNQEgUbsibLR1eLVRfo3A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
-JVM内存结构主要有三大块：堆内存、方法区和栈。
 >堆内存是JVM中最大的一块由年轻代和老年代组成，而年轻代内存又被分成三部分，Eden空间、From Survivor空间、To Survivor空间,默认情况下年轻代按照8:1:1的比例来分配；
 
 方法区存储类信息、常量、静态变量等数据，是线程共享的区域，为与Java堆区分，方法区还有一个别名Non-Heap(非堆)；栈又分为java虚拟机栈和本地方法栈主要用于方法的执行。
@@ -28,7 +87,7 @@ JVM内存结构主要有三大块：堆内存、方法区和栈。
 
 -XX:MaxPermSize设置永久代最大空间大小。
 
--Xss设置每个线程的堆栈大小。
+
 ```
 
 **没有直接设置老年代的参数，但是可以设置堆空间大小和新生代空间大小两个参数来间接控制。**
@@ -39,7 +98,7 @@ JVM内存结构主要有三大块：堆内存、方法区和栈。
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/PgqYrEEtEnoUSbbnzEiafyyQWUibOfnE3G1sZG1aJZSakhFe5d6QeiciaO9ZIDfHrFS9UZx8RfWfkPk9UZLCVdcriaQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
-方法区和对是所有线程共享的内存区域；而java栈、本地方法栈和程序员计数器是运行是线程私有的内存区域。
+
 
 ## 堆
 
@@ -54,6 +113,14 @@ Java堆是垃圾收集器管理的主要区域，因此很多时候也被称做�
 如果在堆中没有内存完成实例分配，并且堆也无法再扩展时，将会抛出OutOfMemoryError异常。
 
 ## 方法区
+
+### MetaSpace（JDK1.8）相比PermGen优势
+
+* 字符串常量池存在永久代中，容易出现性能问题和内存溢出
+* 类和方法的信息大小难易确定，给永久代的大小指定带来困难
+* 永久代会为GC带来不必要的复杂性
+* 方便HotSpot与其他JVM如Jrockit的集成
+
 方法区（Method Area）与Java堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的**类信息、常量、静态变量、即时编译器编译后的代码等数据**。虽然**Java虚拟机规范把方法区描述为堆的一个逻辑部分**，但是它却有一个别名叫做Non-Heap（非堆），目的应该是与Java堆区分开来。
 
 对于习惯在HotSpot虚拟机上开发和部署程序的开发者来说，很多人愿意把方法区称为“**永久代**”（Permanent Generation），本质上两者并不等价，仅仅是因为HotSpot虚拟机的设计团队选择把GC分代收集扩展至方法区，或者说使用**永久代来实现方法区而已**。
@@ -92,20 +159,32 @@ public class HelloWorld {
 
 ![](http://mmbiz.qpic.cn/mmbiz_png/PgqYrEEtEnoL6lB6hGicsicgcT50EBbI0Cdgw9jArfdDicTUlyicGNQsrE7abLJMlCzAKqDYwK9LfiaLug4UycK3jlQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
+# 线程私有
+
 ## 程序计数器
->程序计数器（Program Counter Register）是一块较小的内存空间，它的作用可以看做是当前线程所执行的字节码的行号指示器。在虚拟机的概念模型里（仅是概念模型，各种虚拟机可能会通过一些更高效的方式去实现），字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。
 
-由于Java虚拟机的多线程是通过线程轮流切换并分配处理器执行时间的方式来实现的，在任何一个确定的时刻，一个处理器（对于多核处理器来说是一个内核）只会执行一条线程中的指令。因此，为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器，各条线程之间的计数器互不影响，独立存储，我们称这类内存区域为“线程私有”的内存。
+* 当前线程所执行的字节码行号指示器
+* 改变计数器的值来选取下一条需要执行的字节码指令
+* 和线程是一对一的关系即“线程私有”
+* 对Java方法计数，如果是Native方法则计数器值为Undefined
+* 不会发生内存泄漏
 
-如果线程正在执行的是一个Java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址；如果正在执行的是Natvie方法，这个计数器值则为空（Undefined）。
+## Java虚拟机栈
 
->此内存区域是唯一一个在Java虚拟机规范中没有规定任何OutOfMemoryError情况的区域。
+* Java方法执行的内存模型
+* 包含多个栈帧
+  * 局部变量表
+    * 方法执行过程中的所有变量
+  * 操作数栈
+    * 入栈
+    * 出栈
+    * 复制
+    * 交换
+    * 产生消费变量
+  * 动态连接
+  * 方法出口
 
-## 栈
-
-与程序计数器一样，Java虚拟机栈（Java Virtual Machine Stacks）也是**线程私有**的，它的生命周期与线程相同。
-
-**栈（Stack）**：全称 “虚拟机栈（JVM Stacks）”。**存放基本型，以及对象引用。线程私有**。
+存放基本型，以及对象引用。
 
 **局部变量表存放了编译期可知的各种基本数据类型**（boolean、byte、char、short、int、float、long、double）**、对象引用**（reference类型，它不等同于对象本身，根据不同的虚拟机实现，它可能是一个指向对象起始地址的引用指针，也可能指向一个代表对象的句柄或者其他与此对象相关的位置）和returnAddress类型（指向了一条字节码指令的地址）。
 
