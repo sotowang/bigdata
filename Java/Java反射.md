@@ -80,7 +80,7 @@ Java 反射主要提供以下功能：
 
 这里我们介绍一下基本反射功能的使用和实现(反射相关的类一般都在 java.lang.relfect 包里)。
 
-### 获得 Class 对象
+## 获得 Class 对象
 
 方法有三种：
 
@@ -109,14 +109,14 @@ StringBuilder str = new StringBuilder("123");
 Class<?> klass = str.getClass();
 ```
 
-### 判断是否为某个类的实例
+## 判断是否为某个类的实例
 一般地，我们用 instanceof 关键字来判断是否为某个类的实例。同时我们也可以借助反射中 Class 对象的 isInstance() 方法来判断是否为某个类的实例，它是一个 native 方法：
 
 ```
 public native boolean isInstance(Object obj);
 ```
 
-### 创建实例
+## 创建实例
 通过反射来生成对象主要有两种方式。
 
 * 使用Class对象的newInstance()方法来创建Class对象对应类的实例。
@@ -138,7 +138,7 @@ Object obj = constructor.newInstance("23333");
 System.out.println(obj);
 ```
 
-### 获取方法
+## 获取方法
 获取某个Class对象的方法集合，主要有以下几个方法：
 
 * getDeclaredMethods 方法返回类或接口声明的所有方法，包括公共、保护、默认（包）访问和私有方法，但不包括继承的方法。
@@ -218,7 +218,7 @@ public int org.ScZyhSoft.common.methodClass.sub(int,int)
 
 可以看到，通过 getMethods() 获取的方法可以获取到父类的方法,比如 java.lang.Object 下定义的各个方法。
 
-### 获取构造器信息
+## 获取构造器信息
 
 获取类构造器的用法与上述获取方法的用法类似。主要是通过Class类的getConstructor方法得到Constructor类的一个实例，而Constructor类有一个newInstance方法可以创建一个对象实例:
 
@@ -228,7 +228,7 @@ public T newInstance(Object ... initargs)
 
 此方法可以根据传入的参数来调用对应的Constructor创建对象实例。
 
-### 获取类的成员变量（字段）信息
+## 获取类的成员变量（字段）信息
 
 主要是这几个方法，在此不再赘述：
 
@@ -237,7 +237,7 @@ public T newInstance(Object ... initargs)
 
 getFileds 和 getDeclaredFields 方法用法同上（参照 Method）。
 
-### 调用方法
+## 调用方法
 当我们从类中获取了一个方法后，我们就可以用 invoke() 方法来调用这个方法。invoke 方法的原型为:
 
 ```java
@@ -272,7 +272,7 @@ class methodClass {
 }
 ```
 
-### 利用反射创建数组
+## 利用反射创建数组
 
 数组在Java里是比较特殊的一种类型，它可以赋值给一个Object Reference。下面我们看一看利用反射创建数组的例子：
 
@@ -334,23 +334,10 @@ arrayOop Reflection::reflect_new_array(oop element_mirror, jint length, TRAPS) {
 
 另外，Array 类的 set 和 get 方法都为 native 方法，在 HotSpot JVM 里分别对应 Reflection::array_set 和 Reflection::array_get 方法，这里就不详细解析了。
     
-## 反射的一些注意事项
+# 反射的一些注意事项
 
 由于反射会额外消耗一定的系统资源，因此如果不需要动态地创建一个对象，那么就不需要用反射。
 
 另外，反射调用方法时可以忽略权限检查，因此可能会破坏封装性而导致安全问题。
 
 
-
-
-
-
-
-
-
-
-
-
-```
-
-```
