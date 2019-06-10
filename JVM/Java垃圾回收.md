@@ -28,7 +28,7 @@
 
   **不足**
 
-  	*  碎片化
+  * 碎片化
 
 * 复制算法（年轻代适用）
 
@@ -181,22 +181,22 @@ G1收集器
   * 抛出OutOfMemoryError终止程序也不会回收具有强引用的对象
   * 通过将对象是设置为null来弱化引用,使其被回收
 
-*  软引用
+* 软引用
 
-  * 对象处在有用但非必须的状态
+    * 对象处在有用但非必须的状态
 
-  * 只有当内存空间不足时,GC会回收该引用的对象的内存
+    * 只有当内存空间不足时,GC会回收该引用的对象的内存
 
-  * 可以用来实现高速缓存
+    * 可以用来实现高速缓存
 
-    ```java
-    String str = new String("abc") //强引用
-    SoftReference<String> sofeRef = new SoftReference<String>(str); //软引用
-    ```
+  ```java
+  String str = new String("abc") //强引用
+  SoftReference<String> sofeRef = new SoftReference<String>(str); //软引用
+  ```
 
 * 弱引用
 
-  * 非必须的鸨是,比软引用更弱一些
+  * 非必须的引用,比软引用更弱一些
 
   * GC时会被回收
 
