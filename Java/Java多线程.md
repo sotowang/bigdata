@@ -74,4 +74,48 @@
   * 如果线程处于正常活动状态，那么会将该线程的中断标志设置为true。被设置中断标志的线程将继续正常运行，不受影响。
 * 需要被调用的线程配合中断
   * 在正常运行任务时，经常检查本线程的中断标志位，如果被设置了中断标志就自行停止线程。
-  * 如果线程处于正常活动状态，那么会将该线程的中断标志位设置为true，被徽墨中断标志的线程将继续正常运行，不受影响。
+  * 如果线程处于正常活动状态，那么会将该线程的中断标志位设置为true，被设置中断标志的线程将继续正常运行，不受影响。
+
+# ThreadLocal
+
+* 类似HashMap的数据结构,可以保存"key:value"键值对,一个ThreadLocal只能保存一个,并且各个线程的数据互不干扰
+
+* 可能导致,内存泄漏(Entry为弱引用,实际不会造成内存泄漏)
+
+* set方法
+
+  * 通过当前线程对象thread获取该thread所维护的threadLocalMap
+  * 若threadLocalMap不为null,则以threadLocal实例为key,值为value的键值对存入threadLocalMap
+  * 若threadLocalMap为null的话，就新建threadLocalMap然后在以threadLocal为键，值为value的键值对存入即可
+
+* get方法
+
+  * 通过当前线程thread实例获取到它所维护的threadLocalMap，
+
+  * 以当前threadLocal实例为key获取该map中的键值对（Entry）
+
+  * 若Entry不为null则返回Entry的value。
+
+  * 如果获取threadLocalMap为null或者Entry为null的话，就以当前threadLocal为Key，value为null存入map后，并返回null。
+
+     
+
+     
+
+     
+
+     
+
+     
+
+
+
+​     
+
+​     
+
+​     
+
+​     
+
+​     
