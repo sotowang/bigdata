@@ -21,7 +21,7 @@
 ## 线程池的核心的两个队列
 
 * 线程等待池，即线程队列BlockingQueue
-* 任务处理池（PoolWorker），即正在工作的Thread列表（HashSet<Worker）
+* 任务处理池（PoolWorker），即正在工作的Thread列表（HashSet<Worker>）
 
 ## ThreadPoolExecutor的构造函数
 
@@ -132,7 +132,7 @@ ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads, Thr
 ExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(int corePoolSize);
 ```
 
-## SingleThreadExecutor()
+## SingleThreadPool()
 
 单线程化的线程池：
 
