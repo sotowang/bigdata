@@ -17,8 +17,10 @@
 # 如何实现处理线程的返回值
 
 * 主线程等待法
-* 使用Thread类的join()阻塞当前前线程以等待子线程处理完毕
-* 通过Callable接口实现：通过RutureTask Or线程池获取
+* 使用Thread类的join()阻塞当前线程以等待子线程处理完毕
+* 通过Callable接口实现：
+  * 通过RutureTask 
+  * 通过线程池 获取 Callable实例
 
 # 线程的状态
 
