@@ -606,7 +606,7 @@ ok~，运行程序，结果符合预期：
 
 
 
-##   **基于注解的Spring AAroundOP开发**
+##   **基于注解的Spring AroundOP开发**
 
 - **定义切入点函数**
 
