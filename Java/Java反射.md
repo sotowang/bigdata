@@ -104,7 +104,7 @@ Class<?> classInt = Integer.TYPE;
 
 (3)调用某个对象的 getClass() 方法，比如:
 
-```
+```java
 StringBuilder str = new StringBuilder("123");
 Class<?> klass = str.getClass();
 ```
@@ -121,7 +121,7 @@ public native boolean isInstance(Object obj);
 
 * 使用Class对象的newInstance()方法来创建Class对象对应类的实例。
 
-```
+```java
 Class<?> c = String.class;
 Object str = c.newInstance();
 ```
@@ -143,13 +143,13 @@ System.out.println(obj);
 
 * getDeclaredMethods 方法返回类或接口声明的所有方法，包括公共、保护、默认（包）访问和私有方法，但不包括继承的方法。
 
-```
+```java
 public Method[] getDeclaredMethods() throws SecurityException
 ```
 
 * getMethods 方法返回某个类的所有公用（public）方法，包括其继承类的公用方法。
 
-```
+```java
 public Method[] getMethods() throws SecurityException
 ```
 
