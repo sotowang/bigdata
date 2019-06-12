@@ -7,105 +7,28 @@
 
 # NIO
 
-* Channels
-* Buffers
-* Selectors
+* 与IO区别
+  - 1)IO是面向流的，NIO是面向缓冲区的；
+  - 2)IO流是阻塞的，NIO流是不阻塞的;
+  - 3)NIO有选择器，而IO没有。
+* 核心组件
+  * Channels
+    * Scatter: 从一个Channel读取的信息分散到N个缓冲区中(Buufer).
+    * Gather: 将N个Buffer里面内容按照顺序发送到一个Channel.
+  * Buffers
+    * Java NIO Buffers用于和NIO Channel交互。 我们从Channel中读取数据到buffers里，从Buffer把数据写入到Channels；
+    * Buffer本质上就是一块内存区；
+    * 一个Buffer有三个属性是必须掌握的，分别是：capacity容量、position位置、limit限制。
+    * **Buffer的常见方法**
+      - Buffer clear()
+      - Buffer flip()
+      - Buffer rewind()
+      - Buffer position(int newPosition)
+  * Selectors
+    * Selector 一般称 为选择器 ，当然你也可以翻译为 多路复用器 。它是Java NIO核心组件中的一个，用于检查一个或多个NIO Channel（通道）的状态是否处于可读、可写。如此可以实现单线程管理多个channels,也就是可以管理多个网络链接。
+    * 使用Selector的好处在于： **使用更少的线程来就可以来处理通道**了， 相比使用多个线程，避免了线程上下文切换带来的开销。
 
 # NIO是怎么工作的
-
-## 常见I/O模型对比
-
-所有的系统I/O都分为两个阶段：等待就绪和操作。举例来说，读函数，分为等待系统可读和真正的读；同理，写函数分为等待网卡可以写和真正的写。
-
-需要说明的是等待就绪的阻塞是不使用CPU的，是在“空等”；而真正的读写操作的阻塞是使用CPU的，真正在"干活"，而且这个过程非常快，属于memory copy，带宽通常在1GB/s级别以上，可以理解为基本不耗时。
-
-下图是几种常见I/O模型的对比：
-
-  ![preview](https://pic2.zhimg.com/80/v2-f47206d5b5e64448744b85eaf568f92d_hd.jpg)
-
- 以socket.read()为例子：
-
-传统的BIO里面socket.read()，如果TCP RecvBuffer里没有数据，函数会一直阻塞，直到收到数据，返回读到的数据。
-
-对于NIO，如果TCP RecvBuffer有数据，就把数据从网卡读到内存，并且返回给用户；反之则直接返回0，永远不会阻塞。
-
-最新的AIO(Async I/O)里面会更进一步：不但等待就绪是非阻塞的，就连数据从网卡到内存的过程也是异步的。
-
-换句话说，BIO里用户最关心“我要读”，NIO里用户最关心"我可以读了"，在AIO模型里用户更需要关注的是“读完了”。
-
-NIO一个重要的特点是：socket主要的读、写、注册和接收函数，在等待就绪阶段都是非阻塞的，真正的I/O操作是同步阻塞的（消耗CPU但性能非常高）。
-
-## 如何结合事件模型使用NIO同步非阻塞特性
-
-回忆BIO模型，之所以需要多线程，是因为在进行I/O操作的时候，一是没有办法知道到底能不能写、能不能读，只能"傻等"，即使通过各种估算，算出来操作系统没有能力进行读写，也没法在socket.read()和socket.write()函数中返回，这两个函数无法进行有效的中断。所以除了多开线程另起炉灶，没有好的办法利用CPU。
-
-NIO的读写函数可以立刻返回，这就给了我们不开线程利用CPU的最好机会：如果一个连接不能读写（socket.read()返回0或者socket.write()返回0），我们可以把这件事记下来，记录的方式通常是在Selector上注册标记位，然后切换到其它就绪的连接（channel）继续进行读写。
-
-下面具体看下如何利用事件模型单线程处理所有I/O请求：
-
-NIO的主要事件有几个：读就绪、写就绪、有新连接到来。
-
-我们首先需要注册当这几个事件到来的时候所对应的处理器。然后在合适的时机告诉事件选择器：我对这个事件感兴趣。对于写操作，就是写不出去的时候对写事件感兴趣；对于读操作，就是完成连接和系统没有办法承载新读入的数据的时；对于accept，一般是服务器刚启动的时候；而对于connect，一般是connect失败需要重连或者直接异步调用connect的时候。
-
-其次，用一个死循环选择就绪的事件，会执行系统调用（Linux 2.6之前是select、poll，2.6之后是epoll，Windows是IOCP），还会阻塞的等待新事件的到来。新事件到来的时候，会在selector上注册标记位，标示可读、可写或者有连接到来。
-
-注意，select是阻塞的，无论是通过操作系统的通知（epoll）还是不停的轮询(select，poll)，这个函数是阻塞的。所以你可以放心大胆地在一个while(true)里面调用这个函数而不用担心CPU空转。
-
-所以我们的程序大概的模样是：
-
-```java
-   interface ChannelHandler{
-      void channelReadable(Channel channel);
-      void channelWritable(Channel channel);
-   }
-   class Channel{
-     Socket socket;
-     Event event;//读，写或者连接
-   }
-
-   //IO线程主循环:
-   class IoThread extends Thread{
-   public void run(){
-   Channel channel;
-   while(channel=Selector.select()){//选择就绪的事件和对应的连接
-      if(channel.event==accept){
-         registerNewChannelHandler(channel);//如果是新连接，则注册一个新的读写处理器
-      }
-      if(channel.event==write){
-         getChannelHandler(channel).channelWritable(channel);//如果可以写，则执行写事件
-      }
-      if(channel.event==read){
-          getChannelHandler(channel).channelReadable(channel);//如果可以读，则执行读事件
-      }
-    }
-   }
-   Map<Channel，ChannelHandler> handlerMap;//所有channel的对应事件处理器
-  }
-```
-
-这个程序很简短，也是最简单的Reactor模式：注册所有感兴趣的事件处理器，单线程轮询选择就绪事件，执行事件处理器。
-
-## 优化线程模型
-
-由上面的示例我们大概可以总结出NIO是怎么解决掉线程的瓶颈并处理海量连接的：
-
-NIO由原来的阻塞读写（占用线程）变成了单线程轮询事件，找到可以进行读写的网络描述符进行读写。除了事件的轮询是阻塞的（没有可干的事情必须要阻塞），剩余的I/O操作都是纯CPU操作，没有必要开启多线程。
-
-并且由于线程的节约，连接数大的时候因为线程切换带来的问题也随之解决，进而为处理海量连接提供了可能。
-
-单线程处理I/O的效率确实非常高，没有线程切换，只是拼命的读、写、选择事件。但现在的服务器，一般都是多核处理器，如果能够利用多核心进行I/O，无疑对效率会有更大的提高。
-
-仔细分析一下我们需要的线程，其实主要包括以下几种：
-
-1. 事件分发器，单线程选择就绪的事件。
-2. I/O处理器，包括connect、read、write等，这种纯CPU操作，一般开启CPU核心个线程就可以。
-3. 业务线程，在处理完I/O后，业务一般还会有自己的业务逻辑，有的还会有其他的阻塞I/O，如DB操作，RPC等。只要有阻塞，就需要单独的线程。
-
-Java的Selector对于Linux系统来说，有一个致命限制：同一个channel的select不能被并发的调用。因此，如果有多个I/O线程，必须保证：一个socket只能属于一个IoThread，而一个IoThread可以管理多个socket。
-
-另外连接的处理和读写的处理通常可以选择分开，这样对于海量连接的注册和读写就可以分发。虽然read()和write()是比较高效无阻塞的函数，但毕竟会占用CPU，如果面对更高的并发则无能为力。
-
-![img](https://pic2.zhimg.com/80/v2-22efc734724d07251f8293e2f1143639_hd.png)
 
 # NIO在客户端的魔力
 
@@ -121,7 +44,7 @@ Java的Selector对于Linux系统来说，有一个致命限制：同一个channe
 
 伪代码如下：
 
-```
+```java
 class RedisClient Implements ChannelHandler{
  private BlockingQueue CmdQueue;
  private EventLoop eventLoop;
