@@ -140,3 +140,4 @@ Map
 * ConcurrentHashMap线程安全，CAS+同步锁，数组+链表+红黑树
 * HashMap的key和value可以为null，其他两个不行
 
+# Array与ArrayList的区别
