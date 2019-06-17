@@ -88,8 +88,6 @@ Java 反射主要提供以下功能：
 
 ```java
 public static Class<?> forName(String className)
-...
-
 //比如在 JDBC 开发中常用此方法加载数据库驱动:
 //...java
  Class.forName(driver);
@@ -112,7 +110,7 @@ Class<?> klass = str.getClass();
 ## 判断是否为某个类的实例
 一般地，我们用 instanceof 关键字来判断是否为某个类的实例。同时我们也可以借助反射中 Class 对象的 isInstance() 方法来判断是否为某个类的实例，它是一个 native 方法：
 
-```
+```java
 public native boolean isInstance(Object obj);
 ```
 
@@ -143,88 +141,17 @@ System.out.println(obj);
 
 * getDeclaredMethods 方法返回类或接口声明的所有方法，包括公共、保护、默认（包）访问和私有方法，但不包括继承的方法。
 
-```java
-public Method[] getDeclaredMethods() throws SecurityException
-```
-
 * getMethods 方法返回某个类的所有公用（public）方法，包括其继承类的公用方法。
-
-```java
-public Method[] getMethods() throws SecurityException
-```
 
 * getMethod 方法返回一个特定的方法，其中第一个参数为方法名称，后面的参数为方法的参数对应Class的对象。
 
-
-
-```
-public Method getMethod(String name, Class<?>... parameterTypes)
-```
-
-只是这样描述的话可能难以理解，我们用例子来理解这三个方法：
-
-```java
-package org.ScZyhSoft.common;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-public class test1 {
-	public static void test() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-	        Class<?> c = methodClass.class;
-	        Object object = c.newInstance();
-	        Method[] methods = c.getMethods();
-	        Method[] declaredMethods = c.getDeclaredMethods();
-	        //获取methodClass类的add方法
-	        Method method = c.getMethod("add", int.class, int.class);
-	        //getMethods()方法获取的所有方法
-	        System.out.println("getMethods获取的方法：");
-	        for(Method m:methods)
-	            System.out.println(m);
-	        //getDeclaredMethods()方法获取的所有方法
-	        System.out.println("getDeclaredMethods获取的方法：");
-	        for(Method m:declaredMethods)
-	            System.out.println(m);
-	    }
-    }
-class methodClass {
-    public final int fuck = 3;
-    public int add(int a,int b) {
-        return a+b;
-    }
-    public int sub(int a,int b) {
-        return a+b;
-    }
-}
-```
-
 程序运行的结果如下:
-
-```java
-getMethods获取的方法：
-public int org.ScZyhSoft.common.methodClass.add(int,int)
-public int org.ScZyhSoft.common.methodClass.sub(int,int)
-public final void java.lang.Object.wait() throws java.lang.InterruptedException
-public final void java.lang.Object.wait(long,int) throws java.lang.InterruptedException
-public final native void java.lang.Object.wait(long) throws java.lang.InterruptedException
-public boolean java.lang.Object.equals(java.lang.Object)
-public java.lang.String java.lang.Object.toString()
-public native int java.lang.Object.hashCode()
-public final native java.lang.Class java.lang.Object.getClass()
-public final native void java.lang.Object.notify()
-public final native void java.lang.Object.notifyAll()
-getDeclaredMethods获取的方法：
-public int org.ScZyhSoft.common.methodClass.add(int,int)
-public int org.ScZyhSoft.common.methodClass.sub(int,int)
-```
 
 可以看到，通过 getMethods() 获取的方法可以获取到父类的方法,比如 java.lang.Object 下定义的各个方法。
 
 ## 获取构造器信息
 
 获取类构造器的用法与上述获取方法的用法类似。主要是通过Class类的getConstructor方法得到Constructor类的一个实例，而Constructor类有一个newInstance方法可以创建一个对象实例:
-
-```java
-public T newInstance(Object ... initargs)
-```
 
 此方法可以根据传入的参数来调用对应的Constructor创建对象实例。
 
