@@ -6,7 +6,7 @@
 * 并发工具类tools
   * 闭锁 CountDownLatch
   * 栅栏 CyclicBarrier
-  * 信号量 Senaphore
+  * 信号量 Semaphore
   * 交换器 Exchanger
 
 * 并发集合collections

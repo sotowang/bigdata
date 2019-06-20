@@ -10,9 +10,7 @@ response对象表示服务端向客户端返回的响应，主要将jsp处理过
 
 3、session对象
 
-session对象是由服务器自动创建的与用户请求相关的对象。服务器为每一个用户生成一个session对象，用户保存该用户的信息，跟踪用户的操作状态，session对象的内部是使用Map来保存数据的，因此保存数据的格式为KEY/value，
-
-一次会话：客户端打开浏览器连接服务器开始，到客户端浏览器关闭这个服务器结束，被称为一次会话
+Session对象是用来分别保存每一个用户信息的对象，以便于跟踪用户的操作状态．它保存在服务端，Session的ID保存在客户机的Cookie中．
 
 4、application
 
@@ -22,7 +20,7 @@ application对象在服务器启动时就创建了，Application是一个单例�
 
 5、out对象
 
-Out对象用于向服务器输出信息，并且管理应用服务器上的输出缓冲区，对Out对象进行输出数据时，可以对数据缓冲区进行操作，即使清除缓冲区中的参与数据，渭南其他数据提供缓冲的空间，输出后药剂师关闭缓冲区
+动态的向JSP页面输出字符流，从而把动态的内容转化成HTML形式来展示，这个对象在任何JSP页面中都可以任意访问。
 
 6、page对象
 
@@ -30,7 +28,7 @@ page对象表示jsp本身，作用范围在jsp页面才是合法的
 
 7、config对象
 
-config对象主要是去的一些服务器的配置信息，通过pageContext对象的getServletConfig()方法可以获取config对象，当服务器启动时某些信息通过config对象传递给这个servlet，开发者可以在web.xml中为应用程序环境中的servlet程序和jsp页面提供初始化参数。
+config对象代表当前JSP配置信息,实质上是ServletConfig的一个实例,常用来获取Servlet的初始化参数。
 
 8、exception
 
@@ -74,19 +72,26 @@ pageContext页面上下文对象，可以获取任何范围的参数，对象的
 
 # get 与 post的区别?
 
-1.GET请求的数据会附在URL之后，以?分割URL和传输数据，参数之间以&相连，
+* GET请求的数据会附在URL之后，以?分割URL和传输数据，参数之间以&相连，POST把提交的数据则放置在是HTTP包的包体中。
+* GET的长度受限于url的长度，而url的长度限制是特定的浏览器和服务器设置的，理论上GET的长度可以无限长。
+* POST是没有大小限制的，HTTP协议规范也没有进行大小限制，起限制作用的是服务器的处理程序的处理能力
+* 在ASP中，服务端获取GET请求参数用Request.QueryString，获取POST请求参数用Request.Form。
+* POST的安全性要比GET的安全性高
 
-POST把提交的数据则放置在是HTTP包的包体中。
+# Jsp有哪些动作？作用是什么？
 
-2.GET的长度受限于url的长度，而url的长度限制是特定的浏览器和服务器设置的，理论上GET的长度可以无限长。
-
-3.POST是没有大小限制的，HTTP协议规范也没有进行大小限制，起限制作用的是服务器的处理程序的处理能力
-
-4.在ASP中，服务端获取GET请求参数用Request.QueryString，获取POST请求参数用Request.Form。
-
-5.POST的安全性要比GET的安全性高
-
- 
+* jsp:include
+  * 在页面被请求的时候引入一个文件
+* jsp:useBean
+  * 寻找或者实例化一个JavaBean
+* jsp:setProperty
+  * 设置JavaBean的属性
+* jsp:getProperty
+  * 输出某个JavaBean的属性
+* jsp:forward
+  * 殷请求转到一个新的页面
+* jsp:plugin
+  * 根据浏览器类型为Java插件生成OBJECT或EMBED标记
 
  
 
