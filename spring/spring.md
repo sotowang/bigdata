@@ -136,19 +136,42 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
 * 初始化依赖的Bean
 * 创建Bean
 
-## Spring Bean的作用域
+## Spring Bean的作用域(scope控制)
 
-* singleton
+* singleton(默认)
 
-  * Spring 的默认作用域，容器里拥有唯一的Bean实例
+  * 容器里拥有唯一的Bean实例
+  * IOC容器启动会调用方法创建对象放到ico容器中
+  * 以后每次获取直接从窗口(map.get())创建
+  * 可使用@Lazy懒加载
 * prototype
   * 针对每个getBean请求,容器都会创建一个Bean实例
+  * IOC容器启动并不会去调用方法创建对象放在容器中
+  * 每次获取的时候才会调用方法创建对象
 * request
   * 会为每个Http请求创建一个Bean实例
 * session
   * 会为每个session创建一个Bean实例
 * globalSession
   * 会为每个全局Http Session 创建一个Bean实例,该作用域仅对Porlet有效
+
+## 注解
+
+* @Conditional
+  * 根据条件判断给容器中注册Bean组件
+* 给容器中注册组件
+  * @Controller/@Service/@Repository/@Component
+    * 包扫描+组件标注注解
+  * @Bean
+    * 导入的的第三方包里面的组件
+  * @Import
+    * @Import
+      * 快速给容器中导入一个组件
+    * 实现ImportSelector接口
+      * 返回需要导入组件的全类名的数组
+    * 实现ImportBeanDefinitionRefistrar
+      * BeanDefinitionRegistry的registerBeanDefinition方法手工注册
+  * 实现FactoryBean(工厂Bean)接口
 
 ## Spring Bean的生命周期(待写)
 
