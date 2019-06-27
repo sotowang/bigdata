@@ -260,21 +260,26 @@ bean的生命周期：bean的创建--初始化--销毁的过程，由容器管�
 
 在程序运行期间动态的将某段代码切入到指定方法指定位置进行运行的编程方式
 
-- Aspect
-  - 通用功能的代码实现
+- @Aspect
+  - 切面类标识
 - Target
   - 被织入Aspect的对象
-- Join Point
-  - 可以作为切入点的机会,所有方法都可以作为切入点
-- PointCut
+- @EnableAspectJAutoProxy
+  - 启用自动代理
+- JoinPoint
+  - 通过该参数获取方法信息
+  - 需放在参数表的第一位
+- @PointCut(execution（“”）)
   - Aspect实际被应用在的Join Point,支持正则
-- Advice
-  - 类里的方法以及这个方法如何织入到目标方法的方式
-  - 前置通知(Before)
-  - 后置通知(AfterReturning)
-  - 异常通知(AfterThrowing)
-  - 最终通知(After)
-  - 环绕通知(Around)
+- Advice(通知方法)
+  - 前置通知(@Before)
+    - 在目标方法之前切入
+  - 后置通知(@After)
+  - 返回通知(@AfterReturning)
+  - 异常通知(@AfterThrowing)
+  - 环绕通知(@Around)
+    - 动态代理，手动推进目标方法运行
+    - joinPoint.procced()
 - Weaving
   - AOP的实现过程
 
