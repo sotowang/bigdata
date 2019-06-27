@@ -157,9 +157,29 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
 
 ## 注解
 
-* @Conditional
+* @Configuration
+  * 配置类
+* @Conditional(linux.class)
+  * linux类需实现Condition接口
   * 根据条件判断给容器中注册Bean组件
-* 给容器中注册组件
+* @PropertiesSources（value=""）
+* @Value
+  * 基本数值
+    * @Value("张三")
+  *  #{}
+    * #{20-2}
+  * ${person.name}
+    *  取出配置文件(在运行环境变量)中的值(properties文件)
+* @AutoWire
+  * 自动注入
+  * 默认按照类型从容器中找相应组件
+    * applicationContext.getBean(xxx.class)
+  * 如果找到多个相同类型组件，再将属性的名称作为组件的id去容器中查找
+  * @Qyakufier
+    * 指定需要装配的组件id，而非属性名
+
+## 给容器中注册组件（添加Bean）的方式
+
   * @Controller/@Service/@Repository/@Component
     * 包扫描+组件标注注解
   * @Bean
@@ -172,14 +192,47 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
     * 实现ImportBeanDefinitionRefistrar
       * BeanDefinitionRegistry的registerBeanDefinition方法手工注册
   * 实现FactoryBean(工厂Bean)接口
+    * 默认获取到的是工厂Bean调用getObject创建的对象
+    * 要获取工厂Bean本身，我们需要给id前面加一个&标识
 
-## Spring Bean的生命周期(待写)
+## Spring Bean的生命周期
+
+bean的生命周期：bean的创建--初始化--销毁的过程，由容器管理bean的生命周期
+
+* 创建
+  * 单实例，在容器启动的时候创建对象
+  * 多实例，每次获取的时候创建对象
+* 初始化
+  * 对象创建完成，并赋值好，调用初始化方法
+* 销毁
+  * 单实例：容器关闭的时候
+  * 多实例：容器不会管理这个bean；容器不会调用销毁方法
+
+* 初始化和销毁方法
+
+  * 通过@Bean指定init-method和destroy-method
+  * Bean实现InitializingBean
+    * 定义初始化逻辑（afterPropertiesSet方法）
+  * Bean实现DisposableBean接口
+    * 定义销毁逻辑(destroy方法)
+  * @PostConstruct
+    * bean创建完成并且属性赋值完成，未执行初始化方法
+  * @PreDestroy
+    * 在容器销毁bean之前通知进行清理工作
+  * BeanPostProcessor接口
+    * Bean的后置处理器
+    * postProcessBeforeInitialization
+      * 初始化之前
+    * postProcessAfterInitialization
+      * 初始化之后
+
+  
 
 ​    
 
 ---
 
-# [ Spring AOP](https://zhuanlan.zhihu.com/p/25522841)
+#  Spring AOP
 
 ## AOP的三种织入方式
 
