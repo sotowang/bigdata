@@ -1,60 +1,16 @@
-# [ IOC](https://www.zhihu.com/question/23277575/answer/169698662)
-
-**控制反转( Inversion of Control )**, 我觉得有必要先了解软件设计的一个重要思想：**依赖倒置原则（Dependency Inversion Principle ）**。
-
-## 依赖倒置原则？
-
-假设我们设计一辆汽车：先设计轮子，然后根据轮子大小设计底盘，接着根据底盘设计车身，最后根据车身设计好整个汽车。这里就出现了一个“依赖”关系：汽车依赖车身，车身依赖底盘，底盘依赖轮子。
-
-<img src="https://pic3.zhimg.com/v2-c68248bb5d9b4d64d22600571e996446_b.png" data-caption="" data-rawwidth="1562" data-rawheight="186" class="origin_image zh-lightbox-thumb" width="1562" data-original="https://pic3.zhimg.com/v2-c68248bb5d9b4d64d22600571e996446_r.jpg">![img](https://pic3.zhimg.com/80/v2-c68248bb5d9b4d64d22600571e996446_hd.png)
-
-**这样的设计看起来没问题，但是可维护性却很低。**假设设计完工之后，上司却突然说根据市场需求的变动，要我们把车子的轮子设计都改大一码。这下我们就蛋疼了：因为我们是根据轮子的尺寸设计的底盘，轮子的尺寸一改，底盘的设计就得修改；同样因为我们是根据底盘设计的车身，那么车身也得改，同理汽车设计也得改——整个设计几乎都得改！
-
-我们现在换一种思路。我们先设计汽车的大概样子，然后根据汽车的样子来设计车身，根据车身来设计底盘，最后根据底盘来设计轮子。这时候，依赖关系就倒置过来了：轮子依赖底盘， 底盘依赖车身， 车身依赖汽车。
+# IOC
 
 <img src="https://pic2.zhimg.com/v2-e64bf72c5c04412f626b21753aa9e1a1_b.png" data-caption="" data-rawwidth="1504" data-rawheight="190" class="origin_image zh-lightbox-thumb" width="1504" data-original="https://pic2.zhimg.com/v2-e64bf72c5c04412f626b21753aa9e1a1_r.jpg">![img](https://pic2.zhimg.com/80/v2-e64bf72c5c04412f626b21753aa9e1a1_hd.png)
 
 
 
-这时候，上司再说要改动轮子的设计，我们就只需要改动轮子的设计，而不需要动底盘，车身，汽车的设计了。
-
-依赖倒置原则——把原本的高层建筑依赖底层建筑“倒置”过来，变成底层建筑依赖高层建筑。高层建筑决定需要什么，底层去实现这样的需求，但是高层并不用管底层是怎么实现的。这样就不会出现前面的“牵一发动全身”的情况。
-
-## 依赖注入
-
- **控制反转（Inversion of Control）** 就是依赖倒置原则的一种代码设计的思路。具体采用的方法就是所谓的**依赖注入（Dependency Injection）**。其实这些概念初次接触都会感到云里雾里的。说穿了，这几种概念的关系大概如下：
-
 <img src="https://pic2.zhimg.com/v2-ee924f8693cff51785ad6637ac5b21c1_b.png" data-caption="" data-rawwidth="1398" data-rawheight="630" class="origin_image zh-lightbox-thumb" width="1398" data-original="https://pic2.zhimg.com/v2-ee924f8693cff51785ad6637ac5b21c1_r.jpg">
 
-**为了理解这几个概念，我们还是用上面汽车的例子。**只不过这次换成代码。我们先定义四个Class，车，车身，底盘，轮胎。然后初始化这辆车，最后跑这辆车。代码结构如下：
 
-![img](https://pic4.zhimg.com/80/v2-8ec294de7d0f9013788e3fb5c76069ef_hd.png) 
-
-  
-
-这样，就相当于上面第一个例子，**上层建筑依赖下层建筑**——每一个类的构造函数都直接调用了底层代码的构造函数。假设我们需要改动一下轮胎（Tire）类，把它的尺寸变成动态的，而不是一直都是30。我们需要这样改：
-
-<img src="https://pic2.zhimg.com/v2-64e8b19eeb70d9cf87c27fe4c5c0fc81_b.png" data-caption="" data-rawwidth="534" data-rawheight="154" class="origin_image zh-lightbox-thumb" width="534" data-original="https://pic2.zhimg.com/v2-64e8b19eeb70d9cf87c27fe4c5c0fc81_r.jpg">![img](https://pic2.zhimg.com/80/v2-64e8b19eeb70d9cf87c27fe4c5c0fc81_hd.png)
-
-由于我们修改了轮胎的定义，为了让整个程序正常运行，我们需要做以下改动：
-
-<img src="https://pic3.zhimg.com/v2-82e0c12a1b26f7979ed9241e169affda_b.png" data-caption="" data-rawwidth="1186" data-rawheight="1452" class="origin_image zh-lightbox-thumb" width="1186" data-original="https://pic3.zhimg.com/v2-82e0c12a1b26f7979ed9241e169affda_r.jpg">
-
-
-
-由此我们可以看到，仅仅是为了修改轮胎的构造函数，这种设计却需要**修改整个上层所有类的构造函数**！在软件工程中，**这样的设计几乎是不可维护的**——在实际工程项目中，有的类可能会是几千个类的底层，如果每次修改这个类，我们都要修改所有以它作为依赖的类，那软件的维护成本就太高了。
-
-所以我们需要进行控制反转（IoC），及上层控制下层，而不是下层控制着上层。我们用依赖注入（Dependency Injection）这种方式来实现控制反转。**所谓依赖注入，就是把底层类作为参数传入上层类，实现上层类对下层类的“控制**”。这里我们用**构造方法传递的依赖注入方式**重新写车类的定义：
-
-<img src="https://pic2.zhimg.com/v2-c920a0540ce0651003a5326f6ef9891d_b.png" data-caption="" data-rawwidth="1338" data-rawheight="1424" class="origin_image zh-lightbox-thumb" width="1338" data-original="https://pic2.zhimg.com/v2-c920a0540ce0651003a5326f6ef9891d_r.jpg">
-
- 这里我们再把轮胎尺寸变成动态的，同样为了让整个系统顺利运行，我们需要做如下修改：
-
-<img src="https://pic2.zhimg.com/v2-99ad2cd809fcb86dd791ff7f65fb1779_b.png" data-caption="" data-rawwidth="1344" data-rawheight="1424" class="origin_image zh-lightbox-thumb" width="1344" data-original="https://pic2.zhimg.com/v2-99ad2cd809fcb86dd791ff7f65fb1779_r.jpg">
 
  看到没？这里**我只需要修改轮胎类就行了，不用修改其他任何上层类。**这显然是更容易维护的代码。不仅如此，在实际的工程中，这种设计模式还有利于**不同组的协同合作和单元测试：**比如开发这四个类的分别是四个不同的组，那么只要定义好了接口，四个不同的组可以同时进行开发而不相互受限制；而对于单元测试，如果我们要写Car类的单元测试，**就只需要Mock一下Framework类传入Car就行了**，而不用把Framework, Bottom, Tire全部new一遍再来构造Car。
 
-### 依赖注入方式
+## 依赖注入方式
 
 * Setter
 * Interface
@@ -366,6 +322,37 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
 
     * 如果没有拦截器执行目标方法，或者拦截器的索引和拦截器数组-1大小一样（指定到了最后一个拦截器）
     * 链式获取每一个拦截器，拦截器执行invoke方法，每一个拦截器等待下一个拦截器执行完成返回以后再来执行；拦截器链的机制，保证通知方法与目标方法的执行顺序。
+
+### 总结
+
+* @EnableAspectJAutoProxy 开启AOP功能
+* @EnableAspectJAutoProxy会给容器注册一个组件AnnotationAwareAspectJAutoProxyCreator
+* AnnotationAwareAspectJAutoProxyCreator是一个后置处理器
+* 容器的创建流程
+  * registerBeanPostProcessors()注册后置处理器，创建AnnotationAwareAspectJAutoProxyCreator
+  * finishBeanFactoryInitialization()初始化剩下的单实例bean
+    * 创建业务逻辑组件和切面组件
+    * AnnotationAwareAspectJAutoProxyCreator拦截组件的创建过程
+    * 组件创建完成之后，判断组件是否需要增强
+      * 是：切面的通知方法，包装成增强器（Advisor）；给业务逻辑组件创建一个代理对象（cglib）
+* 执行目标方法
+  * 代理对象执行目标方法
+  * CglibAopProxy.intercept()
+    * 得到目标方法的拦截器链（增强器包装成拦截器MethodInterceptor）
+    * 利用拦截器的链式机制，依次进入每一个拦截器执行
+    * 效果：
+      * 正常执行： 前置通知-->目标方法-->后置通知-->返回通知
+      * 出现异常：前置通知-->目标方法-->后置通知-->异常通知
+
+# 声明式事务
+
+* 环境搭建
+  * 导入相关依赖
+    * 数据源，数据驱动，Spring-jdbc
+  * 配置数据源，JdbcTemplate(Spring提供的简化数据库扣伯的工具)操作数据
+  * 给方法上标注@Tranactional表示当前方法是一个事务方法
+  * @EnableTransactionManagement 开启基于注解的事务管理功能
+  * 配置事务管理器控制事务
 
 
 
