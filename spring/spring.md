@@ -362,7 +362,13 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
   @Import(TransactionManagementConfigurationSelector.class)
   ```
 
-* 
+# BeanFactoryPostProcessor
+
+* BeanPostProcessor
+  * bean后置处理器，bean创建对象初始化前后进行拦截工作
+* BeanFactoryPostProcessor
+  * beanFactory的后置处理器
+  * 在BeanFactory标准初始化之后调用，所有的bean定义已经保存加载到beanFactory
 
 
 
