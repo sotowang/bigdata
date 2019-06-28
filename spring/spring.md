@@ -354,6 +354,16 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
   * @EnableTransactionManagement 开启基于注解的事务管理功能
   * 配置事务管理器控制事务
 
+## 事务原理
+
+* 通过TransactionManagementConfigurationSelector给容器导入组件
+
+  ```java
+  @Import(TransactionManagementConfigurationSelector.class)
+  ```
+
+* 
+
 
 
 
