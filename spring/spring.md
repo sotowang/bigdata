@@ -292,9 +292,83 @@ bean的生命周期：bean的创建--初始化--销毁的过程，由容器管�
 * 运行时织入
   * Spring采用的方式,通过动态代理的方式,实现简单
 
+## AOP原理
+
+AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoProxy想要往容器中导的组件
+
+会执行以下步骤：
+
+* 获取当前bean的所有增强器（通知方法）Object[] specificInterceptors
+
+  * 找到候选的所有增强器（找到哪些通知方法是需要切入当前bean方法）
+  * 获取到能在bean使用的增强器
+  * 给增强器排序
+
+* 保存当前bean在advisedBeans中
+
+* 如果当前bean需要增强，创建当前bean的代理对象
+
+  * 获取所有增强器（通知方法）
+
+  * 保存到proxyFactory
+
+  * 创建代理对象：Spring自动决定
+
+    * ```java
+      if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
+      				return new JdkDynamicAopProxy(config);
+      			}
+      //在默认情况下，如果目标对象没有实现任何接口，Spring会选择CGLIB代理， 其生成的动态代理对象是目标类的子类。
+      ```
+
+    * JdkDynamicAopProxy(config）
+
+      * Jdk动态代理
+
+    * ObjensisCglibAopProxy(config)
+
+      * cglib的动态代理
+
+* 给容器中返回当前组件使用cglib增强了的对象
+
+* 以后容器中获取到的就是这个组件的代理对象，执行目标方法的时候，代理对象就会执行通知方法的流程
 
 
- ![img](https://pic3.zhimg.com/80/v2-4800c187e3a7ddf36523311db7f914c6_hd.png)
+
+**目标方法执行原理**
+
+* 容器中保存了组件的代理对象（cglib增强后的对象），这个对象里面保存了详细信息（比如增强器，目标对象）
+
+  * CglibAopProxy.intercept()
+
+    * 拦截目标方法的执行
+
+  * 根据ProxyFactory对象获取将要执行的目标方法拦截器链
+
+    * List<Object> interceptorList保存所有拦截器（一个国碎的ExposeInvocationInterceptor和4个增强器）
+    * 遍历所有的增强器，将其转为Interceptor
+    * 将增强器转为List<MethodInterceptor>
+      * 如果是MethodInterceptor，直接加入到集合
+      * 如果不是使用AdvisorAdapter将增强器转为MethodInterceptor
+      * 转换完成返回MethodInterceptor数组
+
+  * 如果没有拦截器链，直接执行目标方法
+
+  * 如果有拦截器链，把需要执行的目标对象，目标方法，拦截器链等信息传入创建一个CglibMethodInvocation对象，并调用proceed方法
+
+    * ```java
+      MethodInvocation invocation = new CglibMethodInvocation(proxy, this.target, method, args,this.targetClass, this.adviceChain, methodProxy);
+      
+      Object retVal = invocation.proceed();
+      ```
+
+  * 拦截器链的触发过程
+
+    * 如果没有拦截器执行目标方法，或者拦截器的索引和拦截器数组-1大小一样（指定到了最后一个拦截器）
+    * 链式获取每一个拦截器，拦截器执行invoke方法，每一个拦截器等待下一个拦截器执行完成返回以后再来执行；拦截器链的机制，保证通知方法与目标方法的执行顺序。
+
+
+
 
 
 
