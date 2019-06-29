@@ -1,53 +1,11 @@
 # IOC
 
-<img src="https://pic2.zhimg.com/v2-e64bf72c5c04412f626b21753aa9e1a1_b.png" data-caption="" data-rawwidth="1504" data-rawheight="190" class="origin_image zh-lightbox-thumb" width="1504" data-original="https://pic2.zhimg.com/v2-e64bf72c5c04412f626b21753aa9e1a1_r.jpg">![img](https://pic2.zhimg.com/80/v2-e64bf72c5c04412f626b21753aa9e1a1_hd.png)
-
-
-
-<img src="https://pic2.zhimg.com/v2-ee924f8693cff51785ad6637ac5b21c1_b.png" data-caption="" data-rawwidth="1398" data-rawheight="630" class="origin_image zh-lightbox-thumb" width="1398" data-original="https://pic2.zhimg.com/v2-ee924f8693cff51785ad6637ac5b21c1_r.jpg">
-
-
-
- 看到没？这里**我只需要修改轮胎类就行了，不用修改其他任何上层类。**这显然是更容易维护的代码。不仅如此，在实际的工程中，这种设计模式还有利于**不同组的协同合作和单元测试：**比如开发这四个类的分别是四个不同的组，那么只要定义好了接口，四个不同的组可以同时进行开发而不相互受限制；而对于单元测试，如果我们要写Car类的单元测试，**就只需要Mock一下Framework类传入Car就行了**，而不用把Framework, Bottom, Tire全部new一遍再来构造Car。
-
 ## 依赖注入方式
 
 * Setter
 * Interface
 * Constructor
 * Annotation
-
-这里我们是采用的**构造函数传入**的方式进行的依赖注入。其实还有另外两种方法：**Setter传递**和**接口传递**。这里就不多讲了，核心思路都是一样的，都是为了实现**控制反转**。
-
- ![preview](https://pic2.zhimg.com/v2-861683acac47577c81f2b7493dd05649_r.jpg)
-
- 
-
-## 控制反转容器
-
-什么是**控制反转容器(IoC Container)**呢？其实上面的例子中，对车类进行初始化的那段代码发生的地方，就是控制反转容器。
-
-![img](https://pic3.zhimg.com/80/v2-c845802f9187953ed576e0555f76da42_hd.png) 
-
-因为采用了依赖注入，在初始化的过程中就不可避免的会写大量的new。这里IoC容器就解决了这个问题。**这个容器可以自动对你的代码进行初始化，你只需要维护一个Configuration（可以是xml可以是一段代码），而不用每次初始化一辆车都要亲手去写那一大段初始化的代码**。这是引入IoC Container的第一个好处。
-
-IoC Container的第二个好处是：**我们在创建实例的时候不需要了解其中的细节。**在上面的例子中，我们自己手动创建一个车instance时候，是从底层往上层new的：
-
-<img src="https://pic4.zhimg.com/v2-555b2be7d76e78511a6d6fed3304927f_b.png" data-caption="" data-rawwidth="2430" data-rawheight="168" class="origin_image zh-lightbox-thumb" width="2430" data-original="https://pic4.zhimg.com/v2-555b2be7d76e78511a6d6fed3304927f_r.jpg">![img](https://pic4.zhimg.com/80/v2-555b2be7d76e78511a6d6fed3304927f_hd.png)
-
-这个过程中，我们需要了解整个Car/Framework/Bottom/Tire类构造函数是怎么定义的，才能一步一步new/注入。
-
-而IoC Container在进行这个工作的时候是反过来的，它先从最上层开始往下找依赖关系，到达最底层之后再往上一步一步new（有点像深度优先遍历）：
-
-![img](https://pic3.zhimg.com/80/v2-24a96669241e81439c636e83976ba152_hd.png)
-
-这里IoC Container可以直接隐藏具体的创建实例的细节，在我们来看它就像一个工厂：
-
-![img](https://pic2.zhimg.com/80/v2-5ca61395f37cef73c7bbe7808f9ea219_hd.png) 
-
- 我们就像是工厂的客户。我们只需要向工厂请求一个Car实例，然后它就给我们按照Config创建了一个Car实例。我们完全不用管这个Car实例是怎么一步一步被创建出来。
-
-实际项目中，有的Service Class可能是十年前写的，有几百个类作为它的底层。假设我们新写的一个API需要实例化这个Service，我们总不可能回头去搞清楚这几百个类的构造函数吧？IoC Container的这个特性就很完美的解决了这类问题——**因为这个架构要求你在写class的时候需要写相应的Config文件，所以你要初始化很久以前的Service类的时候，前人都已经写好了Config文件，你直接在需要用的地方注入这个Service就可以了**。这大大增加了项目的可维护性且降低了开发难度。
 
 ## Spring IOC容器创建过程
 
@@ -108,6 +66,8 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
 * 检测parentBeanFactory
 * 初始化依赖的Bean
 * 创建Bean
+
+![img](https://img-blog.csdn.net/20160317082518227)
 
 ## Spring Bean的作用域(scope控制)
 
