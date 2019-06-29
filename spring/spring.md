@@ -49,12 +49,23 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
 
 实际项目中，有的Service Class可能是十年前写的，有几百个类作为它的底层。假设我们新写的一个API需要实例化这个Service，我们总不可能回头去搞清楚这几百个类的构造函数吧？IoC Container的这个特性就很完美的解决了这类问题——**因为这个架构要求你在写class的时候需要写相应的Config文件，所以你要初始化很久以前的Service类的时候，前人都已经写好了Config文件，你直接在需要用的地方注入这个Service就可以了**。这大大增加了项目的可维护性且降低了开发难度。
 
-# Spring IOC过程
+## Spring IOC容器创建过程
 
-* 读取Bean配置信息
-* 根据Bean注册表实例化Bean
-* 将Bean实例放到Spring容器中
-* 使用Bean
+* Spring容器在启动的时候，先会保存所有注册进来的Bean的定义信息
+  * xml注册Bean: <bean>
+  * 注解注册Bean:@Service,@Component,@Bean...
+* Spring容器会在合适时机同创建这些Bean
+  * 用到这个Bean的时候；利用getBean()创建Bean；创建好以合保存在容器中
+  * 统一创建剩下所有bean的时候；finishBeanFactoryInitialization()
+* 后置处理器
+  * 每一个bean创建完成，都会使用各种后置处理器进行处理；来增强Bean功能
+    * AutowiredAnnotationBeanPostProcessor：处理自动注入
+    * AnnotationAwareAspectJAutoProxyCreator: 来做AOP功能（为Bean创建代理对象）
+* 事件驱动模型
+  * ApplicationListener：事件监听
+  * ApplicationEventMulticaster: 事件派发
+
+
 
 ## Spring IOC容器的核心接口
 
@@ -73,6 +84,12 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
 
 * BeanFactory是Spring框架的基础设施，面向Spring
 * ApplicationContext面向使用Spring框架的开发者
+* BeanFactory 采用的是延迟加载，第一次getBean的时候才会初始化Bean
+* ApplicationContext是对BeanFactory的扩展，提供了更多的功能
+  - 国际化处理
+  - 事件传递
+  - Bean自动装配
+  - 各种不同应用层的Context实现
 
 ## Spring IOC 支持的功能
 
@@ -156,6 +173,8 @@ IoC Container的第二个好处是：**我们在创建实例的时候不需要�
     * 在虚拟机参数位置加载  -Dspring.profiles.active=test
     * 代码方式激活环境
     * 没有标注环境标识的Bean在任何环境下都加载
+* @EventListener(classes={ApplicationEvent.class})
+  * 监听事件
 
 ## 给容器中注册组件（添加Bean）的方式
 
@@ -370,9 +389,15 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
   * beanFactory的后置处理器
   * 在BeanFactory标准初始化之后调用，所有的bean定义已经保存加载到beanFactory
 
+# BeanDefinitionRegistryPostProcessor
 
+# ApplicationListener
 
+监听容器中发布的事件，完成事件驱动开发
 
+@EventListener(classes={ApplicationEvent.class})
+
+- 监听事件
 
 
 
