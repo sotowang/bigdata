@@ -11,9 +11,21 @@
 
 
 
+# Session机制
 
+HttpServletResponse 接口提供了重写 URL 的方法：
 
+```java
+public java.lang.String encodeURL(java.lang.String url) 
+```
 
+   该方法的实现机制为： 
+
+​    ● 先判断当前的 Web 组件是否启用 Session，如果没有启用 Session，直接返回参数 url。 
+
+​    ● 再判断客户端浏览器是否支持 Cookie，如果支持 Cookie，直接返回参数 url；如果不支持 Cookie，就在参数 url 中加入 Session ID 信息，然后返回修改后的 url。
+
+ 
 
 
 
