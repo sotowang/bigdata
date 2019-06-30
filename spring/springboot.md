@@ -89,5 +89,21 @@
 # 自动配置原理
 
 * SpringBoot启动的时候加载主配置类，开启了自动配置功能@EnableAutoConfiguration
+
 * @EnableAutoConfiguration作用
+
   * 利用AutoConfigurationImportSelector给容器导入一些组件
+
+* 精要
+
+  * SpringBoot启动会加载大量的自动配置类
+
+  * 我们看我们需要的功能有没有SpringBoot默认写好的自动配置类
+
+  * 我们再来看这个自动配置害到底配置了哪些组件
+
+    * 如果有我们要用的组件，就不需要再来配置了
+
+  * 给容器中自动配置类为珈组件的时候，会从properties类中获取某些属性，我们就可以在配置文件的中指定这些属性的值
+
+    
