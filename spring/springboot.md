@@ -33,13 +33,18 @@
 * @ImportResource
   * 导入Spring的配置文件，让配置文件中的内容生效
   * 主配置文件下注解
-* @ConditionalOnWebApplication
-  * Spring底层@Conditional注解
-  * 判断当前就伯是否是web应用，如果是配置类生效
-* @ConditionalOnClass
-  * 判断当前项目有没有这个类
-* @ConditionalOnPerperty
-  * 判断配置文件中是否存在某个配置
+* @Conditiional
+  * @ConditionalOnWebApplication
+    * Spring底层@Conditional注解
+    * 判断当前是否是web应用，如果是配置类生效
+  * @ConditionalOnClass
+    * 判断当前项目有没有这个类
+  * @ConditionalOnPerperty
+    * 判断配置文件中是否存在某个配置
+  * @ConditionalOnMissingBean(xxx.class)
+    * 判断容器中没有这个组件
+  * @ConditionalOnBean
+    * 判断是否有这个组件
 
 # 配置文件
 
@@ -89,11 +94,9 @@
 # 自动配置原理
 
 * SpringBoot启动的时候加载主配置类，开启了自动配置功能@EnableAutoConfiguration
-
 * @EnableAutoConfiguration作用
 
   * 利用AutoConfigurationImportSelector给容器导入一些组件
-
 * 精要
 
   * SpringBoot启动会加载大量的自动配置类
@@ -105,5 +108,20 @@
     * 如果有我们要用的组件，就不需要再来配置了
 
   * 给容器中自动配置类为珈组件的时候，会从properties类中获取某些属性，我们就可以在配置文件的中指定这些属性的值
+* 自动配置类必须在一定条件下才能生效
+  * 通过启用debug=true;让控制台打印自动配置报告
+  * Positive matches(已启用)
+  * Nagative matches(未启用)
 
-    
+#     日志
+
+* 日志门面(抽象类)
+
+  * SLF4j	
+
+* 日志实现
+
+* * logback
+  * log4j
+
+  
