@@ -121,7 +121,46 @@
 
 * 日志实现
 
-* * logback
+  * logback
+
   * log4j
 
-  
+## 如何让系统中所有的日志都统一到slf4j
+
+* 将系统中其他日志框架先排除出去
+* 用中间包替换原有的日志框架
+* 导入slf4j其他实现
+
+## 日志的级别
+
+* trace
+* debug
+* info
+* warn
+* error
+
+```properties
+logging.level.com.soto= trace
+logging.path=
+logging.file=
+logging.patterm.console=
+logging.pattern.file=
+```
+
+## 指定配置
+
+* logback.xml
+
+  * 直接被日志框架识别
+
+* logback-spring.xml
+
+  * 由spring 解析日志配置,可以使用Spring Boot的Profile功能
+
+  ```properties
+  <springProfile name="staging">
+  </springProfile>
+  ```
+
+
+
