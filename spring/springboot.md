@@ -90,6 +90,11 @@
   * classpath:/
   * 打包后使用
     * spring.config.location
+* 静态资源加载顺序
+  * META/resources 
+  *  resources 
+  *  static 
+  *  public
 
 # 自动配置原理
 
@@ -162,5 +167,10 @@ logging.pattern.file=
   </springProfile>
   ```
 
+# web开发
 
+模板引擎实时生效
+
+* 禁用模板引擎的缓存
+* 页面修改完成以后，ctrl+F9重新编译
 
