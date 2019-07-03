@@ -174,3 +174,35 @@ logging.pattern.file=
 * 禁用模板引擎的缓存
 * 页面修改完成以后，ctrl+F9重新编译
 
+拦截器
+
+* LoginHandlerInterceptor implements HandlerInterceptor
+
+  ```java
+  @Override
+      public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+          Object user = request.getSession().getAttribute("loginUser");
+          return false;
+      }
+  
+      @Override
+      public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+  
+      }
+  
+      @Override
+      public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+  
+      }
+  ```
+
+thymeleaf公共页面抽取
+
+* th:insert
+  * 将公共片段整个插入到声明引入元素中
+* th:replace
+  * 将声明的引入的元素替换为公共片段
+* th:include
+  * 将被引入的片段的内容包含进标签中
+
+
