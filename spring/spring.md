@@ -355,9 +355,156 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
 
 监听容器中发布的事件，完成事件驱动开发
 
-@EventListener(classes={ApplicationEvent.class})
-
 - 监听事件
+
+  - ApplicationListener抽象类
+
+  - @EventListener(class={ApplicationEvent.class})
+
+    ```java
+    @EventListener(class={ApplicationEvent.class})
+    public void listen(ApplicationEvent event){
+        System.out.println("UserService..监听到的事件"+event);
+    }
+    ```
+
+    
+
+- 监听原理
+
+  - ContextRefreshedEvent事件
+
+    - 容器创建对象,refresh();
+
+    - finishRefresh() 容器刷新完成
+
+    - publishEvent(new ContextRefreshedEvent(this))
+
+      - 事件发布流程
+
+        - 获取事件多播器:getApplicationEventMulicaster()
+
+        - multicastEvent派发事件
+
+        - 获取到所有的ApplicationListener
+
+          ```java
+          for (final ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+          			Executor executor = getTaskExecutor();
+              //如果有executor,可以支持使用Executor进行异步派发
+          			if (executor != null) {
+          				executor.execute(new Runnable() {
+          					@Override
+          					public void run() {
+          						invokeListener(listener, event);
+          					}
+          				});
+          			}
+              //否则同步方式直接执行listener方法
+          			else {
+          				invokeListener(listener, event);
+          			}
+          		}
+          ```
+
+        - 拿到listener回调onApplicationEvent方法
+
+          ```java
+          listener.onApplicationEvent(event);
+          ```
+
+  - 容器关闭事件
+
+    ```java
+    applicationContext.close()
+    ```
+
+    - contextCloseEvent
+
+  - 事件多播器获取
+
+    - 容器创建对象refresh()
+
+    - initApplicationEventMulticaster() 
+
+      ```java
+      protected void initApplicationEventMulticaster() {
+      		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+          //先去容器中找有没有id="applicationEventMulticaster"的组件
+      		if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) {
+      			this.applicationEventMulticaster =
+      					beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
+      			if (logger.isDebugEnabled()) {
+      				logger.debug("Using ApplicationEventMulticaster [" + this.applicationEventMulticaster + "]");
+      			}
+      		}
+      		else {
+      			this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+      
+                  //如果没有则注册一个,并加入到容器中
+                  beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
+      			if (logger.isDebugEnabled()) {
+      				logger.debug("Unable to locate ApplicationEventMulticaster with name '" +
+      						APPLICATION_EVENT_MULTICASTER_BEAN_NAME +
+      						"': using default [" + this.applicationEventMulticaster + "]");
+      			}
+      		}
+      	}
+      ```
+
+  - 容器中有哪些监听器
+
+    - 容器创建对象 refresh()
+
+    - 从容器中拿到所有的监听器,把他们注册到applicationEventMulticaster中
+
+      ```java
+      String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
+      for (String listenerBeanName : listenerBeanNames) {		getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+      		}
+      ```
+
+  - @EventListener原理--SmartInitializingSingleton原理
+
+    - IOC容器创建对象并刷新容器refresh()
+
+    - 初始化所有的单实例(non-lazy-init)Bean
+
+      - finishBeanFactoryInitialization(beanFactory);初始化剩下的单实例Bean
+
+        - 先创建所有的单实例Bean: getBean()
+
+          ```java
+          //获取所有创建好的单实例Bean
+          for (String beanName : beanNames) {
+          			Object singletonInstance = getSingleton(beanName);
+              //判断是否是SmartInitializingSingleton类型的
+          			if (singletonInstance instanceof SmartInitializingSingleton) {
+          				final SmartInitializingSingleton smartSingleton = (SmartInitializingSingleton) singletonInstance;
+          				if (System.getSecurityManager() != null) {
+          					AccessController.doPrivileged(new PrivilegedAction<Object>() {
+          						@Override
+          						public Object run() {
+          							smartSingleton.afterSingletonsInstantiated();
+          							return null;
+          						}
+          					}, getAccessControlContext());
+          				}
+          				else {
+                              //如果是调用该方法
+          					smartSingleton.afterSingletonsInstantiated();
+          				}
+          			}
+          		}
+          ```
+
+          
+
+
+
+
+
+
 
 
 
