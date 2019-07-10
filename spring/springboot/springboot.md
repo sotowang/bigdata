@@ -17,6 +17,13 @@
   * 默认从全局配置文件获取值
   * prefix = "person".配置文件中哪个下面所有属性进行映射
 * @Value("")
+* @Configuration  
+  * 表示这是一个配置类,可给容器加组件
+* @EnableConfigurationProperties(xx.class)
+  * 启用指定类(xx.class)ConfigurationProperties功能
+* @ConditionalOnClass(xxx.class)
+  * 判断当前项目是否有xxx类
+* @ConditionalOnProperty
 
 ## @ConfigurationProperties  与@Value比较
 
@@ -99,24 +106,63 @@
 # 自动配置原理
 
 * SpringBoot启动的时候加载主配置类，开启了自动配置功能@EnableAutoConfiguration
+
 * @EnableAutoConfiguration作用
 
-  * 利用AutoConfigurationImportSelector给容器导入一些组件
-* 精要
+  * 利用EnableAutoConfigurationImportSelector给容器导入一些组件
+
+  ```java
+  List<String> configurations = SpringFactoriesLoader.loadFactoryNames(
+  				getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader());
+  //扫描所有jar包类路径下 "META-INF/spring.factories"
+  //把扫描到的这些文件的内容包装成properties
+  //从properties中获取到EnableAutoCpnfigutation.class类(类名)对应的值,然后把他们添加在容器中
+  ```
+
+  * 即将类路径下META-INF/spring.factories里面配置的所有EnableAutoConfiguration的值加入到了容器中
+
+    ```properties
+    org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    org.springframework.cloud.netflix.archaius.ArchaiusAutoConfiguration,\
+    org.springframework.cloud.netflix.feign.ribbon.FeignRibbonClientAutoConfiguration,\
+    org.springframework.cloud.netflix.feign.FeignAutoConfiguration,\
+    org.springframework.cloud.netflix.feign.encoding.FeignAcceptGzipEncodingAutoConfiguration,\
+    org.springframework.cloud.netflix.feign.encoding.FeignContentGzipEncodingAutoConfiguration,\
+    org.springframework.cloud.netflix.hystrix.HystrixAutoConfiguration,\
+    org.springframework.cloud.netflix.hystrix.security.HystrixSecurityAutoConfiguration,\
+    org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration,\
+    org.springframework.cloud.netflix.rx.RxJavaAutoConfiguration,\
+    org.springframework.cloud.netflix.metrics.servo.ServoMetricsAutoConfiguration
+    
+    org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker=\
+    org.springframework.cloud.netflix.hystrix.HystrixCircuitBreakerConfiguration
+    
+    org.springframework.boot.env.EnvironmentPostProcessor=\
+    org.springframework.cloud.netflix.metrics.ServoEnvironmentPostProcessor
+    ```
+
+    * 每一个这样的xxAutoConfiguration类都是容器中的一个组件,都加入到容器中,用他们来做自动配置
+
+  * 每一个自动配置类做自动配置功能
+
+    * 根据当前不同的条件判断,决定这个配置类是否生效
+
+* 精髓
 
   * SpringBoot启动会加载大量的自动配置类
 
   * 我们看我们需要的功能有没有SpringBoot默认写好的自动配置类
 
-  * 我们再来看这个自动配置害到底配置了哪些组件
+  * 我们再来看这个自动配置类到底配置了哪些组件
 
     * 如果有我们要用的组件，就不需要再来配置了
 
-  * 给容器中自动配置类为珈组件的时候，会从properties类中获取某些属性，我们就可以在配置文件的中指定这些属性的值
+  * 给容器中自动配置类添加组件的时候，会从properties类中获取某些属性，我们就可以在配置文件的中指定这些属性的值
+
 * 自动配置类必须在一定条件下才能生效
   * 通过启用debug=true;让控制台打印自动配置报告
   * Positive matches(已启用)
-  * Nagative matches(未启用)
+  * Negative matches(未启用)
 
 #     日志
 
@@ -206,3 +252,121 @@ thymeleaf公共页面抽取
   * 将被引入的片段的内容包含进标签中
 
 
+
+# 启动配置原理
+
+* 几个重要的事件回调机制
+  * 配置在META-INF/spring.factories
+    * ApplicationContextInitializer
+    * SpringApplicationRunListener
+  * 只需要放在IOC容器中
+    * ApplicationRunner
+    * CommandLineRunner
+
+* 创建SpringApplication对象
+
+  ```java
+  private void initialize(Object[] sources) {
+      //保存主配置类
+  		if (sources != null && sources.length > 0) {
+  			this.sources.addAll(Arrays.asList(sources));
+  		}
+      //判断当前是否是一个web应用
+  		this.webEnvironment = deduceWebEnvironment();
+      //从类路径下找到META-INF/spring.factories配置的所有ApplicationContextInitializer,然后保存起来
+  		setInitializers((Collection) getSpringFactoriesInstances(
+  				ApplicationContextInitializer.class));
+      //从类路径下找到META-INF/spring.factories配置的所有ApplicationListener
+  		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+      
+      //从多个配置类中找到有main方法的主配置类
+  		this.mainApplicationClass = deduceMainApplicationClass();
+  	}
+  ```
+
+  ```java
+  public ConfigurableApplicationContext run(String... args) {
+  		StopWatch stopWatch = new StopWatch();
+  		stopWatch.start();
+  		ConfigurableApplicationContext context = null;
+  		FailureAnalyzers analyzers = null;
+  		configureHeadlessProperty();
+      
+      //获取SpringApplicationRunListeners;从类路径下META-INF/spring.factories获取
+  		SpringApplicationRunListeners listeners = getRunListeners(args);
+      
+      //回调所有的获取SpringApplicationRunListeners.starting()方法
+  		listeners.starting();
+      
+  		try {
+  			ApplicationArguments applicationArguments = new DefaultApplicationArguments(
+  					args);
+              //准备环境,创建环境完成后回调SpringApplicationRunListeners.environmentPrepared();表示环境准备完成
+  			ConfigurableEnvironment environment = prepareEnvironment(listeners,
+  					applicationArguments);
+  			Banner printedBanner = printBanner(environment);
+              
+              //创建ApplicationContext决定创建web的ioc还是普通的IOC
+  			context = createApplicationContext();
+  			analyzers = new FailureAnalyzers(context);
+              
+              //准备上下文环境,将environment保存到ioc中,
+              //applyInitializers()回调之前保存的ApplicationContextInitializer的initialize()方法
+              //回调所有的SpringApplicationRunListener的contextPrepared()
+  			prepareContext(context, environment, listeners, applicationArguments,
+  					printedBanner);
+              
+              //刷新容器;ioc容器初始化
+              //扫描创建加载所有组件的地方
+  			refreshContext(context);
+              
+              //从所有的ioc容器中获取所有的ApplicationRunner和CommandLineRunner进行回调
+  			afterRefresh(context, applicationArguments);
+              //所有的SpringApplicationRunListener回调finished
+  			listeners.finished(context, null);
+              
+  			stopWatch.stop();
+  			if (this.logStartupInfo) {
+  				new StartupInfoLogger(this.mainApplicationClass)
+  						.logStarted(getApplicationLog(), stopWatch);
+  			}
+              
+              //整个SpringBoot应用启动完成后返回IOC容器
+  			return context;
+  		}
+  		catch (Throwable ex) {
+  			handleRunFailure(context, listeners, analyzers, ex);
+  			throw new IllegalStateException(ex);
+  		}
+  	}
+  ```
+
+# 自定义starter
+
+* starter
+
+  * 这个场景需要使用到的依赖
+
+  * 如何编写自动配置
+
+    ```java
+    @configuration //指定这个类是一个配置类
+    @ConditionalOnxxx //在指定条件成立的情况下自动配置类生效
+    @AutoConfigureOrder  //指定自动配置类的顺序
+    @Bean  //给容器中添加组件
+    @ConfigurationProperties //结合相关xxxProperties类来绑定相关配置
+    @EnableConfigurationProperties //让xxxProperties类生效,加入到容器中
+    ```
+
+    * 自动配置类要能加载,将需要启动就加载的自动配置类,配置在META-INF/spring.factories
+
+    ```properties
+    org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
+    ```
+
+  * 模式
+
+    * 启动器只用来做依赖导入
+    * 专门来写一个自动配置模块
+    * 启动器依赖自动配置,别人只需要引入启动器(starter)

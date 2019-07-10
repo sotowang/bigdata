@@ -11,3 +11,4 @@
 * 解决方案
   * 移除 @SpringBootApplication 和 @ComponentScan 两个注解来禁用组件自动扫描
   * 在需要的 bean 上进行显式配置
+
