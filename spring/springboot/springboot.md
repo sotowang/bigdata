@@ -441,5 +441,15 @@ thymeleaf公共页面抽取
 
     > docker logs container -name/containerId
 
+# RabbitMQ
 
-
+* Message
+* Publisher
+* Exchange
+* Queue
+* Binding
+* Connection
+* Channel
+* Consumer
+* Virtual Host
+* Broker
