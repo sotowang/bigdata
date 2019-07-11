@@ -370,3 +370,76 @@ thymeleaf公共页面抽取
     * 启动器只用来做依赖导入
     * 专门来写一个自动配置模块
     * 启动器依赖自动配置,别人只需要引入启动器(starter)
+
+
+
+# Docker
+
+* Docker镜像(Images)
+  * 软件打包好的镜像,放在Docker仓库中
+* Docker容器
+  * 独立运行的一个或一组应用
+* Docker客户端(Client)
+  * 连接Docker主机进行操作
+* Docker主机(Host)
+  * 安装了Doscker程序的机器
+* Docker仓库(Registry)
+  * 用来保存各种打包好的镜像
+
+## 常用操作
+
+* 镜像操作
+  * 搜索镜像
+
+    > docker search mysql
+
+  * 下载镜像
+
+    > docker pull mysql
+
+  * 所有镜像
+
+    > docker images
+
+  * 删除镜像
+
+    > docker rmi image-id
+
+* 容器操作
+
+  * 运行
+
+    > docker run --name myTomcat -d tomcat:latest 
+
+    ```bash
+    docker run -p 3306:3306 --name mysql01 -e MYSQL_ROOT_PASSWORD=123456 -d mysql
+    ```
+
+    
+
+  * 查看运行中的容器
+
+    >docker ps
+
+  * 停止容器
+
+    > docker stop containerId
+
+  * 启动
+
+    > docker start cocntainerId
+
+  * 删除 
+
+    > docker rm 
+
+  * 端口映射
+
+    > docker run -d -p 8080(host port):8080(container port) tomcat 
+
+  * 容器日志
+
+    > docker logs container -name/containerId
+
+
+
