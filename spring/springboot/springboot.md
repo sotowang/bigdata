@@ -453,3 +453,29 @@ thymeleaf公共页面抽取
 * Consumer
 * Virtual Host
 * Broker
+
+# Spring Boot与数据访问
+
+* DataSourceInitializer:ApplicationListener
+
+  * runSchemaScripts()
+
+    * 运行建表语句
+
+  * runDataScripts()
+
+    * 运行插入数据sql语句
+
+  * 默认需要将文件命名为
+
+    ```properties
+    schema-*.sql  data-*.sql
+    默认规则: schema.sql  schema-all..sql;
+    可以使用 
+    	schema:
+    		- classpath:department.sql
+    		指定位置
+    ```
+
+    
+
