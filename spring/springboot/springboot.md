@@ -477,5 +477,33 @@ thymeleaf公共页面抽取
     		指定位置
     ```
 
-    
+
+
+
+# ElasticSearch
+
+# 任务
+
+## 异步任务
+
+* @EnableAsync
+* @Async
+
+## 定时任务
+
+* @EnableScheduling
+* @Scheduled(cron=“0 * * * * MON-SAT”)
+
+## 邮件任务
+
+# 安全
+
+* SpringSecurity
+  * 引入SpringSecurity
+  * 编写SpringSecurity的配置类
+    * @EnableWebSecurity extends WebSecurityConfigurerAdapter
+
+
+
+# 分布式
 
