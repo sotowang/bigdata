@@ -70,12 +70,15 @@
 
 # Cookie和Session的区别
 
-* Sessioon的实现方式
+* Session的实现方式
   * 使用Cookie来实现(JSESSIONID)
+    * Session利用cookie进行信息处理,用户进行信息请求后,服务端就在浏览器上创建一个cookie,当这个session结束时,其实是Cookie过期了
   * 使用URL回写来实现
 * Cookie数据存放在客户的浏览器上,Session数据放在服务器上
 * Session相对Cookie更安全
-* 若考虑减轻服务器负担,应当使用Cookie
+  * 若考虑减轻服务器负担,应当使用Cookie
+* 相同点
+  * 都是用来跟踪浏览器用户身份的会话方式
 
 
 

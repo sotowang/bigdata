@@ -1,10 +1,12 @@
-**作者：索罗娃·多卡纳 链接：<https://www.nowcoder.com/discuss/203984> 来源：牛客网**  
+**作者：索罗娃·多卡纳 链接：<https://www.nowcoder.com/discuss/203984> 来源：牛客网**
 
-cookie和session的区别  
+# 一面  
 
-session的生命周期  
+## cookie和session的区别  
 
-有n个服务器，怎样去协调他们使用redis（题目我没理解到位，说了一通分布式锁。。。最后面试官问我redis是单线程还是多线程，我说单线程。面试官点头说，原来你知道啊）  
+## session的生命周期  
+
+# 有n个服务器，怎样去协调他们使用redis
 
 redis持久化方式  Mysql索引结构  
 
