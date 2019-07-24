@@ -72,13 +72,30 @@
 
 * Session的实现方式
   * 使用Cookie来实现(JSESSIONID)
-    * Session利用cookie进行信息处理,用户进行信息请求后,服务端就在浏览器上创建一个cookie,当这个session结束时,其实是Cookie过期了
+    * Session利用cookie进行信息处理,用户进行信息请求后,服务端就在浏览器上创建一个cookie,当这个session结束时,其实是Cookie过期了,它的maxAge属性一般为-1
+
   * 使用URL回写来实现
+
+    ```
+    注意：TOMCAT判断客户端浏览器是否支持Cookie的依据是请求中是否含有Cookie。尽管客户端可能会支持Cookie，但是由于第一次请求时不会携带任何Cookie（因为并无任何Cookie可以携带），URL地址重写后的地址中仍然会带有jsessionid。当第二次访问时服务器已经在浏览器中写入Cookie了，因此URL地址重写后的地址中就不会带有jsessionid了。
+    ```
+
+    
+
 * Cookie数据存放在客户的浏览器上,Session数据放在服务器上
+
 * Session相对Cookie更安全
   * 若考虑减轻服务器负担,应当使用Cookie
+
 * 相同点
   * 都是用来跟踪浏览器用户身份的会话方式
+
+* Session什么时候失效
+
+  * 服务器将长时间没有活动的Session从服务器内存中清除.Tomcat默认失效时间为20分钟
+  * 调用Session的invalidate方法
+
+  
 
 
 
