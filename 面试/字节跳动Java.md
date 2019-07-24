@@ -27,6 +27,10 @@ set key value px ... nx
 
 ## Mysql索引结构  
 
+* B树
+* B+树
+* Hash
+
 ## 聊一聊Mysql查询优化（没回答上来。。。）  
 
 例子  有ABCD，建立了index(A,C,D)  查A = xx and D = xx可以吗  查C = xx and D = xx可以吗  查C = xx and A = xx可以吗（我懵了）  
