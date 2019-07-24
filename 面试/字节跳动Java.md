@@ -4,13 +4,30 @@
 
 ## cookie和session的区别  
 
+* cookie 在客户端
+* session在服务端
+* 通过cookie实现session
+
 ## session的生命周期  
 
-# 有n个服务器，怎样去协调他们使用redis
+* session调用 inValidate
+* session到期,maxAge=-1
 
-redis持久化方式  Mysql索引结构  
+## 有n个服务器，怎样去协调他们使用redis
 
-聊一聊Mysql查询优化（没回答上来。。。）  
+分布式锁
+
+set key value px ... nx 
+
+## redis持久化方式  
+
+* RDB
+* AOF
+* RDB-AOF(官方推荐)
+
+## Mysql索引结构  
+
+## 聊一聊Mysql查询优化（没回答上来。。。）  
 
 例子  有ABCD，建立了index(A,C,D)  查A = xx and D = xx可以吗  查C = xx and D = xx可以吗  查C = xx and A = xx可以吗（我懵了）  
 
