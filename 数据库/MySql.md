@@ -58,6 +58,8 @@
 
 # MySQL 查询优化
 
+<https://segmentfault.com/a/1190000011330649#articleHeader5>
+
 * MySQL逻辑架构
 
   ![img](http://dbaplus.cn/uploadfile/2017/0928/20170928110355446.png)
@@ -110,11 +112,77 @@
 
   * 添加索引,B-Tree
 
-*  用IN() 取代OR
+* 用IN() 取代OR
 
   * IN()先将自己列表中折数据进行排序,然后通过二分查找的方式确定列的值是是否在IN()的列表中,时间复杂度O(logn)
+
   * OR操作,时间复杂度为O(n)
 
 * 优化关联查询
 
-  * 
+  在MySql中，任何一个查询都可以看成是一个关联查询，即使只有一个表的查询也是如此。
+  MySql对任何关联都执行嵌套循环的关联操作，例如对于下面的SQL语句：
+
+  ```sql
+  SELECT tbl1.col1,tbl2.col2
+  FROM tbl1 INNER JOIN tbl2 USING(col3)
+  WHERE tbl1.col1 IN(5,6);
+  ```
+
+  下面的伪代码表示MySql将如何执行这个查询：
+
+  ```c
+  //先从第一个表中取出符合条件的所有行
+  out_iter = iterator over tbl1 where col1 IN(5,6)
+  outer_row = out_iter.next
+  //在while循环中遍历第一个表结果集的每一行
+  while outer_row
+      //对于第一个表结果集中的每一行，在第二个表中找出符合条件的所有行
+      inner_iter = iterator over tbl2 where col3 = outer_row.col3
+      inner_row = inner_iter.next
+      while inner_row
+          //将第一个表的结果列和第二个表的结果列拼装在一起作为结果输出
+          output[outer_row.col1, inner_row.col2]
+          inner_row = inner_iter.next
+      end
+      //回溯，再根据第一个表结果集的下一行，继续上面的过程
+      outer_row = outer_iter.next
+  end
+  ```
+
+  * 通常只需要在关联顺序的第二个表的相应列上创建索引
+  * 确保任何的GROUP BY 和ORDER BY中的表达式只涉及到一个表中的列(这样才能使用索引优化这个过程)
+
+* 临时表(派生表)
+
+  * 子查询
+    * 先执行子查询并将结果放到一个临时表中,然后将这个临时表当作一个普通表对待
+    * MySQL临时表是没有任何索引的,在编写复杂子查询时需要注意
+  * UNION查询
+    * 先将一个单表查询放到一个临时表中
+    * 重新读出临时表数据来完成UNION查询
+
+* 排序优化
+
+  * 尽量让MySQL使用索引进行排序
+  * 若数量太大超过“排序缓冲区”大小,MySQL只能采用文件排序,消耗资源
+
+* 子查询优化
+
+  * 用关联替换子查询
+
+* 优化COUNT()查询
+
+  * COUNT()作用
+    * 统计某个列值的数量,即统计某列值不为NULL的个数
+    * COUNT(*)统计行数
+
+* 优化LIMIT分页
+
+  * 使用索引覆盖扫描,而不是查询所有的列
+  * 然后根据需要与万年青做一次关联操作返回所需要的列
+
+* 使用UNION查询
+
+  * 除非确实需要服务器消除重复的行,否则一定要使用UNION ALL
+  * 如果没有ALL关键字,MySQL会给临时表加上DISTINCT选项,这会导致对整个临时表做唯一性检查,代价很大
