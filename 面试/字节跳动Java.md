@@ -31,11 +31,13 @@ set key value px ... nx
 * B+树
 * Hash
 
-## 聊一聊Mysql查询优化（没回答上来。。。）  
+## Mysql查询优化  
 
-例子  有ABCD，建立了index(A,C,D)  查A = xx and D = xx可以吗  查C = xx and D = xx可以吗  查C = xx and A = xx可以吗（我懵了）  
+## 最左匹配原则
 
-来搞一道算法题吧  
+例子  有ABCD，建立了index(A,C,D)  查A = xx and D = xx可以吗  查C = xx and D = xx可以吗  查C = xx and A = xx可以吗
+
+## 算法
 
 给定数组nums=[1,2,3,2,3,5,4],和一个常数K，找到有没有可能将nums分成k个子集，使得每个子集的和相等  (5),(1,4),(2,3),(2,3) True  写了快半小时，面试官说注意时间。。。。。然后我一顿瞎写，用的纯暴力算法。。。  面试官说还有很多可优化的。。。
 
