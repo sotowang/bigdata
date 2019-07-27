@@ -56,6 +56,11 @@
 * 不管是主键索引，唯一键索引还是普通索引都是稀疏索引
 * 不支持事务
 
+# MyISAM与InnoDB区别
+
+* 存储结构
+  * 
+
 # MySQL 查询优化
 
 <https://segmentfault.com/a/1190000011330649#articleHeader5>

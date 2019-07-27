@@ -24,7 +24,7 @@
   * 标记
     * 从根集合进行扫描，对存活的对象进行标记
   * 清除
-    * 对堆内存从头到尾进行纯属遍历，回收不可达对象内存
+    * 对堆内存从头到尾进行遍历，回收不可达对象内存
 
   **不足**
 
@@ -75,7 +75,7 @@
 
 # 触发Full GC的条件
 * 老年代空间不足
-* 永久代(JDK1.8已无)空间不足
+* 永久代(JDK 8已无)空间不足
 * CMS GC时出现promotion failed,concurrent mode failure
 * Minor GC晋升到老年代的平均大小大于老年代的剩余空间
 * 调用System.gc()
@@ -84,7 +84,7 @@
 # Stop-the-World
 
 * JVM 由于要执行GC而停止了应用程序的执行
-* 任何一和GC算法中都会发生
+* 任何一GC算法中都会发生
 * 多数GC优化通过减少Stop-the-world发生的时间来提高程序的性能
 
 # SafePoint
@@ -120,7 +120,7 @@ ParNew收集器
 * 多线程收集器,其余的行为,特点和Serial收集器一样
 * 单核执行效率不如Serial,在多核下执行才有优势
 
-Parallel Scavenge收集器
+Parallel Scavenge收集器(1.8默认)
 
 *  -XX:+UseParallelGC,复制算法
 * 吞吐量=运行用户代码时间/(运行用户代码时间+地方都用收集时间)
@@ -135,7 +135,7 @@ Serial Old收集器
 * 单线程收集,进行垃圾收集时,必须暂停所有工作线程
 * 简单高效,Client模式下默认的老年代收集器
 
-Parallel Old收集器
+Parallel Old收集器(1.8默认)
 
 * -XX:+UseParallelOldGC,标记-整理算法
 * 多线程,吞吐量优先
@@ -189,10 +189,10 @@ G1收集器
 
     * 可以用来实现高速缓存
 
-  ```java
-  String str = new String("abc") //强引用
-  SoftReference<String> sofeRef = new SoftReference<String>(str); //软引用
-  ```
+      ```java
+      String str = new String("abc") //强引用
+      SoftReference<String> sofeRef = new SoftReference<String>(str); //软引用
+      ```
 
 * 弱引用
 
