@@ -26,9 +26,15 @@
 
 * Exchange
 
-  * direct
-  * fanout
-  * topic
+  * direct(单播)
+    * 根据路由键将消息派发给指定队列
+  * fanout(广播)
+    * 每个消息都会分到所有绑定队列上去
+    * fanout类型转发消息是最快的
+    * 像子网传播,每台子网内的主机都获得了一份复制消息
+  * topic(有选择广播)
+    * 通过模式匹配分配消息的路由键属性
+    * #匹配0个或多个单词,*匹配一个单词,单词之间用点隔开
   * headers
 
 * Queue
@@ -37,6 +43,28 @@
 
 * Connection
 
-* Channel
+* Channel 信道
+
+* Consumer
+
+* Virtual Host
+
+* Broker
+
+
+
+## RabbitMQ 运行
+
+> docker run -d -p 5672:5672 -p 15672:15672 --name myrabbitmq 3f92e6354d11
+
+
+
+ 自动配置
+
+* RabbitAutoConfiguration
+* 有自动配置了连接工厂ConnectionFactory
+* RabbitProperties 封装了 RabbitMQ的配置
+* RabbitTemplate:给RabbitMQ发送和接收消息
+* AmqpAdmin  RabbitMQ系统管理组件
 
   
