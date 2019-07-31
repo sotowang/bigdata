@@ -21,9 +21,7 @@
 # RabbitMQ
 
 * Message
-
 * Publisher
-
 * Exchange
 
   * direct(单播)
@@ -36,19 +34,18 @@
     * 通过模式匹配分配消息的路由键属性
     * #匹配0个或多个单词,*匹配一个单词,单词之间用点隔开
   * headers
-
 * Queue
-
+  * 保存消息并转发给消费者
 * Binding
-
+  * Exchange和Queue之间的虚拟连接
+  * Binding中可以包含Routingkey
 * Connection
-
 * Channel 信道
-
 * Consumer
-
 * Virtual Host
-
+  * 虚拟主机,用于逻辑隔离,最上层消息路由
+  * 一个Virtual Host里面可以有若干个Exchange和Queue
+  * 同一个Virtual Host里面不能有相同名称的Exchange或Queue
 * Broker
 
 
