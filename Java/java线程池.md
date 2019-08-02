@@ -188,7 +188,7 @@ ExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(int coreP
 
 - 3、Executors.newSingleThreadExecutor()；创**建一个单线程**，串行执行
 
-- 4、Executors.newScheduledThreadPool(5)；**计划类线程池**
+- 4、Executors.newScheduledThreadPoosfl(5)；**计划类线程池**
 
 ## 多线程回调
 
