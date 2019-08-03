@@ -12,6 +12,14 @@
 
   > ./mqadmin clusterList -n 127.0.0.1:9876
 
+* 关闭broker
+
+  > ./mqshutdown broker
+
+* 关闭 nameServ
+
+  > ./mqshutdown namesrv
+
 # 概念模型
 
 * Produccer
@@ -55,6 +63,14 @@
   * 消息存储
 * rocketmq-tools
   * 管理工具(mqadmin)
+
+# 集群环境
+
+* 单点模式
+* 主从模式
+  * 保障消息即时性与可靠性
+* 双主模式
+* 双主双从模式  多主多从模式 
 
 
 
