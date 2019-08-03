@@ -99,12 +99,17 @@
 * @Value
   * 基本数值
     * @Value("张三")
-  *  #{}
+  * #{}
     * #{20-2}
   * ${person.name}
     *  取出配置文件(在运行环境变量)中的值(properties文件)
+
+---
+
+### @Constructor @Autodwired @PostConstruct的顺序
+
 * @Autowire(required=false)
-  * 自动注入，Spring规范的注解
+  * **若类A中有个成员变量p被@Autowired,那么p是在A构造方法执行完之后注入**
   * 标注位置
     * 方法位置
       * @Bean+方法参数，参数从容器中获取
@@ -119,13 +124,26 @@
   * @Primary
     * 让Spring装配时，默认选取首选的类
     * 可以使用@Qualifier指定需要装配的bean的名字
+* @PostConstruct
+  * 若想在生成对象时完成初始化操作,而初始化操作又依赖于依赖注入,可使用@PostConstruct注解一个方法来完成初始化
+  * 会在依赖注入完成后自动调用
+
+* @Constructor
+  * @Constructor>>@Autowired >>@PostConstruct
+
+---
+
+
+
 * @Resource
   * Java规范的注解，类似Autowired
   * 默认按照组件名称进行装配
     * @Resource（“指定bean name”）
+
 * @Inject
   * Java规范的注解，类似Autowired
   * 导入javax.inject包
+
 * @Profile("s")
   * Spring为我们提供的可以根据当前环境，动态地激活和切换一系列组件的功能
   * 加了环境标识的bean，只有这个环境被激活的时候才能注册到容器中。默认是default环境
@@ -133,8 +151,11 @@
     * 在虚拟机参数位置加载  -Dspring.profiles.active=test
     * 代码方式激活环境
     * 没有标注环境标识的Bean在任何环境下都加载
+
 * @EventListener(classes={ApplicationEvent.class})
   * 监听事件
+
+  
 
 ## 给容器中注册组件（添加Bean）的方式
 
