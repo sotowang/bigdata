@@ -150,7 +150,7 @@ https://www.nowcoder.com/discuss/167644
 * 可重入锁
 * 分段锁
 
-## ReentrantLock实现原理； 
+## ReentrantLock实现原理
 
 ## 接上面，讲到了AQS； 
 
