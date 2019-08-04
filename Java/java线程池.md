@@ -99,8 +99,7 @@
 * CPU密集型
 
   * 线程数=按照核数或者核数+1设定
-* # I/O密集型
-
+* I/O密集型
   * 线程数=CPU核数*(1+平均等待时间/平均工作时间)
 
 # 线程池主要组件
@@ -116,8 +115,6 @@
 * 任务队列(taskQueue)
   * 存放没有处理的任务,提供一种缓冲机制
 
-
-
 # 常见四种线程池
 
 * CachedThreadPool()   可缓存线程池
@@ -132,19 +129,15 @@
     ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
     ```
 
-    
-
 * FixedThreadPool()   定长线程池
 
   1. 可控制线程最大并发数（同时执行的线程数）
   * 超出的线程会在队列中等待
 
-  ```java
-  //nThreads => 最大线程数即maximumPoolSize
-  ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads);
-  ```
-
-  
+    ```java
+    //nThreads => 最大线程数即maximumPoolSize
+    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads);
+    ```
 
 * ScheduledThreadPool()  定时线程池
 
@@ -167,23 +160,32 @@
     ExecutorService singleThreadPool = Executors.newSingleThreadPool();
     ```
 
-# **创建多线程的方式有哪几种？**
+# 创建多线程的方式
 
-方式一：继承Thread类
+*  继承Thread类
+*  实现Runnable接口
+*  实现Callable接口
+*  使用线程池的方式
 
-方式二：实现Runnable接口
+# 解决线程安全问题方式
 
-方式三：实现Callable接口
+*　使用同步代码块
 
-方式四：使用线程池的方式
+* 使用同步方法
+* 使用ReentrantLock
 
-## **解决线程安全问题有几种方式？**
+# 缓冲队列BlockingQueue
 
-方式一：使用同步代码块
-
-方式二：使用同步方法
-
-方式三：使用ReentrantLock
+* ArrayBlockingQueue(int i)
+  * 必须指定大小
+  * 所含对象为FIFO顺序
+* LinkedBlockingQueue() 或者int(i)
+  * 大小不固定,若构造时指定大小,则有大小限制;不指定大小,则为Integer.MAX_VALUE
+  * 所含对象为FIFO顺序
+* PriorityBlockingQueue 或者(int i)
+  * 所含对象的排序不是FIFO,而是依据对象的自然顺序或者构造函数的Comparator决定
+* SynchronizedQueue()
+  * 特殊的BlockingQueue,对其操作必须是放和取代交替完成
 
 
 
