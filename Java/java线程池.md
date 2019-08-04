@@ -1,3 +1,10 @@
+# 为什么要使用线程池
+
+>  **线程池的概念是Executor这个接口**,具体实现为ThreadPoolExecutor类,对线程池的配置，就是对ThreadPoolExecutor构造函数的参数的配置
+
+- 降低资源消耗
+- 提高线程的可管理性
+
 # Fork/Join框架
 
 把大任务分割成若干小任务并行，最终汇总每个小任务结果后得到大任务结果的框架。
@@ -18,39 +25,50 @@
 
 # 线程池参数
 
-## 线程池的核心的两个队列
-
-* 线程等待池，即线程队列BlockingQueue
-* 任务处理池（PoolWorker），即正在工作的Thread列表（HashSet<Worker>）
-
-## ThreadPoolExecutor的构造函数
-
-* **corePoolSize** 核心线程数量
-
-  默认情况下，在创建了线程池后，线程池中的线程数为0，当有任务来之后，就会创建一个线程去执行任务，当线程池中的线程数目达到corePoolSize后，就会把到达的任务放到**缓存队列**当中。**核心线程在allowCoreThreadTimeout被设置为true时会超时退出，默认情况下不会退出**。
-
-* **maxmimumPoolSize** 最大线程池数
-
+* 线程池的核心的两个队列
+  * 线程等待池，即线程队列BlockingQueue
+  * 任务处理池（PoolWorker），即正在工作的Thread列表（HashSet<Worker>）
+* corePoolSize
+  * 当线程池中的线程数目达到corePoolSize后，就会把到达的任务放到**缓存队列**当中。**核心线程在allowCoreThreadTimeout被设置为true时会超时退出，默认情况下不会退出**。
+* maxPoolSize
   * 线程不够用时能够创建的最大线程数
+* queueCapacity
+  * 任务队列的长度要根据核心线程数，以及系统对任务响应时间的要求有关。
+  * 队列长度可以设置为 所有核心线程每秒处理任务数 * 每个任务响应时间 = 每秒任务总响应时间 ，即(corePoolSize*threadtasks)*responsetime： (20*10)*2=400，即队列长度可设置为400。
 
-* **workQueue**  任务等待队列
+* keepAliveTime
 
-* **keepAliveTime**
+  * 当线程空闲时间达到keepAliveTime，该线程会退出，直到线程数量等于corePoolSize。如果allowCoreThreadTimeout设置为true，则所有线程均会退出直到线程数量为0。
 
-  当线程空闲时间达到keepAliveTime，该线程会退出，直到线程数量等于corePoolSize。如果allowCoreThreadTimeout设置为true，则所有线程均会退出直到线程数量为0。
-
-* **allowCoreThreadTimeout**
+* allowCoreThreadTimeout
 
   是否允许核心线程空闲退出，默认值为false。
 
-* **handler**
 
-## 新任务提交execute执行后的判断
+# ThreadPoolExecutor执行的策略
 
-* 如果运行的线程少于corePoolSize，则创建新线程来处理任务，即使线程池中的其他线程是空闲的
-* 如果线程池中的线程数量大于等于corePoolSize且小于maximumPoolSize，则只有当workQueue满时才创建新的线程去处理任务
-* 如果设置的corePoolSize和maximumPoolSize相同，则创建的线程池的大小是固定的，这时如果有新任务提交，workQueue未满，则将请求放入workQueue中，等待有空闲的线程去从workQueue中取任务并处理
-* 如果运行的线程数量大于等于maximumPoolSize，这时如果workQueue已经满了，则通过handler所指定的策略来处理任务
+>  新建线程 -> 达到核心数 -> 加入队列 -> 新建线程（非核心） -> 达到最大数 -> 触发拒绝策略
+
+* execute() 无返回值,无法任务是否成功
+
+  * 线程数量未达到corePoolSize，则新建一个线程(核心线程)执行任务
+  * 线程数量达到了corePools，则将任务移入队列等待
+  * 队列已满，新建线程(非核心线程)执行任务
+  * 队列已满，总线程数又达到了maximumPoolSize，就会由(RejectedExecutionHandler)抛出异常
+* submit() 有返回值futire
+
+  * future.get() 获得返回值
+* 拒绝策略
+  * AbortPolicy	(默认)
+    * 不执行新任务,直接抛出异常,提示线程已满
+  * DiscardPolicy (静默)
+    * 不执行新任务,也不抛出异常
+  * DiscardOldSetPolicy
+    * 将消息队列的第一个替换为当前新来的任务执行
+  * CallerRunPolicy
+    * 用于被拒绝任务的处理程序,直接在execute()方法的调用线程中运行被拒绝的任务
+    * 如果执行程序已关闭,则会丢弃该任务 
+
 
 # 线程池状态
 
@@ -67,85 +85,87 @@
 
 ![深度截图_选择区域_20190605130036.png](https://i.loli.net/2019/06/05/5cf74c87a2e2989507.png)
 
+# 线程池关闭
 
+* shutdown()
+  * 只将线程池的状态高成SHUTDOWN状态,然后中断没有正在执行任务的线程
+* shutdownNow()
+  * 遍历线程池中工作线程,逐个调用线程的interrupt方法中断
+  * 无法响应中断的任务可能永远无法终止
+  * shutdownNow会首先将线程池的状态设置成STOP，然后尝试停止所有的正在执行或暂停任务的线程，并返回等待执行任务的列表。
 
 # 线程池大小
 
 * CPU密集型
 
   * 线程数=按照核数或者核数+1设定
-* I/O密集型
+* # I/O密集型
+
   * 线程数=CPU核数*(1+平均等待时间/平均工作时间)
 
+# 线程池主要组件
+
+* 线程池管理器(ThreadPool)
+  * 创建线程池
+  * 销毁线程池
+  * 添加任务
+* 工作线程(WorkThread)
+  * 在没有任务时处于等待状态,可以循环执行任务
+* 任务接口(Task)
+  * 每个任务必须实现的接口,以供工作线程调试任务的执行,规定了任务的入口,任务执行完后收尾工作,任务执行状态
+* 任务队列(taskQueue)
+  * 存放没有处理的任务,提供一种缓冲机制
 
 
-# [为什么要使用线程池](https://liuzho.github.io/2017/04/17/%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%8C%E8%BF%99%E4%B8%80%E7%AF%87%E6%88%96%E8%AE%B8%E5%B0%B1%E5%A4%9F%E4%BA%86/)
-
-在Java中，**线程池的概念是Executor这个接口**，具体实现为ThreadPoolExecutor类，对线程池的配置，就是对ThreadPoolExecutor构造函数的参数的配置
-
-* 降低资源消耗
-* 提高线程的可管理性
 
 # 常见四种线程池
 
-如果你不想自己写一个线程池，那么你可以从下面看看有没有符合你要求的(一般都够用了)，如果有，那么很好你直接用就行了，如果没有，那你就老老实实自己去写一个吧
+* CachedThreadPool()   可缓存线程池
 
-## CachedThreadPool()
+  * 线程数无限制
 
-可缓存线程池：
+  * 有空闲线程则复用空闲线程，若无空闲线程则新建线程
 
-1. 线程数无限制
-2. 有空闲线程则复用空闲线程，若无空闲线程则新建线程
-3. 一定程序减少频繁创建/销毁线程，减少系统开销
+  * 一定程序减少频繁创建/销毁线程，减少系统开销
 
-创建方法：
+    ```java
+    ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+    ```
 
-`ExecutorService cachedThreadPool = Executors.newCachedThreadPool();`
+    
 
-## FixedThreadPool()
+* FixedThreadPool()   定长线程池
 
-定长线程池：
+  1. 可控制线程最大并发数（同时执行的线程数）
+  * 超出的线程会在队列中等待
 
-1. 可控制线程最大并发数（同时执行的线程数）
-2. 超出的线程会在队列中等待
+  ```java
+  //nThreads => 最大线程数即maximumPoolSize
+  ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads);
+  ```
 
-创建方法：
+  
 
-```java
-//nThreads => 最大线程数即maximumPoolSize
-ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads);
+* ScheduledThreadPool()  定时线程池
 
-//threadFactory => 创建线程的方法，这就是我叫你别理他的那个星期六！你还看！
-ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads, ThreadFactory threadFactory;
-```
+  * 支持定时及周期性任务执行。
 
-## ScheduledThreadPool()
+    ```java
+    //nThreads => 最大线程数即maximumPoolSize
+    ExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(int corePoolSize);
+    ```
 
-定长线程池：
+    
 
-1. 支持定时及周期性任务执行。
+* SingleThreadPool()  单线程化的线程池
 
-创建方法：
+  * 有且仅有一个工作线程执行任务
 
-```java
-//nThreads => 最大线程数即maximumPoolSize
-ExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(int corePoolSize);
-```
+  * 所有任务按照指定顺序执行，即遵循队列的入队出队规则
 
-## SingleThreadPool()
-
-单线程化的线程池：
-
-1. 有且仅有一个工作线程执行任务
-2. 所有任务按照指定顺序执行，即遵循队列的入队出队规则
-
-创建方法：
-
-`ExecutorService singleThreadPool = Executors.newSingleThreadPool();`
-
-还有一个`Executors.newSingleThreadScheduledExecutor()`结合了3和4，就不介绍了，基本不用。
-
-
+    ```java
+    ExecutorService singleThreadPool = Executors.newSingleThreadPool();
+    ```
 
 # **创建多线程的方式有哪几种？**
 
@@ -165,38 +185,7 @@ ExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(int coreP
 
 方式三：使用ReentrantLock
 
-# Java线程池
 
-[Java线程池实例解析](https://blog.csdn.net/qq_33142257/article/details/75968791)
-
-## 线程池概念
-
-**创建一个线程集合，池子的大小取决于内存数量；当需要执行一个任务的时候是重用一个等待的线程，而不是重新开启一个线程；当任务执行完成后继续回到池子中等待下一个任务**
-
-- 优点：
-
-1、减少在创建和销毁线程上所花的时间和资源开销
-2、与主线程隔离，实现异步执行
-
-注意：**池中的线程数不是越多越好，线程休眠同样也会占用资源，所以要合理的选择线程池大小**
-
-- 1、Executors.newCachedThreadPool()；**可缓存的线程池**，当线程越多线程池规模也随之扩大,默认超时时间是60s，如果超过会自动终止该线程
-
-  理论上可开启的线程数是无限的，但是受cpu的影响，**cpu越多的话开的越多**；
-
-- 2、Executors.newFixedThreadPool(2)；创建**一个固定大小的线程池**；**当线程达到最大数时，大小不再变**化，适用于固定的稳定的并发编程
-
-- 3、Executors.newSingleThreadExecutor()；创**建一个单线程**，串行执行
-
-- 4、Executors.newScheduledThreadPoosfl(5)；**计划类线程池**
-
-## 多线程回调
-
-submit：将线程放入线程池中，除了使用execute，还可以使用submit,而且能够获取回调，submit适用于生产者-消费者模式，和Future一起使用起到没有返回结果就阻塞当前线程，等待线程池返回结果；
-
-调用结束打印的语句都是在run方法中返回出来的，**通过future来接受返回参数，然后将future打印**；
-
-通过上面一个例子可以知道Future是阻塞取出结果的，按顺序执行，如果说正常的前面的线程执行完成后面的线程还在执行中的话，前面线程的结果时可以直接返回的，但是如果后面的线程比前面的线程先执行完成，则后面线程的返回结果需要等待前面线程返回后才能取得结果； 而CompletionService是异步非阻塞的，哪个执行完成有回调了，哪个就能输出结果；
 
 
 

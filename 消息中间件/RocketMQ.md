@@ -35,6 +35,44 @@
 * Broker
   * MQ消息服务(中转角色,用于消息存储与生产消费转发)
 
+
+
+# RocketMQ 生产者
+
+## 核心参数
+
+* producerGroup -----组名
+* createTopicKey 
+* defaultTopicQueueNums (默认为4)
+* sendMsgTimeout (单位:ms)
+* compressMsgBodyOverHowmuch  (默认压缩字节4096)
+* retryTimesWhenSendFailed
+* retryAnotherBrokerWhenNotStoreOK(默认false)
+* maxMessageSize(默认128k)
+
+## 主从同步机制解析
+
+* Master - Slave主从同步 
+* 同步信息
+  * 数据内容
+  * 元数据信息
+* 元数据同步
+  * Broker角色识别,为Slave启动同步任务
+* 消息同步
+  * HAService
+  * HAconnection
+  * WaitNotifyObject
+
+
+
+
+
+
+
+
+
+
+
 # 包结构 
 
 * rocketmq-broker
