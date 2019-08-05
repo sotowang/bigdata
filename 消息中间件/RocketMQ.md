@@ -63,6 +63,16 @@
   * HAconnection
   * WaitNotifyObject
 
+## 同步消息发送
+
+* producer.send(Message msg)
+
+## 异步消息发送
+
+* producer.send(Message msg,SendCallback sendCallback)
+* 异步发送消息核心实现
+  * DefaultMQProducerImpl
+
 
 
 
