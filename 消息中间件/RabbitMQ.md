@@ -21,6 +21,9 @@
 # RabbitMQ
 
 * Message
+  * 由Properties和Body组成
+  * Properties对消息修饰(消息优先级,延迟等)
+  * Body 消息体内容 
 * Publisher
 * Exchange
 
@@ -40,19 +43,29 @@
   * Exchange和Queue之间的虚拟连接
   * Binding中可以包含Routingkey
 * Connection
+  * 连接,应用程序与Broker连接
 * Channel 信道
+  * 进行消息读写的通道
+  * 客户端可以建立多个Channel
 * Consumer
 * Virtual Host
   * 虚拟主机,用于逻辑隔离,最上层消息路由
   * 一个Virtual Host里面可以有若干个Exchange和Queue
   * 同一个Virtual Host里面不能有相同名称的Exchange或Queue
 * Broker
+  * 接受客户端的连接,实现AMQP实体服务
 
 
 
 ## RabbitMQ 运行
 
 > docker run -d -p 5672:5672 -p 15672:15672 --name myrabbitmq 3f92e6354d11
+
+>  sudo rabbitmq-server start
+
+* 使用插件 
+
+  > rabbitmq-plugins  enable rabbitmq_management 
 
 
 
