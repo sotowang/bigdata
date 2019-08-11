@@ -173,4 +173,6 @@
     * 消息主体以及元数据的存储主体,对CommitLog建立一个ConsumeQueue,每个ConsumeQueue对应一个MessageQueue,所以只要有CommitLog在.ConsumeQueue即使数据丢失,仍然可以恢复
   * ConsumeQueue
     * 消息的逻辑队列,存储Queue在CommitLog 中起始offset,log大小和MessageTag的hashCode,log大小和MessageTag的hashCode.每个Topic下的每个Queue都有一个对应 的ConsumeQueue
-  * 
+
+
+
