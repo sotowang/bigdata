@@ -152,6 +152,18 @@ https://www.nowcoder.com/discuss/167644
 
 ## ReentrantLock实现原理
 
+* 实现前提为AQS
+  * CountDownLatch,FurureTask,Semaphore,Renentrantlock是该抽象类的子类
+  * 围绕state变量提供获取和释放
+  * tryAcquire获取锁
+    * state=0.表示锁无人占有
+    * 再判断队列前是否有线程在等待锁,.没有的话调用compareAndSetState使用CAS修改state,传入的acquires写死是1
+    * 获取锁成功后,将线程记录为独占锁的线程
+    * 线程可以不停lock增加state值(可重入),对应地也要unlock
+  * 锁获取失败后加入等待队列(addWaiter),队列节点为Node对象,维护前后Node和指针和等待状态
+  * 释放锁
+    * 头节点是获取锁的线程,先移除头节点,再通知后面的节点获取锁(sync.release(1))
+
 ## 接上面，讲到了AQS； 
 
 ## 讲讲AQS怎么实现的Fair和NoFair； 
