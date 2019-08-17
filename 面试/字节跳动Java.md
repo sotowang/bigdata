@@ -164,9 +164,15 @@ https://www.nowcoder.com/discuss/167644
   * 释放锁
     * 头节点是获取锁的线程,先移除头节点,再通知后面的节点获取锁(sync.release(1))
 
-## 接上面，讲到了AQS； 
-
 ## 讲讲AQS怎么实现的Fair和NoFair； 
+
+* FairSync
+  * 重写tryAcquire方法,参数为1
+  * hasQueuePredecessors()保证公平性
+  * 只有在队列为空或者当前线程已获得锁(重入)的情况下,才能获得锁
+* NonfairSync
+  * 若state==0,获得锁
+  * 当前线程为拥有锁的线程,获得锁
 
 ##  ssh是什么原理？（RSA非对称加密，生成一个公钥和一个私钥） 
 
