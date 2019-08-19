@@ -1,3 +1,12 @@
+# IO类型
+
+* 同步IO
+  * BIO阻塞IO
+  * 非阻塞IO
+  * IO多路复用
+  * 信号驱动IO
+* 异步IO
+
 # BIO
 
 - InputStream
