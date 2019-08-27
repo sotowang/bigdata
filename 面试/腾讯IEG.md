@@ -1,12 +1,7 @@
-# 腾讯IEG（offer）
-
-## 一面（全程问基础）：
+# 一面
 
 ```
-1、介绍项目
-2、String、StringBuffer、StringBuilder的区别，怎么理解String不变性
-3、==和equals的区别，如果重写了equals()不重写hashCode()会发生什么
-4、volatile怎么保证可见性，synchronized和lock的区别，synchronized的底层实现
+synchronized和lock的区别，synchronized的底层实现
 5、sleep和wait的区别，sleep会不会释放锁，notify和notifyAll的区别
 6、了不了解线程的局部变量，讲讲线程池参数
 7、什么情况会发生死锁，死锁的处理方法
@@ -16,71 +11,20 @@
 
 ------
 
-### String、StringBuffer、StringBuilder的区别，怎么理解String不变性
+## String、StringBuffer、StringBuilder的区别
 
-[java中String、StringBuffer、StringBuilder的区别](https://www.cnblogs.com/xudong-bupt/p/3961159.html)
+* String不变性
+  - String对象是常量，它的值不能被创建后改变，StringBuffer和StringBuilder可以可变；
+  * StringBuilder非线程安全（单线程使用），String与StringBuffer线程安全（多线程使用）；
+  * 如果程序不是多线程的，那么使用StringBuilder效率高于StringBuffer。
 
-**1.可变与不可变**
+* 常量池
 
-　　String类中使用字符数组保存字符串，如下就是，因为有“final”修饰符，所以可以知道string对象是不可变的。
+  常量池是一个内存空间，不同于使用new关键字创建的对象所在的堆空间。
+  常量池是为了避免频繁的创建和销毁对象而影响系统性能，其实现了对象的共享。当需要一个对象时，就可以从池中取一个出来（如果池中没有则创建一个），则在需要重复创建相等变量时节省了很多时间。
+  在编译期被确定，并被保存在已编译的.class文件中的一些数据，包括类、方法、接口等中的常量和字符串常量。常量池还具备动态性，运行期间可以将新的常量放入池中。java中基本类型的包装类的大部分都实现了常量池技术， 即Byte,Short,Integer,Long,Character,Boolean；
 
-　　　　**private final char value[];**
-
-　　StringBuilder与StringBuffer都继承自AbstractStringBuilder类，在AbstractStringBuilder中也是使用字符数组保存字符串，如下就是，可知这两种对象都是可变的。
-
-　　　　**char[] value;**
-
-**2.是否多线程安全**
-
-　　String中的对象是不可变的，也就可以理解为常量，**显然线程安全**。
-
-　　AbstractStringBuilder是StringBuilder与StringBuffer的公共父类，定义了一些字符串的基本操作，如expandCapacity、append、insert、indexOf等公共方法。
-
-　　StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是**线程安全的**。看如下源码：
-
-```java
-1 public synchronized StringBuffer reverse() {
-2     super.reverse();
-3     return this;
-4 }
-5 
-6 public int indexOf(String str) {
-7     return indexOf(str, 0);        //存在 public synchronized int indexOf(String str, int fromIndex) 方法
-8 }
-```
-
-
-
-　　StringBuilder并没有对方法进行加同步锁，所以是**非线程安全的**。
-
- **3.StringBuilder与StringBuffer共同点**
-
-　　StringBuilder与StringBuffer有公共父类AbstractStringBuilder(**抽象类**)。
-
-　　抽象类与接口的其中一个区别是：抽象类中可以定义一些子类的公共方法，子类只需要增加新的功能，不需要重复写已经存在的方法；而接口中只是对方法的申明和常量的定义。
-
-　　StringBuilder、StringBuffer的方法都会调用AbstractStringBuilder中的公共方法，如super.append(...)。只是StringBuffer会在方法上加synchronized关键字，进行同步。
-
-　　**最后，如果程序不是多线程的，那么使用StringBuilder效率高于StringBuffer。**
-
-------
-
-[Java基础之String、StringBuffer与StringBuilder ](https://blog.csdn.net/chenliguan/article/details/51911906)
-
-#### 1 区别
-
-- String对象是常量，它的值不能被创建后改变，StringBuffer和StringBuilder可以可变；
-- StringBuilder非线程安全（单线程使用），String与StringBuffer线程安全（多线程使用）；
-- 如果程序不是多线程的，那么使用StringBuilder效率高于StringBuffer。
-
-（2）常量池
-
-常量池是一个内存空间，不同于使用new关键字创建的对象所在的堆空间。
-常量池是为了避免频繁的创建和销毁对象而影响系统性能，其实现了对象的共享。当需要一个对象时，就可以从池中取一个出来（如果池中没有则创建一个），则在需要重复创建相等变量时节省了很多时间。
-在编译期被确定，并被保存在已编译的.class文件中的一些数据，包括类、方法、接口等中的常量和字符串常量。常量池还具备动态性，运行期间可以将新的常量放入池中。java中基本类型的包装类的大部分都实现了常量池技术， 即Byte,Short,Integer,Long,Character,Boolean；
-（3）下面代码创建了几个String对象?
-
-
+  下面代码创建了几个String对象?
 
 ```java
 String s1 = new String("s1") ; 
@@ -91,142 +35,36 @@ String s2 = new String("s1") ;
 // 3个，编译期在常量池中创建1个，即“s1”常量对象；运行期堆中创建2个，即s1和s2对象。
 String s1 = "s1";  
 String s2 = s1;  
-
 s2 = "s2";
 ```
 
-#### 2 String与StringBuffer区别
-
-##### 2.1 在修改时对象自身是否可变（主要区别）
-
-（1） String在修改时不会改变对象自身
-　　在每次对 String 类型进行改变的时候其实都等同于生成了一个新的 String 对象，然后将指针指向新的 String 对象，所以经常改变内容的字符串最好不要用 String 。
-
-```java
-String str = "abc";//地址str1s
-str = "def";//地址str2
-```
-
-（2） StringBuffer在修改时会改变对象自身
-
-　　每次结果都会对 StringBuffer 对象本身进行操作，而不是生成新的对象，再改变对象引用。所以在一般情况下我们推荐使用 StringBuffer ，特别是字符串对象经常改变的情况下。StringBuffer 上的主要操作是 append 和 insert 方法。
-
-```java
-StringBuffer strBuffer = new StringBuffer("abc");//地址strBuffer,值是abc
-strBuffer.append("def");//地址strBuffer,值是abcdef
-```
-
-#### 3 总结
-
-（1）如果要操作少量的数据用 String；
-（2）多线程操作字符串缓冲区下操作大量数据 StringBuffer；
-（3）单线程操作字符串缓冲区下操作大量数据 StringBuilder。
-
 ------
 
-### ==和equals的区别，如果重写了equals()不重写hashCode()会发生什么
+## ==和equals的区别
 
-[hashcode和equals为何要同时重写](https://blog.csdn.net/woailuo453786790/article/details/49779869)
+## 重写equals()不重写hashCode()会发生什么
 
-首先equals与hashcode间的关系是这样的：
+## volatile怎么保证可见性
 
- 1、如果两个对象相同（即用equals比较返回true），那么它们的hashCode值一定要相同；
+## 并发编程的锁机制
 
- 2、如果两个对象的hashCode相同，它们并不一定相同(即用equals比较返回false)   
+* 可重入锁
 
-自我的理解：由于为了提高程序的效率才实现了hashcode方法，先进行hashcode的比较，如果不同，那没就不必在进行equals的比较了，这样就大大减少了equals比较的次数，这对比需要比较的数量很大的效率提高是很明显的，一个很好的例子就是在集合中的使用；
+* 读写锁
 
+  读写锁将对一个资源的访问分成了2个锁，如文件，一个读锁和一个写锁。正因为有了读写锁，才使得多个线程之间的读操作不会发生冲突。`ReadWriteLock`就是读写锁，它是一个接口，ReentrantReadWriteLock实现了这个接口。可以通过readLock()获取读锁，通过writeLock()获取写锁。
 
+* 可中断锁
 
-> 我们都知道java中的List集合是有序的，因此是可以重复的，而set集合是无序的，因此是不能重复的，那么怎么能保证不能被放入重复的元素呢，但靠equals方法一样比较的话，如果原来集合中以后又10000个元素了，那么放入10001个元素，难道要将前面的所有元素都进行比较，看看是否有重复，欧码噶的，这个效率可想而知，因此hashcode就应遇而生了，java就采用了hash表，利用哈希算法（也叫散列算法），就是将对象数据根据该对象的特征使用特定的算法将其定义到一个地址上，那么在后面定义进来的数据只要看对应的hashcode地址上是否有值，那么就用equals比较，如果没有则直接插入，只要就大大减少了equals的使用次数，执行效率就大大提高了。
+  可中断锁，即可以中断的锁。在Java中，synchronized就不是可中断锁，而Lock是可中断锁。 如果某一线程A正在执行锁中的代码，另一线程B正在等待获取该锁，可能由于等待时间过长，线程B不想等待了，想先处理其他事情，我们可以让它中断自己或者在别的线程中中断它，这种就是可中断锁。
 
-继续上面的话题，为什么必须要重写hashcode方法，其实简单的说就是为了保证同一个对象，保证在equals相同的情况下hashcode值必定相同，如果重写了equals而未重写
+  Lock接口中的**lockInterruptibly**()方法就体现了Lock的可中断性。
 
-hashcode方法，可能就会出现两个没有关系的对象equals相同的（因为equal都是根据对象的特征进行重写的），但hashcode确实不相同的
+* 公平锁
 
-[==和equals的区别，如果重写了equals()不重写hashCode()会发生什么](https://blog.csdn.net/javazejian/article/details/51348320)
+  `synchronized`是非公平锁，它无法保证等待的线程获取锁的顺序。对于`ReentrantLock`和`ReentrantReadWriteLock`，默认情况下是非公平锁，但是可以设置为公平锁。
 
-[==和equals的区别，如果重写了equals()不重写hashCode()会发生什么](https://blog.csdn.net/neosmith/article/details/17068365)
-
-[==和equals的区别，如果重写了equals()不重写hashCode()会发生什么](https://blog.csdn.net/u013679744/article/details/57074669)
-
-
-
-------
-
-### volatile怎么保证可见性
-
-[4.4 volatile关键字是如何保证可见性的](http://www.tianshouzhi.com/api/tutorials/mutithread/286)
-
-在前面我们提到volatile关键字可以保证多个线程运行时的可见性问题。在单核CPU的情况下，是不存在可见性问题的，如果是多核CPU，可见性问题就会暴露出来。
-
-我们知道线程中运行的代码最终都是交给CPU执行的，而代码执行时所需使用到的数据来自于内存(或者称之为主存)。但是CPU是不会直接操作内存的，每个CPU都会有自己的缓存，操作缓存的速度比操作主存更快。
-
-因此当某个线程需要修改一个数据时，事实上步骤是如下的：
-
-```
-1、将主存中的数据加载到缓存中
-
-2、CPU对缓存中的数据进行修改
-
-3、将修改后的值刷新到内存中
-```
-
-多个线程操作同一个变量的情况，则可以用下图表示:
-
-![可见性.png](http://static.tianshouzhi.com/ueditor/upload/image/20160610/1465533403406066640.png)
-
-第一步：线程1、线程2、线程3操作的是主存中的同一个变量，并且分别交由CPU1、CPU2、CPU3处理。
-
-第二步：3个CPU分别将主存中变量加载到缓存中
-
-第三步：各自将修改后的值刷新到主存总
-
-问题就出现在第二步，因为每个CPU操作的是各自的缓存，所以不同的CPU之间是无法感知其他CPU对这个变量的修改的，最终就可能导致结果与我们的预期不符。
-
-而使用了volatile关键字之后，情况就有所不同，volatile关键字有两层语义：
-
-
-
-```
-1、立即将缓存中数据写会到内存中
-
-2、其他处理器通过嗅探总线上传播过来了数据监测自己缓存的值是不是过期了，如果过期了，就会对应的缓存中的数据置为无效。而当处理器对这个数据进行修改时，会重新从内存中把数据读取到缓存中进行处理。
-```
-
-在这种情况下，不同的CPU之间就可以感知其他CPU对变量的修改，并重新从内存中加载更新后的值，因此可以解决可见性问题。
-
-
-
-------
-
-### [并发编程的锁机制：synchronized和lock](https://juejin.im/post/5a43ad786fb9a0450909cb5f)
-
-#### 1.1 可重入锁
-
-如果锁具备可重入性，则称作为可重入锁。synchronized和ReentrantLock都是可重入锁，可重入性在我看来实际上表明了锁的分配机制：基于线程的分配，而不是基于方法调用的分配。举比如说，当一个线程执行到method1 的synchronized方法时，而在method1中会调用另外一个synchronized方法method2，此时该线程不必重新去申请锁，而是可以直接执行方法method2。
-
-#### 1.2 读写锁
-
-读写锁将对一个资源的访问分成了2个锁，如文件，一个读锁和一个写锁。正因为有了读写锁，才使得多个线程之间的读操作不会发生冲突。`ReadWriteLock`就是读写锁，它是一个接口，ReentrantReadWriteLock实现了这个接口。可以通过readLock()获取读锁，通过writeLock()获取写锁。
-
-#### 1.3 可中断锁
-
-可中断锁，即可以中断的锁。在Java中，synchronized就不是可中断锁，而Lock是可中断锁。 如果某一线程A正在执行锁中的代码，另一线程B正在等待获取该锁，可能由于等待时间过长，线程B不想等待了，想先处理其他事情，我们可以让它中断自己或者在别的线程中中断它，这种就是可中断锁。
-
-Lock接口中的lockInterruptibly()方法就体现了Lock的可中断性。
-
-#### 1.4 公平锁
-
-公平锁即尽量以请求锁的顺序来获取锁。同时有多个线程在等待一个锁，当这个锁被释放时，等待时间最久的线程（最先请求的线程）会获得该锁，这种就是公平锁。
-
-非公平锁即无法保证锁的获取是按照请求锁的顺序进行的，这样就可能导致某个或者一些线程永远获取不到锁。
-
-`synchronized`是非公平锁，它无法保证等待的线程获取锁的顺序。对于`ReentrantLock`和`ReentrantReadWriteLock`，默认情况下是非公平锁，但是可以设置为公平锁。
-
-#### 3. 两种锁的比较
-
-##### 3.1 synchronized和lock的区别
+## synchronized和lock的区别
 
 - Lock是一个接口，而synchronized是Java中的关键字，synchronized是内置的语言实现；
 - synchronized在发生异常时，会自动释放线程占有的锁，因此不会导致死锁现象发生；而Lock在发生异常时，如果没有主动通过unLock()去释放锁，则很可能造成死锁现象，因此使用Lock时需要在finally块中释放锁；
@@ -237,11 +75,9 @@ Lock接口中的lockInterruptibly()方法就体现了Lock的可中断性。
 
  到了JDK1.6，发生了变化，对synchronize加入了很多优化措施，有自适应自旋，锁消除，锁粗化，轻量级锁，偏向锁等等。导致在JDK1.6上synchronize的性能并不比Lock差。官方也表示，他们也更支持synchronize，在未来的版本中还有优化余地，所以还是提倡在synchronized能实现需求的情况下，优先考虑使用synchronized来进行同步。
 
-
-
 ------
 
-### [synchronized的JVM底层实现（很详细 很底层）](https://blog.csdn.net/niuwei22007/article/details/51433669)
+## synchronized的JVM底层实现
 
 synrhronized关键字简洁、清晰、语义明确，因此即使有了Lock接口，使用的还是非常广泛。其应用层的语义是可以把任何一个非null对象 作为"锁"，当synchronized作用在方法上时，锁住的便是对象实例（this）；当作用在静态方法时锁住的便是对象对应的Class实例，因为 Class数据存在于永久带，因此静态方法锁相当于该类的一个全局锁；当synchronized作用于某一个对象实例时，锁住的便是对应的代码块。在 HotSpot JVM实现中，锁有个专门的名字：对象监视器。 
 
@@ -249,15 +85,10 @@ synrhronized关键字简洁、清晰、语义明确，因此即使有了Lock接�
 
 ```
 Contention List：所有请求锁的线程将被首先放置到该竞争队列
-
 Entry List：Contention List中那些有资格成为候选人的线程被移到Entry List
-
 Wait Set：那些调用wait方法被阻塞的线程被放置到Wait Set
-
 OnDeck：任何时刻最多只能有一个线程正在竞争锁，该线程称为OnDeck
-
 Owner：获得锁的线程称为Owner
-
 !Owner：释放锁的线程
 ```
 
@@ -267,13 +98,9 @@ Owner：获得锁的线程称为Owner
 
 新请求锁的线程将首先被加入到ConetentionList中，当某个拥有锁的线程（Owner状态）调用unlock之后，如果发现 EntryList为空则从ContentionList中移动线程到EntryList，下面说明下ContentionList和EntryList 的实现方式：
 
-
-
 ------
 
-### sleep和wait的区别，sleep会不会释放锁
-
-[java sleep和wait的区别的疑惑?](https://www.zhihu.com/question/23328075)
+## sleep和wait的区别
 
 ![](https://pic2.zhimg.com/80/bb4f380c79779c9dc1aea6f0a6c10b6d_hd.jpg)
 
@@ -281,11 +108,9 @@ Owner：获得锁的线程称为Owner
 
 **wait** 调用的时候需要先获得该 Object 的锁，调用 wait 后，会把当前的锁释放掉同时阻塞住；当别的线程调用该 Object 的 notify/notifyAll 之后，有可能得到 CPU，同时重新获得锁。由于有如上描述锁的设计，只要在 notify 的时候首先获得锁，就可以保证 notify 的时候或者处于 wait 线程获得锁之前，或者正在 wait，从而保证不会丢掉这次 notify 信息。
 
-
-
 ------
 
-### [java中的notify和notifyAll有什么区别？](https://www.zhihu.com/question/37601861)
+## Java中的notify和notifyAll有什么区别？
 
 [notify和notifyAll的区别](https://www.zhihu.com/question/37601861)
 
@@ -310,9 +135,7 @@ Owner：获得锁的线程称为Owner
 
 ------
 
-### 什么情况会发生死锁，死锁的处理方法
-
-[死锁产生的条件和处理死锁的方法](https://blog.csdn.net/a1414345/article/details/70215628)
+## 什么情况会发生死锁，死锁的处理方法
 
 **死锁（Deadlock）**就是指两个或两个以上的进程在执行的过程中，由于竞争资源或者由于彼此通信而造成的一种阻塞的现象，若无外力作用，它们都将无法推进下去，此时称系统处于死锁状态或系统产生了死锁，这些永远在互相等待的进程称为死锁进程。
 
@@ -329,7 +152,7 @@ Owner：获得锁的线程称为Owner
 
 前三个条件是死锁存在的必要条件，但不是充分条件。第四个条件实际上是前三个条件的潜在结果，即假设前三个条件存在，可能发生的一系列事情会导致不可解的循环等待。这四个条件连在一起构成了死锁的充分必要条件。
 
-#### 死锁处理
+## 死锁处理
 
 有三种方法可以处理死锁。
 
@@ -339,7 +162,7 @@ Owner：获得锁的线程称为Owner
 
 ------
 
-### [Cookie和Session的区别](https://blog.csdn.net/baidu_31337243/article/details/48954445)
+## Cookie和Session的区别
 
 - cookie 和session 的区别：
 
@@ -365,7 +188,7 @@ Cookie是客户端技术，程序把每个用户的数据以cookie的形式写�
 
 Session是服务器端技术，利用这个技术，服务器在运行时可以为每一个用户的浏览器创建一个其独享的session对象，由于session为用户浏览器独享，所以用户在访问服务器的web资源时，可以把各自的数据放在各自的session中，当用户再去访问服务器中的其它web资源时，其它web资源再从用户各自的session中取出数据为用户服务。
 
-### 怎么防止Cookie欺骗
+## 怎么防止Cookie欺骗
 
 [防止cookies欺骗－－相关解决方案](https://blog.csdn.net/sollion/article/details/6769798)
 
@@ -400,15 +223,15 @@ response.COOKIES("LOGIN")("MD5COOKIES")=MD5(服务器IP&客户IP&客户ID) ///�
 
 ------
 
-### [从用户在浏览器输入域名，到浏览器显示出页面的过程](https://blog.csdn.net/qq_24147051/article/details/81115806)
+## [从用户在浏览器输入域名，到浏览器显示出页面的过程](https://blog.csdn.net/qq_24147051/article/details/81115806)
 
 
 
 ---
 
-## 二面（全程怼项目，压力面）：
+# 二面（全程怼项目，压力面）
 
-### [1. 谈谈对UDF的理解，写UDF的目的，代码怎么写的](https://blog.csdn.net/WYpersist/article/details/80314352)
+## [谈谈对UDF的理解，写UDF的目的，代码怎么写的](https://blog.csdn.net/WYpersist/article/details/80314352)
 
 [UDFgithub](https://github.com/sotowang/udf)
 
@@ -437,7 +260,7 @@ Hive中有3种UDF：
 8、看你春招笔试的时候***作系统得了0分是怎么做到的
 ```
 
-## 三面（接着怼项目）：
+# 三面
 
 ```
 1、看你写了实时计算的程序，你怎么保证计算的结果肯定是对的
@@ -447,6 +270,6 @@ Hive中有3种UDF：
 5、kafka监控是怎么做的，kafka中能彻底删除数据吗，怎么做的
 ```
 
-## 面委会（全程聊天）：
+# 面委会（全程聊天）
 
 - 平时是怎么学习的，爱看哪些博客，怎么看待加班，有没有成为leader的潜力
