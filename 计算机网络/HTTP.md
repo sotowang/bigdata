@@ -95,8 +95,10 @@
   * 服务器将长时间没有活动的Session从服务器内存中清除.Tomcat默认失效时间为20分钟
   * 调用Session的invalidate方法
 
+# 如何防止cookie欺骗
 
-
+* cookie加个加密算法
+* 加个时间戳和IP戳,让cookie在同个IP下一定时间内失效
 
 # token
 

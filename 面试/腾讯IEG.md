@@ -80,44 +80,18 @@ s2 = "s2";
 
 ## notify和notifyAll有什么区别
 
-## 什么情况会发生死锁，死锁的处理方法
+## 什么情况会发生死锁
+
+## 死锁的处理方法
 
 ## Cookie和Session的区别
 
-- cookie 和session 的区别：
-
-1、cookie数据存放在客户的浏览器上，session数据放在[服务器](https://www.baidu.com/s?wd=%E6%9C%8D%E5%8A%A1%E5%99%A8&tn=24004469_oem_dg&rsv_dl=gh_pl_sl_csd)上。
-
-2、cookie不是很安全，别人可以分析存放在本地的COOKIE并进行COOKIE欺骗
-   考虑到安全应当使用session。
-
-3、session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能
-   考虑到减轻服务器性能方面，应当使用COOKIE。
-
-4、单个cookie保存的数据不能超过4K，很多浏览器都限制一个站点最多保存20个cookie。
-
-5、所以个人建议：
-   将登陆信息等重要信息存放为SESSION
-   其他信息如果需要保留，可以放在COOKIE中
-
-- Cookie
-
-Cookie是客户端技术，程序把每个用户的数据以cookie的形式写给用户各自的浏览器。当用户使用浏览器再去访问服务器中的web资源时，就会带着各自的数据去。这样，web资源处理的就是用户各自的数据了。 
-
-- Session
-
-Session是服务器端技术，利用这个技术，服务器在运行时可以为每一个用户的浏览器创建一个其独享的session对象，由于session为用户浏览器独享，所以用户在访问服务器的web资源时，可以把各自的数据放在各自的session中，当用户再去访问服务器中的其它web资源时，其它web资源再从用户各自的session中取出数据为用户服务。
-
 ## 怎么防止Cookie欺骗
 
-[防止cookies欺骗－－相关解决方案](https://blog.csdn.net/sollion/article/details/6769798)
-
-一、网络上提供的解决方案
-1、
 最简单的是给Cookies加个加密算法。
 保险点的是给Cookies加个时间戳和IP戳，实际就是让Cookies在同个IP下多少时间内失效。
 
-2、
+
 实际上是这样的，不管cookies里保存了多少个字段，最后，还要增加一个验证字段，或者称为MAC码。这个码是使用上面所有字段的内容合算出来的摘要再用一种加密算法，如3DES等使用服务器的主密钥进行加密。　这样，在从cookies得到数据后，再判断一下这个MAC码就可以知道整个cookies字段是否被篡改过。
 
 3、
@@ -140,8 +114,6 @@ response.COOKIES("LOGIN")("MD5COOKIES")=MD5(服务器IP&客户IP&客户ID) ///�
 6、   
 
 参考动网防Cookies欺骗，利用动态密码与Session+Cookies双重验证
-
-------
 
 ## [从用户在浏览器输入域名，到浏览器显示出页面的过程](https://blog.csdn.net/qq_24147051/article/details/81115806)
 
