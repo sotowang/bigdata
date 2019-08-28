@@ -137,13 +137,38 @@ switch 语句中的变量类型可以是：
 
 从 Java SE 7 开始，switch 支持字符串 String 类型了，同时 case 标签必须为字符串常量或字面量。
 
-# Java中String类为什么要设计成final
 
 
+# equals与hashCode()
 
+- 若两对象相同.equals返回true,则hashCode值必相同
+- 若两对象hashCode相同,equals可能为false
+- hashCode
+  - 对象比较时先进行hashCode比较.若不同,则没有后序比较必要.减少了equals比较次数,效率提高
+  - 集合中的例子
+    - set集合不重复且无序,在插入时会判断是否重复,若用equals则全都要比较一遍,使用hash表大大减少比较的次数
+- 为何必须重写hashCode
+  - equals根据对象的特征重写的
+  - 保证同一对象在equals相同时hashCode必相同
 
+# ==与equals的区别
 
+* equals由开发者自己写逻辑,默认为==
+* String重写了equals,比较字符是否相同
+* ==判断两个判断是否或实例是不是指向同一个内存空间
+* equals判断两个变量或实例所指向的内存空间的值是否相同
+* 基本数据类型用==比较的是值
 
+# sleep和wait的区别
 
+![](https://pic2.zhimg.com/80/bb4f380c79779c9dc1aea6f0a6c10b6d_hd.jpg)
 
+* sleep让线程阻塞,特定时间后转为非阻塞,重新获得CPU
+* wait调用时先获得该Object的锁,调用wait后将锁释放并阻塞.当调用notify/notifyAll后,可能获得CPU重新获得锁
 
+# notify与notifyAll的区别
+
+* 若线程调用wait()方法,线程则进入该对象等待池中,等待池中线程不会竞争锁
+* 当线程调用notifyAll()方法或notify().被唤醒的线程会进入对象的锁池中竞争锁
+* 优先级高的线程竞争到锁的概率大,若某线程没竞争到锁,则它会留在锁池;只有线程又调用wait(),它才回等待池中.拿到锁的线程执行完synchronized代码块,释放该锁后锁池中线程继续竞争
+* 唤醒线程即将线程由等待池加入锁池
