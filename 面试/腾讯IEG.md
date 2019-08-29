@@ -88,40 +88,9 @@ s2 = "s2";
 
 ## 怎么防止Cookie欺骗
 
-最简单的是给Cookies加个加密算法。
-保险点的是给Cookies加个时间戳和IP戳，实际就是让Cookies在同个IP下多少时间内失效。
+## 在浏览器输入域名，到浏览器显示出页面的过程
 
-
-实际上是这样的，不管cookies里保存了多少个字段，最后，还要增加一个验证字段，或者称为MAC码。这个码是使用上面所有字段的内容合算出来的摘要再用一种加密算法，如3DES等使用服务器的主密钥进行加密。　这样，在从cookies得到数据后，再判断一下这个MAC码就可以知道整个cookies字段是否被篡改过。
-
-3、
-我的个人意见:(想过,正准备用上)
-response.COOKIES("LOGIN")("MD5COOKIES")=MD5(服务器IP&客户IP&客户ID) ///等等，看着办吧。
-然后 if MD5(服务器IP&客户IP&客户ID)<>request.COOKIES("LOGIN")("MD5COOKIES") then 立即清除全部COOKIES end if
-补充：上面我写的那个，客户IP不能带上。我想可以改用网卡的MAC或硬盘的SN码。
-
-4、
-做项目的时候研究了一下，理论上应该是杜绝了cookies欺骗,我的做法如下： 
-自己做session，不用服务器的session功能，大网站都是这样做的，还可以做到session 
-跨站。 
-用户第一次访问站点的时候，程序产生一个随机sessionID,然后以cookies的方式发给客户端， 
-然后将该md5(sessionID+加上该客户断信息(如IP，端口等))和状态信息一起存入数据库， 
-这样就算cookies被盗，也有99%的把握不被欺骗。
-
-5、
-要防止这个，在写网页的时候就不要相信cookies，例如用户登陆时，记录用户的账号和密码到cookies里，其他叶面就不能直接使用这个cookies，特别是数据库操作，每个叶面都要把cookies与数据库中的用户名和账号对照，如果不吻合，就清空cookies，按非会员操作，即使吻合，进行数据库操作时也要检查字段，阻断注入。
-
-6、   
-
-参考动网防Cookies欺骗，利用动态密码与Session+Cookies双重验证
-
-## [从用户在浏览器输入域名，到浏览器显示出页面的过程](https://blog.csdn.net/qq_24147051/article/details/81115806)
-
-
-
----
-
-# 二面（全程怼项目，压力面）
+# 二面
 
 ## [谈谈对UDF的理解，写UDF的目的，代码怎么写的](https://blog.csdn.net/WYpersist/article/details/80314352)
 
