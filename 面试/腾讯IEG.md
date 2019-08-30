@@ -1,12 +1,17 @@
 # 一面
 
-```
-了不了解线程的局部变量，讲讲线程池参数
-8、Cookie和Session的区别，怎么防止Cookie欺骗
-9、从用户在浏览器输入域名，到浏览器显示出页面的过程
-```
+## 线程的局部变量
 
-------
+* ThreadLocal与ThreadLocalMap与内存泄漏与线程池下的不安全
+
+## 线程池参数
+
+* corePoolSize
+* maxmumPoolSize
+* allowCoreThreadTimeout
+* keepAliveTime
+* queueCapacity
+* BlockingQueue
 
 ## String、StringBuffer、StringBuilder的区别
 
@@ -92,34 +97,20 @@ s2 = "s2";
 
 # 二面
 
-## [谈谈对UDF的理解，写UDF的目的，代码怎么写的](https://blog.csdn.net/WYpersist/article/details/80314352)
+## 谈谈对UDF的理解，
 
-[UDFgithub](https://github.com/sotowang/udf)
-
-```
-Hive中有3种UDF：
-	UDF：操作单个数据行，产生单个数据行；
-	UDAF：操作多个数据行，产生一个数据行。
-	UDTF：操作一个数据行，产生多个数据行一个表作为输出。
-    
-用户构建的UDF使用过程如下：
-	第一步：继承UDF或者UDAF或者UDTF，实现特定的方法。
-	第二步：将写好的类打包为jar。如hivefirst.jar.
-	第三步：进入到Hive外壳环境中，利用add jar /home/hadoop/hivefirst.jar.注册该jar文件
-	第四步：为该类起一个别名，create temporary function mylength as 'com.whut.StringLength';这里注意UDF只是为这个Hive会话临时定义的。
-	第五步：在select中使用mylength();
-```
+## 写UDF的目的，代码怎么写
 
 ```
-1、看你写过UDF，谈谈对UDF的理解，写UDF的目的，代码怎么写的
-2、改造hive表后怎么进行数据一致性校验的，有没有自动化流程
-3、看你读过kafka源码，讲讲kafka broker的源码里面你最熟悉的类，以及这个类的主要方法，用的什么设计模式
 4、项目里面从数据采集到最终的数据可视化，每个环节都有可能丢数据，怎么判断数据有没有丢，如果丢了如何定位到在哪一个环节丢的
 5、项目里面为什么要用kafka stream做实时计算，而不是用spark或者flink，kafka sql和spark sql了解过吗
 6、项目里面用到了时序数据库opentsdb，为什么要用这个，有没有跟其它的时序数据库对比过
 7、平时逛不逛社区，有没有参与过开源项目
-8、看你春招笔试的时候***作系统得了0分是怎么做到的
 ```
+
+## 改造hive表后怎么进行数据一致性校验的，有没有自动化流程
+
+## 讲讲kafka broker的源码里面你最熟悉的类，以及这个类的主要方法，用的什么设计模式
 
 # 三面
 
