@@ -80,16 +80,22 @@
 
 # ThreadLocal
 
-* 类似HashMap的数据结构,可以保存"key:value"键值对,一个ThreadLocal只能保存一个,并且各个线程的数据互不干扰
-
-* 可能导致,内存泄漏(Entry为弱引用,实际不会造成内存泄漏)
-
+* 为线程提供局部变量的工具类,就是为线程胆代一个线程私有的变量副本,这样多个线程可随意更改线程局部变量,不会影响其他线程
+* ThreadLocal提供的是一个**浅拷贝**,若变量是引用类型,需要考虑它内部的状态是否会改变,可通过重写ThreadLocal的initialValue()函数来实现自己的**深拷贝**,建议在ThreadLocal时一开始就重写该函数
+  * 浅拷贝
+    * 对基本数据类型进行值传递,对引用数据类型进行引用传递
+  * 深拷贝
+    * 对基本数据类型进行值传递,对引用数据类型,创建一个新的对象,并复制其内容
+* 内有ThreadLocalMap的内部类,类似HashMap的数据结构,key为ThreadLocal对象而且还使用了WeakReference,一个ThreadLocal只能保存一个,并且各个线程的数据互不干扰
+* 内存泄漏
+  * 当ThreadLocal被设置为null,由于ThreadLocalMap持有ThreadLocal的弱引用,即便不手动删除,ThreadLocal仍会被回收,ThreadLocalMap在之后调用`set()` `entey()` `getEntry()`和`remove()`时会清除所有key为null的Entry
+  * ThreadLocalMap仅含有这些被动措施来补救内存泄漏问题,如果在之后没调用上述函数的话伯会有泄漏问题
+  * 在使用线程池的情况下,如果不用时清理,戳破泄漏事小,甚至还会产生逻辑上的问题
+  * 为了安全使用ThreadLocal,必须在使用完ThreadLocal后调用remove清理无用Entry
 * set方法
-
   * 通过当前线程对象thread获取该thread所维护的threadLocalMap
   * 若threadLocalMap不为null,则以threadLocal实例为key,值为value的键值对存入threadLocalMap
   * 若threadLocalMap为null的话，就新建threadLocalMap然后在以threadLocal为键，值为value的键值对存入即可
-
 * get方法
 
   * 通过当前线程thread实例获取到它所维护的threadLocalMap，

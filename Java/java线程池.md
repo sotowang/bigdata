@@ -28,10 +28,13 @@
 * 线程池的核心的两个队列
   * 线程等待池，即线程队列BlockingQueue
   * 任务处理池（PoolWorker），即正在工作的Thread列表（HashSet<Worker>）
+
 * corePoolSize
   * 当线程池中的线程数目达到corePoolSize后，就会把到达的任务放到**缓存队列**当中。**核心线程在allowCoreThreadTimeout被设置为true时会超时退出，默认情况下不会退出**。
-* maxPoolSize
+
+* maximumPoolSize
   * 线程不够用时能够创建的最大线程数
+
 * queueCapacity
   * 任务队列的长度要根据核心线程数，以及系统对任务响应时间的要求有关。
   * 队列长度可以设置为 所有核心线程每秒处理任务数 * 每个任务响应时间 = 每秒任务总响应时间 ，即(corePoolSize*threadtasks)*responsetime： (20*10)*2=400，即队列长度可设置为400。
