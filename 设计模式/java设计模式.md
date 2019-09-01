@@ -19,7 +19,7 @@
 - 饿汉式
 
   ```java
-  public claass Singleton{
+  public class Singleton{
       private static Singleton instance = new Singleton();
       private Singleton(){}
       public static Singleton getInstance(){
@@ -31,7 +31,13 @@
 * 懒汉式
 
   ```java
+  //DCL模式（Double Check Lock双端检锁机制）
   public class Singleton{
+      
+      //加volatile是因为防止指令重排
+      //memory = allocate(); //1.分配对象内存空间
+      //instance(memory); //2.初始化对象
+      //instance = memory; //3.设置instance指向刚分配的内存地址,此时Instance ！=null，但instance还未完成初始化
       private static volatile Singleton instance;
       private Singleton(){}
       public static Singleton getInstance(){

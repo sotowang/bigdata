@@ -1,19 +1,63 @@
 # Collection
 
-* List
-  * ArrayList
-  * LinkedList
-  * Vector
-* Set
-  * HashSet
-    * 保证元素唯一性
-  * TreeSet
-    * 保证元素排序
-* Queue
+## List
+
+### ArrayList
+
+* 实现List接口，底层使用数组保存所有元素，操作基本上是对数组的操作a
+
+  ```java
+  transient Object[] elementData; 
+  ```
+
+* ArrayList三种构造器
+
+  * 默认空列表，初始容量为10
+    * 若没指定ArrayList大小，第一次调用add时，会初始化数组容量为10
+  * 指定初始容量的空列表
+  * 指定collection元素的列表，按照collection迭代器返回它们的顺序排列
+
+* 存储
+
+  * `add(E e)`
+    * 将指定元素添加至列表尾
+    * `ensureCapacityInternal()`会检查添加后元素个数是否会超过当前数组长度，若超出则扩容
+  * `add(int index,E element)`
+  * addAll(Collection<? extends E> c)
+
+* 扩容
+
+  * 将老数组无数拷贝进新数组，容量为原容量的1.5倍，实际使用应避免数组扩张
+  * 当可预知保存元素数量时，在构造ArrayList时就指定容量，以避免扩容，或根据实际需求，通过调用`ensureCapacity()`手动增加容量
+
+* 线程不安全
+
+  * 故障现象`java.util.ConcurrentModificationException`并发修改异常
+  * 导致原因
+    * 
+  * 解决方案
+    * 使用`Vector`
+    * `Collections.synchronizedList(new ArrayList<>());`
+    * 写时复制`new CopyOnWriteArrayList<>();`
+      * 往一个 容器添加元素时不直接在容器添加，而是将当前容器Object[]进行copy复制出一个新容器`Object[] newElements`,然后在新容器中添加元素，添加完成后，将原容器引用指向新粉吕`setArray(nweElements)`
+      * 好处是可对容器进行并发读而不需加锁，读写分离的思想
+
+### LinkedList
+
+### Vector
+
+## Set
+
+* HashSet
+  * 保证元素唯一性
+* TreeSet
+  * 保证元素排序
+
+## Queue
 
 # Map
 
-# HashMap
+## HashMap
 
 HashMap 底层是基于 **`数组 + 链表`** 组成的，不过在 jdk1.7 和 1.8 中具体实现稍有不同。
 
@@ -96,19 +140,19 @@ Map
 
 
 
-# HashSet
+## HashSet
 
 对于 HashSet 而言，它是基于 HashMap 实现的，底层采用 HashMap 来保存元素
 
 由于 HashMap 的 put() 方法添加 key-value 对时，当新放入 HashMap 的 Entry 中 key 与集合中原有 Entry 的 key 相同（hashCode()返回值相等，通过 equals 比较也返回 true），新添加的 Entry 的 value 会将覆盖原来 Entry 的 value（HashSet 中的 value 都是`PRESENT`），但 key 不会有任何改变，因此**如果向 HashSet 中添加一个已经存在的元素时，新添加的集合元素将不会被放入 HashMap中，原来的元素也不会有任何改变，这也就满足了 Set 中元素不重复的特性。**
 
-# ConcurrentHashMap
+## ConcurrentHashMap
 
 * Java5 使用segment分段锁
 * java8 CAS+synchronized使锁更细化
 * 数组+链表+红黑树
 
-## put方法的逻辑
+### put方法的逻辑
 
 * 如果key或者value为null，则抛出空指针异常； 
 * 如果table为null或者table的长度为0，则初始化table，调用initTable()方法。
@@ -119,7 +163,7 @@ Map
   * 如果是TreeNode（树型结构）则执行树添加操作
 * 判断链表长度已经达到临界值8，当节点数超过这个值就需要把链表转换为树结构
 
-## get方法的逻辑
+### get方法的逻辑
 
 - ConcurrentHashMap的get方法就是从Hash表中读取数据，而且与扩容不冲突。该方法没有同步锁。 
 - 通过键值的hash计算索引位置，如果满足条件，直接返回对应的值； 
