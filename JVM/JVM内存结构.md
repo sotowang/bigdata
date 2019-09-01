@@ -210,6 +210,9 @@ public class HelloWorld {
   * 可见性(volatile)
     * JMM决定一个线程对共享变量的写入何时对另一个线程可见。
   * 原子性
+    * synchronized
+    * AtomicInteger
+      * `getAndIncrement()`
   * 有序性(volatile禁止指令重排)
 * JMM与Java内存区域划分是不同的概念层次
   - JMM描述的是一组规则,围绕**原子性**,**有序性**,**可见性**展开
