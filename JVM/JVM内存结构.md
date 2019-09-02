@@ -1,11 +1,38 @@
-# JVM三大性能调优参数
+# JVM调优参数
 
-* -Xss 
-  * 每个线程的堆栈大小。
-* -Xms
-  * 堆的初始值
-* -Xmx
-  * 堆能达到的最大值
+## JVM参数类型
+
+* 标配参数
+* X参数（了解）
+  * `-Xint`解释执行
+  * `-Xcomp`第一次使用就编译成本地代码
+  * `-Xmixed`混合模式
+* xx参数
+  * Boolean类型
+    * `+开启` ` -关闭`
+  * KV设值类型
+    * `-XX:key=xx`
+    * -Xss 
+      * 每个线程的堆栈大小。
+    * -Xms
+      * `-XX:InitialHeapSize`
+      * 堆的初始值
+    * -Xmx
+      * `-XX:MaxHeapSize`
+      * 堆能达到的最大值
+* JVM参数查看
+  * `jinfo -flag ThreadStackSize 22063`
+  * 初始参数
+    * `java -XX:+PrintFlagsInitial`
+  * 修改后
+    * `java -XX:+PrintFlagsFinal`
+    * `java -XX:+PrintCommandLineFlags -version`
+    * `=`没改过  `：=`人为改过
+
+## 常用JVM参数
+
+* `-Xmn`设置年轻代大小
+* `-XX：MetaspaceSize`元空间大小
 
 # Java内存模型中堆和栈的区别
 
@@ -36,10 +63,12 @@
   * 堆仅支持动态分配
 * 栈的效率比堆高
 
-# 元空间（metaSpace），堆，线程独占部分间的联系-内存角度
+# metaSpace/堆/线程独占部分
 
-* MetaSpace
+* MetaSpace（java1.8）
   * 类被加载进来时，MetaSpace保存Class对象信息，Method，属性信息
+  * 本质与永久代类似，对JVM规范中方法区的实现
+  * 元空间不在虚拟机中，使用本地内存。大小受本地内存限制
 * Java堆
   * Java堆加载的是对象实例（Object），String实例（如果有）
 * 线程独占
