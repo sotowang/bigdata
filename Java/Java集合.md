@@ -70,6 +70,34 @@
 
 ## Queue
 
+### BlockingQueue
+
+> 当阻塞队列为空时，从队列获取元素时操作被阻塞
+>
+> 当队列满时，添加元素操作被阻塞
+
+| 方法类型 | 抛出异常   | 特殊值     | 阻塞     | 超时                 |
+| -------- | ---------- | ---------- | -------- | -------------------- |
+| 插入     | `add(e)`   | `offer(e)` | `put(e)` | `offer(e,time,unit)` |
+| 移除     | `remove()` | `poll()`   | `take()` | `poll(time,unit)`    |
+| 检查     | element()  | `peek()`   | 不可用   | 不可用               |
+
+- ArrayBlockingQueue
+  - 一个由数组结构组成的有界阻塞队列
+- LinkedBlockingQueue
+  - 一个由链表结构组成的有界(Integer.MAX_VALUE)/无界阻塞队列
+- SynchronousQueue
+  - 一个不存储元素的阻塞队列，也即单个元素的队列,产生一个消费一个
+
+- PriorityBlockingQueue
+  - 一个支持优先级排序的无界阻塞队列
+- DelayQueue
+  - 一个使用优先级队列组成的延迟无界阻塞队列
+- LinkedTransferQueue
+  - 一个由链表结构级成的无界阻塞队列
+- LinkedBlockingDeque
+  - 一个由链表结构组成的**双向**阻塞队列
+
 # Map
 
 ## HashMap
