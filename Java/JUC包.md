@@ -26,31 +26,71 @@
     * LinkedBlockingDeque
       * 一个由链表结构组成的双向阻塞队列
 
-
-
-
-
 # 并发工具类
 
-`CountDownLatch` 是能使一组线程等另一组线程都跑完了再继续跑
+## CountDownLatch
 
-CountDownLatch的最简单使用，CountDownLatch同步计数器从5开始计数，分别对应5个子线程的业务完成情况。每当一个子线程业务完成后，CountDownLatch同步计数器就countDown一次。直到count等于0时，这时主线程上面的await()方法解除等待/阻塞状态，继续执行。这里要注意一下：
+* 让一组线程等另一组线程跑完再继续跑
+* 每当一子线程完成任务，同步计数器就`countDown()`一次，直到count为0，此时主线程上的`await()`方法解除等待/阻塞状态，继续执行
+  * 在调用await时，若同步计数器的count刚好为0，此时不会进入等待/阻塞状态
+  * 同一线程也可以先调用countDown再调用`await()`
 
-- 不是说只能有一次await方法的调用，而是同一时间可以有多个线程调用了await方法。只要在count还不等于0时，某个线程调用了await方法，它都会进入等待/阻塞状态。
-- 在调用await时，如果CountDownLatch同步计数器的count已经等于0了，则await方法不会进入等待/阻塞状态。
-- await调用和countDown调用不是说必须处于不同线程。同一线程中，您可以先调用countDown然后再调用await进入等待/阻塞。CountDownLatch同步计数器会始终遵循上两条工作原则。
-- 在使用CountDownLatch同步计数器时，您无需考虑脏数据的问题。CountDownLatch同步计数器是线程安全的。
+- CountDownLatch同步计数器是线程安全的,无需考虑脏数据的问题。
 
- 
+  ```java
+  CountDownLatch countDownLatch = new CountDownLarch(6);
+  //在线程内执行
+  countDownLatch.countDown();
+  //在主线程下执行
+  countDownLarch.await();
+  ```
 
-` CyclicBarrier` 能够使一组线程在一个时间点上达到同步，可以是一起开始执行全部任务或者一部分任务。同时，它是可以循环使用的。
+##  CyclicBarrier
 
-* 总结
+*  让一组线程在一个时间点上达到同步，可以是一起开始执行全部/部分任务。
 
-CountDownLatch和CyclicBarrier都能够实现线程之间的等待，只不过它们侧重点不同：
+* 与`CountDownLatch`作用相反
 
-CountDownLatch一般用于某个线程A等待若干个其他线程执行完任务之后，它才执行；
+* CyclicBarrier可以重用，CountDownLatch不可
 
-而CyclicBarrier一般用于一组线程互相等待至某个状态，然后这一组线程再同时执行；
+  ```java
+  CyclicBarrier cyclicBarrier = new CyclicBarrier(int parties,Runnable barrierAction)；
+  //线程内执行  先到被阻塞
+  cyclicBarrier.await();
+  ```
 
-另外，CountDownLatch是不能够重用的，而CyclicBarrier是可以重用的。
+## Semaphore
+
+* 使用场景
+
+  * 多个共享资源的互斥使用
+  * 并发线程数的控制（走一个来一个）
+
+  ```java
+  Semaphore semaphore = new Semaphore(3); //模拟3个停车位
+  //线程内执行
+  semaphore.acquire(); //抢到车位
+  //线程内执行
+  semaphore.release();
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
