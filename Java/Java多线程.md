@@ -1,26 +1,52 @@
-# Thread中的start和run方法的区别
+# 创建多线程的方式
+
+- 继承Thread类
+- 实现Runnable接口
+- 实现Callable接口
+- 使用线程池的方式
+
+# Thread
+
+## start()和run()的区别
 
 * 调用start()方法会创建一个新的子线程并启动
 * run() 方法只是Thread的一个普通方法的调用
 
-# Thread和Runnable的关系
+## Thread和Runnable的关系
 
 * Thread是实现了Runnable接口的类，使得run支持多线程
 * 因类的单一继承原则，推荐多使用Runnable接口
 
-# 如何给run() 方法传参
+## 如何给run() 方法传参
 
 * 构造函数传参
 * 成员变量传参
 * 回调函数传参
 
-# 如何实现处理线程的返回值
+## 如何实现处理线程的返回值
 
 * 主线程等待法
 * 使用Thread类的join()阻塞当前线程以等待子线程处理完毕
 * 通过Callable接口实现：
   * 通过FutureTask 
   * 通过线程池 获取 Callable实例
+
+# Runnable
+
+# Callable
+
+* 运行方式
+
+  ```java
+  FutureTask<Integer> futureTask = new FutureTask<>(new MyThread() implements Callable);
+  Thread t1 = new Thread(futureTask,"A1");
+  t1.start();
+  futureTask.get(); //建议放在最后面，否则会阻塞
+  ```
+
+  
+
+
 
 # 线程的状态
 
