@@ -1,8 +1,9 @@
-# 为什么要使用线程池
+# 为什么用线程池
 
->  **线程池的概念是Executor这个接口**,具体实现为ThreadPoolExecutor类,对线程池的配置，就是对ThreadPoolExecutor构造函数的参数的配置
+* 线程池的底层为`ThreadPoolExcutor`类，对线程池的配置实际是对该类构造函数的配置
 
-- 降低资源消耗
+- 降低资源消耗，重复利用已建线程降低创建销毁的消耗
+- 提高响应速度。任务到达时，可以不需要等到线程创建就立即执行
 - 提高线程的可管理性
 
 # Fork/Join框架
@@ -23,29 +24,24 @@
 
 **如果一个变量是局部变量**，那么每个线程都会有一个该局部变量的拷贝（即便是同一个对象中的方法的局部变量，也会对每一个线程有一个拷贝），一个线程对该局部变量的改变不会影响到其他线程。
 
-# 线程池参数
-
-* 线程池的核心的两个队列
-  * 线程等待池，即线程队列BlockingQueue
-  * 任务处理池（PoolWorker），即正在工作的Thread列表（HashSet<Worker>）
+# 线程池参数(7个)
 
 * corePoolSize
-  * 当线程池中的线程数目达到corePoolSize后，就会把到达的任务放到**缓存队列**当中。**核心线程在allowCoreThreadTimeout被设置为true时会超时退出，默认情况下不会退出**。
-
+  * 线程数目达到corePoolSize，会把到达的任务放到**缓存队列**当中
+  * 核心线程在allowCoreThreadTimeout被设置为true时会超时退出，默认情况下不会退出。
 * maximumPoolSize
   * 线程不够用时能够创建的最大线程数
-
-* queueCapacity
-  * 任务队列的长度要根据核心线程数，以及系统对任务响应时间的要求有关。
-  * 队列长度可以设置为 所有核心线程每秒处理任务数 * 每个任务响应时间 = 每秒任务总响应时间 ，即(corePoolSize*threadtasks)*responsetime： (20*10)*2=400，即队列长度可设置为400。
-
 * keepAliveTime
 
   * 当线程空闲时间达到keepAliveTime，该线程会退出，直到线程数量等于corePoolSize。如果allowCoreThreadTimeout设置为true，则所有线程均会退出直到线程数量为0。
-
-* allowCoreThreadTimeout
-
-  是否允许核心线程空闲退出，默认值为false。
+* unit
+  * keepAliveTime的单位
+* workQueue
+  * 任务队列，被提交但尚未被执行的任务
+* threadFactory
+  * 生成线程池中工作线程的线程工厂，用于创建线程一般默认的即可
+* handler
+  * 拒绝策略，当队列满了且工作线程>=maximumPoolSize
 
 
 # ThreadPoolExecutor执行的策略
@@ -97,13 +93,13 @@
   * 无法响应中断的任务可能永远无法终止
   * shutdownNow会首先将线程池的状态设置成STOP，然后尝试停止所有的正在执行或暂停任务的线程，并返回等待执行任务的列表。
 
-# 线程池大小
+# 线程池大小配置
 
 * CPU密集型
 
-  * 线程数=按照核数或者核数+1设定
+  * `线程数=按照核数或者核数+1`设定
 * I/O密集型
-  * 线程数=CPU核数*(1+平均等待时间/平均工作时间)
+  * `线程数=CPU核数*(1+平均等待时间/平均工作时间)`
 
 # 线程池主要组件
 
@@ -120,7 +116,7 @@
 
 # 常见四种线程池
 
-* CachedThreadPool()   可缓存线程池
+* `CachedThreadPool() `  可缓存线程池
 
   * 线程数无限制
 
@@ -132,7 +128,7 @@
     ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
     ```
 
-* FixedThreadPool()   定长线程池
+* `FixedThreadPool()`   定长线程池
 
   1. 可控制线程最大并发数（同时执行的线程数）
   * 超出的线程会在队列中等待
@@ -142,7 +138,7 @@
     ExecutorService fixedThreadPool = Executors.newFixedThreadPool(int nThreads);
     ```
 
-* ScheduledThreadPool()  定时线程池
+* `ScheduledThreadPool()`  定时线程池
 
   * 支持定时及周期性任务执行。
 
@@ -153,7 +149,7 @@
 
     
 
-* SingleThreadPool()  单线程化的线程池
+* `SingleThreadPool() ` 单线程化的线程池
 
   * 有且仅有一个工作线程执行任务
 
@@ -163,12 +159,7 @@
     ExecutorService singleThreadPool = Executors.newSingleThreadPool();
     ```
 
-# 创建多线程的方式
 
-*  继承Thread类
-*  实现Runnable接口
-*  实现Callable接口
-*  使用线程池的方式
 
 # 解决线程安全问题方式
 
