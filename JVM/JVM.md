@@ -1,27 +1,6 @@
-# 谈谈你对Java的理解
-
-* 平台无关性
-  * 编译时
-  * 运行时
-* GC
-* 语言特性
-  * 泛型
-  * 反射
-  * lambda表达式
-* 面向对象
-  * 封装
-  * 继承
-  * 多态
-* 类库
-* 异常处理
-
-
-
 # JDK  JRE  JVM 关系
 
 JDK包含JRE  JRE包含JVM
-
-
 
 # 内存溢出问题的解决
 > -XX:+HeapDumpOnOutOfMemoryError
@@ -31,9 +10,7 @@ JDK包含JRE  JRE包含JVM
 ```
 
 # JVM监控工具
-> jconsole
-
-[JVM内存区域详解（Eden Space、Survivor Space、Old Gen、Code Cache和Perm Gen）](https://blog.csdn.net/shiyong1949/article/details/52585256)
+jconsole
 
 # Java虚拟机
 * Sun Classic VM(第一个Java虚拟机)   --->已过时
@@ -249,7 +226,7 @@ Java堆中划分出一块内存来作为句柄池，引用中存储对象的句�
 
 什么是循环引用问题
 
-```
+```java
 public class GCTest {
 
     private Object instance;
@@ -281,20 +258,6 @@ public class GCTest {
 ![](https://images2017.cnblogs.com/blog/1072930/201712/1072930-20171231231426601-602197925.png)
 
 ### 判定垃圾对象之可达性分析算法
-这个算法的基本思路就是通过一系列的称谓“GC Roots"的对象作为起始点，从这些节点开始向下搜索，搜索所有走过的路径为引用链，当一个对象到GC Roots没有任何引用链相连时，则证明此对象时不可用的：
-
-注：Java语言中，可作为GC Roots的对象包括下面几种：
-
-```
-1) 虚拟机栈(栈帧中的本地变量表)中引用的对象
-
-2) 方法区中类静态属性引用的对象
-
-3) 方法区中常量引用的对象
-
-4) 本地方法栈中JNI(即一般说的Native方法)引用的对象
-```
-
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180101000505460-1654287575.png)
 
 如上图，以栈中的引用为GC ROOTS，对象3和对象4随便彼此引用，但是GC ROOTS无法搜索到，所以对象3和对象4会被当成垃圾清理。
@@ -302,8 +265,6 @@ public class GCTest {
 ---
 
 ## 垃圾回收算法
-
-[垃圾回收算法](https://www.cnblogs.com/shyroke/p/8167777.html)
 
 ### 标记-清除算法
 

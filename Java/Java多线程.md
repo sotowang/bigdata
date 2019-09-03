@@ -116,8 +116,8 @@
 * 内有ThreadLocalMap的内部类,类似HashMap的数据结构,key为ThreadLocal对象而且还使用了WeakReference,一个ThreadLocal只能保存一个,并且各个线程的数据互不干扰
 * 内存泄漏
   * 当ThreadLocal被设置为null,由于ThreadLocalMap持有ThreadLocal的弱引用,即便不手动删除,ThreadLocal仍会被回收,ThreadLocalMap在之后调用`set()` `entey()` `getEntry()`和`remove()`时会清除所有key为null的Entry
-  * ThreadLocalMap仅含有这些被动措施来补救内存泄漏问题,如果在之后没调用上述函数的话伯会有泄漏问题
-  * 在使用线程池的情况下,如果不用时清理,戳破泄漏事小,甚至还会产生逻辑上的问题
+  * ThreadLocalMap仅含有这些被动措施来补救内存泄漏问题,如果在之后没调用上述函数的话会有泄漏问题
+  * 在使用线程池的情况下,如果不用时清理,内存泄漏事小,甚至还会产生逻辑上的问题
   * 为了安全使用ThreadLocal,必须在使用完ThreadLocal后调用remove清理无用Entry
 * set方法
   * 通过当前线程对象thread获取该thread所维护的threadLocalMap

@@ -1,23 +1,13 @@
 # Error和Exception的区别
 
-* Error：程序无法处理的系统错误，编译器不做检查
+* Error：程序无法处理的系统错误，编译器不做检查,JVM承担的责任
 * Exception：程序可以处理的异常，捕获后可能恢复
-* 总结：前者是程序无法处理的错误，后者是可以处理的异常
+  * RuntimeException
+    * 不可预知的，程序应当自行避免，由程序承担责任
+      * 空指针异常，数组下标越界
+  * 非RuntimeException
 
-**RuntimeException**
-
-* 不可预知的，程序应当自行避免
-  * 空指针异常，数组下标越界
-
-**非RuntimeException**
-
-**从责任角度看**
-
-* Error属于JVM需要负担的责任
-* RuntimeException是程序应该负担的责任
-* CheckedException可检查异常是Java编译器应该负担的责任
-
-# 常见Error以及Exception
+  * CheckedException可检查异常是Java编译器应该负担的责任
 
 ## RuntimeException
 
@@ -34,12 +24,24 @@
 
 ## Error
 
-* NoClassDefFoundError
+* `NoClassDefFoundError`
   * 类依赖的class或者jar不存在
   * 类文件存在，但是存在不同的域中
   * 大小写问题，javac编译的时候是无视大小写的，很有可能编译出的class文件与想要的不一样
-* StackOverflowError - 深递归导致栈被耗尽而抛出的异常
-* OutOfMemoryError - 内存溢出异常
+* `StackOverflowError` 
+* `OutOfMemoryError` 
+  * `Java heap space`
+  * `GC overhead limit exceeded`
+    * 超过98%的时间用来做GC并且回收不到2%内存
+  * `Direct buffer memory`
+    * 堆内存充足，本地内存用尽；因堆内存使用少，不需要GC，`DirectByteBuffer`对象就不会被回收
+  * `unable to create new native thread`
+    * 原因
+      * 一个应用进程创建多个线程，超过系统极限（Linux默认1024）
+    * 解决
+      * 降低自身应用线程数
+      * 修改linux服务器配置
+  * `Metaspace`
 
 # Java的异常处理机制
 
@@ -48,7 +50,7 @@
 * 捕获异常
   * 寻找合适的异常处理器处理异常，否则终止运行
 
-# 高效主流的异常处理框架
+# 异常处理框架
 
 在用户看来，应用系统发生的所有异常都是应用系统内部的异常
 

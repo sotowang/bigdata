@@ -165,19 +165,21 @@ G1收集器
 * 将整个Java堆内存划分成多个大小相等的Region
 * 年轻代和老年代不再物理隔离
 
-# Object的finalize()方法的作用是否与C++的析构函数作用相同?
+# finalize()方法
 
-* 不同,析构函数调用确定,而它是不确定的
-* 将未被引用的对象放置于F-Queue队列
-* 方法执行随时可能会被终止
-* 给予对象一次重生机会
+* Object的protected方法，子类可以覆盖以实现资源清理工作，GC在回收对象之前调用该方法
+* 可用来清理本地对象JNI
+* 确保某非内存资源释放的一个补充，在finalize方法中显示调用其他资源释放方法
+* 对象再生
+  * 将待回收对象赋值给GC Roots可达的对象引用，从而达到再生
+* 至多由GC执行一次
 
-# Java中的强引用,软引用,弱引用,虚引用有什么用?
+# 强引用/软引用/弱引用/虚引用
 
 * 强引用
 
   * 最普遍的引用
-    * Object obj = new Object()
+    * `Object obj = new Object()`
   * 抛出OutOfMemoryError终止程序也不会回收具有强引用的对象
   * 通过将对象是设置为null来弱化引用,使其被回收
 
@@ -185,13 +187,13 @@ G1收集器
 
     * 对象处在有用但非必须的状态
 
-    * 只有当内存空间不足时,GC会回收该引用的对象的内存
+    * 只有当内存空间不足时,GC会回收该内存
 
     * 可以用来实现高速缓存
 
       ```java
       String str = new String("abc") //强引用
-      SoftReference<String> sofeRef = new SoftReference<String>(str); //软引用
+      SoftReference<String> softRef = new SoftReference<String>(str); //软引用
       ```
 
 * 弱引用
@@ -214,7 +216,7 @@ G1收集器
   * 不会决定对象的生命周期
   * 任何时候都可能被垃圾收集器回收
   * 跟踪对象被垃圾收集器回收的活动,起哨兵作用
-  * 必须和引用队列ReferenceQueue联合使用
+  * 必须和引用队列ReferenceQueue联合使用,被回收时对象将被放到引用队列中保存
 
   ```java
   String str = new String("abc");
