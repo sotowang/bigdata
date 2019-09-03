@@ -33,6 +33,15 @@
 
 * `-Xmn`设置年轻代大小
 * `-XX：MetaspaceSize`元空间大小
+* `-XX:+PrintGCDetails`
+* `-XX:SurvivorRatio`
+  * 设置新生代中eden和s0/s1空间的比例
+  * `-XX:SurvivorRatio=8,Eden:S0:S1=8:1:1` 
+* `-XX:NewRatio`
+  * 设置老年代的占比
+  * `-XX:NewRatio=2`新生代占1.老年代占2
+* `-XX:MaxTenuringThreshold`
+  * 设置垃圾最大年龄，默认15
 
 # Java内存模型中堆和栈的区别
 
@@ -78,22 +87,19 @@
   * 本地栈
   * 程序计数器
 
-# 不同JDK版本之间intern()方法的区别
+# intern()方法
 
 * JDK6
-  * 当调用intern方法时，如果字符串常量池先前已创建出该**字符串对象**，则返回池中的该字符串的引用。否则将此字符串对象添加到字符串常量池中，并且返回该字符串对象的引用。
+  * 若在池中，则返回池中引用
+  * 否则加入池中并返回引用
 * JDK6+
-  * 当调用intern方法时，如果字符串常量池先前**已创建出该字符串对象**，则返回池中的该字符串的引用。否则，如果该字符串对象已经存在于Java堆中，则将堆中对此**对象的引用添加到字符串常量池**中，并且返回该引用；如果堆中不存在，则在**池中创建该字符串**并返回其引用。
-
-
+  * 若字符串在常量池中则取池中引用
+  * 若在堆中，则将堆中对象引用添加入常量池，并返回堆引用
+  * 若不在堆中，则在池中创建并返回引用
 
 # 线程共享
 
-JVM内存结构](https://mp.weixin.qq.com/s?__biz=MzI4NDY5Mjc1Mg==&mid=2247483949&idx=1&sn=8b69d833bbc805e63d5b2fa7c73655f5&chksm=ebf6da52dc815344add64af6fb78fee439c8c27b539b3c0e87d8f6861c8422144d516ae0a837&scene=21#wechat_redirect)
-
 ![](https://mmbiz.qpic.cn/mmbiz_png/PgqYrEEtEnoUSbbnzEiafyyQWUibOfnE3GicpdRQOuxWBrhB3Fic7MRf4z5ywT2RmCicibGibHNQEgUbsibLR1eLVRfo3A/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
-
->堆内存是JVM中最大的一块由年轻代和老年代组成，而年轻代内存又被分成三部分，Eden空间、From Survivor空间、To Survivor空间,默认情况下年轻代按照8:1:1的比例来分配；
 
 方法区存储类信息、常量、静态变量等数据，是线程共享的区域，为与Java堆区分，方法区还有一个别名Non-Heap(非堆)；栈又分为java虚拟机栈和本地方法栈主要用于方法的执行。
 
@@ -101,27 +107,7 @@ JVM内存结构](https://mp.weixin.qq.com/s?__biz=MzI4NDY5Mjc1Mg==&mid=224748394
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/PgqYrEEtEnoUSbbnzEiafyyQWUibOfnE3GQ0NibDSK0gTV91vOLkOGUBM9h9nTHTJ9YfzVonOicI9c1N2cCpG4j5Mg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
-控制参数
-
-```markdown
--Xms设置堆的最小空间大小。
-
--Xmx设置堆的最大空间大小。
-
--XX:NewSize设置新生代最小空间大小。
-
--XX:MaxNewSize设置新生代最大空间大小。
-
--XX:PermSize设置永久代最小空间大小。
-
--XX:MaxPermSize设置永久代最大空间大小。
-
-
-```
-
-**没有直接设置老年代的参数，但是可以设置堆空间大小和新生代空间大小两个参数来间接控制。**
-
->老年代空间大小=堆空间大小-年轻代大空间大小
+没有直接设置老年代的参数，但是可以设置堆空间大小和新生代空间大小两个参数来间接控制。
 
 从更高的一个维度再次来看JVM和系统调用之间的关系
 
