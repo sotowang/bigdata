@@ -171,30 +171,40 @@ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
 
 buffer和cache都是内存中的一块区域，当CPU需要写数据到磁盘时，由于磁盘速度比较慢，所以CPU先把数据存进buffer，然后CPU去执行其他任务，buffer中的数据会定期写入磁盘；当CPU需要从磁盘读入数据时，由于磁盘速度比较慢，可以把即将用到的数据提前存入cache，CPU直接从Cache中拿数据要快的多。
 
-# 使用top查看系统资源占用情况时，哪一列表示内存占用呢？
+# 常用linux命令
 
-答：
+* 整机
+  * `top`
+    * 查看系统资源占用情况
+  * `uptime`
+    * 系统运行时间
+    * `load average`负载情况
+* CPU
+  * `vmstat -n 2 3`
+    * 2:采样的时间间隔数（s）；3:采样的次数
+    * `us+sy>80`说明cpu不足
+  * `mpstat -P ALL 2`
+    * 查看所有CPU核信息
+* 内存
+  * `free -m`查看总的内存
+  * `pidstat -p PID -r 采样间隔秒数`
+* 硬盘
+  * `df -h`
+    * h表示human
+* 磁盘IO
+  * `iostat -xdk 2 3`
+* 网络IO
+  * `ifstat`
 
-```
-PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
-301 root      20   0     0    0    0 S  0.3  0.0   0:00.08 jbd2/sda3-8
-1 root      20   0  2900 1428 1216 S  0.0  0.1   0:01.28 init
-2 root      20   0     0    0    0 S  0.0  0.0   0:00.00 kthreadd
-3 root      RT   0     0    0    0 S  0.0  0.0   0:00.00 migration/0
-```
+# CPU占用过高分析
 
-- VIRT虚拟内存用量
-- RES物理内存用量
-- SHR共享内存用量
-- %MEM内存用量
-
- 
-
-
-
-
-
-
+* `top`命令查出占用过高进程
+* `ps -ef|grep java`定位到具体Java程序
+* `ps -mp PID -o THREAD,tid,time`定位到具体线程
+  * `-m`显示所有进程
+  * `-p`pid进程使用cpu的时间
+  * `-o`用户自定义格式
+* `jstack 进程ID |grep tid(16进制线程ID小写英文)-A60`
 
 
 
