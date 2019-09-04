@@ -180,6 +180,17 @@
   * 首先使用无锁操作CAS插入头节点，失败则循环重试
   * 若头节点已存在，则尝试获取头节点的同步锁，再进行操作
 
+## TreeMap
+
+* 传入一个比较器的构造函数，Map中元素按此比较器排序
+
+  `public TreeMap(Comparator<? super K> comparator)`
+
+* 排序逻辑在`Comparator`中实现
+
+## LinkedHashMap
+
+* 维持元素插入顺序
 
 ## HashMap、HashTable、ConcurrentHashMap的区别
 
