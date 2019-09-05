@@ -68,7 +68,7 @@
 ## IO多路复用
 
 * select , poll, epoll
-  * 单个proces就可以同时处理多个网络连接的IO
+  * 单个process就可以同时处理多个网络连接的IO
   * 不断轮询所负责的所有socket，当某个socket有数据到达，就通知用户进程
 * 实际中对于每一个socket，一般都设置成NIO，但是整个用户的process其实是一直被block的，不过process是被block这个函数block，而不是被socket IO给Block
 * IO多路复用是阻塞在select，epoll这样的系统调用之上，而没有阻塞在真正的IO系统调用之上
@@ -137,7 +137,7 @@
 
 * epoll
 
-  > 使用一个fd管理多个fd,将用户关系的fd的事件放到内核的一个事件表中,为用户空间和内核空间的copy只需一次
+  > 使用一个fd管理多个fd,将用户关系的fd的事件放到内核的一个事件表中,用户空间和内核空间的copy只需一次
 
   * 原理
     * 支持水平触发和边缘触发(只告诉进程哪些fd刚刚变为就绪态,并且只通知一次)
