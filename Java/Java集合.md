@@ -39,7 +39,7 @@
     * 使用`Vector`
     * `Collections.synchronizedList(new ArrayList<>());`
     * 写时复制`new CopyOnWriteArrayList<>();`
-      * 往一个 容器添加元素时不直接在容器添加，而是将当前容器Object[]进行copy复制出一个新容器`Object[] newElements`,然后在新容器中添加元素，添加完成后，将原容器引用指向新粉吕`setArray(newElements)`
+      * 往一个 容器添加元素时不直接在容器添加，而是将当前容器Object[]进行copy复制出一个新容器`Object[] newElements`,然后在新容器中添加元素，添加完成后，将原容器引用指向新数组`setArray(newElements)`
       * 内部使用ReentrantLock加锁
       * 好处是可对容器进行并发读而不需加锁，读写分离的思想
 
