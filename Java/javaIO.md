@@ -49,21 +49,34 @@
   - IO流是阻塞的，NIO流是不阻塞的;
   - NIO有选择器，而IO没有。
 * 核心组件
-  * Channels
+  * 通道`Channels`
     * Scatter: 从一个Channel读取的信息分散到N个缓冲区中(Buufer).
     * Gather: 将N个Buffer里面内容按照顺序发送到一个Channel.
-  * Buffers
-    * Java NIO Buffers用于和NIO Channel交互。 我们从Channel中读取数据到buffers里，从Buffer把数据写入到Channels；
+    * 类型
+      * `FileChannel`从文件读写数据 
+      * `DataGramChannel`通过UDP读写网络数据
+      * `SocketChannel`通过TCP
+      * `ServerSocketChannel`可以监听新来的TCP连接,为每个连接建立一 个SocketChannel
+  * 缓冲区`Buffers`
+    * 缓冲区实质是一个数组(内存区)
+    * 从Buffer把数据写入到Channels；从Channel中读取数据到buffers
     * Buffer本质上就是一块内存区；
-    * 一个Buffer有三个属性是必须掌握的，分别是：capacity容量、position位置、limit限制。
-    * Buffer的常见方法
-      - Buffer clear()
-      - Buffer flip()
-      - Buffer rewind()
-      - Buffer position(int newPosition)
-  * Selectors
-    * Selector 一般称 为选择器 ，当然你也可以翻译为 多路复用器 。它是Java NIO核心组件中的一个，用于检查一个或多个NIO Channel（通道）的状态是否处于可读、可写。如此可以实现单线程管理多个channels,也就是可以管理多个网络链接。
-    * 使用Selector的好处在于： **使用更少的线程来就可以来处理通道**了， 相比使用多个线程，避免了线程上下文切换带来的开销。
+    * 类型
+      * `ByteBuffer`
+      * `CharBuffer`
+      * `ShortBuffer`
+      * `IntBuffer`
+      * `LongBuffer`
+      * `FloatBuffer`
+      * `DoubleBuffer`
+    * 状态变量
+      * `capacity`最大容量
+      * `position`当前已读写字节数
+      * `limit`还可以己度人读写字节数
+  * 选择器`Selectors`
+    * `Selector`选择器 / 多路复用器 
+    * 一个线程用selector监听多个channel事件,实现IO多路复用
+    * 避免了线程上下文切换带来的开销
 
 ## IO多路复用
 
