@@ -16,4 +16,6 @@
 * new Integer(2).equals(new Integer(2))?
   * true
   * equals 判断值是否相等
-
+* 自动装箱
+  * 调用 `Integer.valueOf()`
+  * 缓冲池大小`-128-127`,上界可通过`-XX:AutoBoxCacheMax=<size>`调整

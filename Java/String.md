@@ -2,6 +2,7 @@
 
 * 可变与不可变
   * String使用字符数组保存字符串,用final 修饰`private final char value[]`.String对象不可变(指向字符串的指针不可变)
+    * Java1.9之后使用`private final byte[] value`
   * StringBuilder与StringBuffer都继承自AbstractStringBuilder类
     * AbstractStringBuilder中也使用字符数组保存字符串`char[] value;`
     * AbstractStringBuilder公共方法
@@ -23,12 +24,18 @@
 
 # String类为什么要设计成final
 
-* 安全性考虑
-* 支持字符串常量池
+* 可以缓存hash值
+  * String的hash值经常被使用,如String用做HashMap的key,只需计算 一次
+* 常量池需要
+  * 若String对象已被创建过,会从常量取得引用,只有不可变才能使用常量池
+* 安全性
 
+# String pool
 
-
-
+* 保存着所有字符串字面量,可通过`intern()`方法将字符串添加入常量池
+* 当字符串调用`intern()`方法
+  * 若String pool已存在该值,则返回String Pool中引用
+  * 若不存在池中,则添加并返回池中引用
 
 
 
