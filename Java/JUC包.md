@@ -26,7 +26,7 @@
   //在线程内执行
   countDownLatch.countDown();
   //在主线程下执行
-  countDownLarch.await();
+  countDownLatch.await();
   ```
 
 ##  CyclicBarrier
