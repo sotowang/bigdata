@@ -4,7 +4,7 @@
 
 ### ArrayList
 
-* 实现List接口，底层使用数组保存所有元素，操作基本上是对数组的操作a
+* 实现List接口，底层使用数组保存所有元素，操作基本上是对数组的操作
 
   ```java
   transient Object[] elementData; 
@@ -46,6 +46,10 @@
 ### LinkedList
 
 ### Vector
+
+* 实现与ArrayList类似,但使用了Synchronized同步
+* 最好使用ArrayList,因同步操作完全可由程序员控制
+* Vector扩容每次扩大2倍(可通过构造函数设置增长量),而ArrayList是1.5倍
 
 ## Array与ArrayList的区别
 
@@ -151,15 +155,15 @@
 ## HashTable
 
 * Hashtable与HashMap的区别
-  * HashMap不是线程安全的，HashTable是线程安全。
+  * HashMap不是线程安全的;HashTable是线程安全,使用synchronized同步 
   * HashMap允许空（null）的键和值（key），HashTable则不允许。
-  * HashMap性能优于Hashtable。
+  * HashMap性能优于Hashtable
 
 ## ConcurrentHashMap
 
 * 特性
-  * Java5 使用segment分段锁
-  * java8 CAS+synchronized使锁更细化
+  * Java7 使用segment分段锁,继承自ReentrantLock
+  * java8 CAS+synchronized使锁更细化,CAS操作失败时使用synchronized
   * 数组+链表+红黑树
 
 * put方法的逻辑
@@ -190,7 +194,19 @@
 
 ## LinkedHashMap
 
-* 维持元素插入顺序
+* 继承自HashMap
+* 内部维护一个双链表,用来维护插入顺序或者LRU顺序
+  * `final boolean accessOrder;`
+    * 默认为false,维护插入顺序
+    * true时将最近访问节点放入尾部
+* LRU缓存
+
+
+
+## WeakHashMap
+
+- 其Entry继承自WeakReference,主要用来实现缓存
+- 当key为null时，发生GC后将被回收
 
 ## HashMap、HashTable、ConcurrentHashMap的区别
 
@@ -199,9 +215,7 @@
 * ConcurrentHashMap线程安全，CAS+同步锁，数组+链表+红黑树
 * HashMap的key和value可以为null，其他两个不行
 
-## WeakHashMap
 
-* 当key为null时，发生GC后将被回收
 
 
 
