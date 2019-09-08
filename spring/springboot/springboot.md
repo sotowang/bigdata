@@ -40,7 +40,7 @@
 * @ImportResource
   * 导入Spring的配置文件，让配置文件中的内容生效
   * 主配置文件下注解
-* @Conditiional
+* @Conditional
   * @ConditionalOnWebApplication
     * Spring底层@Conditional注解
     * 判断当前是否是web应用，如果是配置类生效
@@ -79,7 +79,8 @@
   * applicatiion-prod.properties
   * 默认使用application.properties
   * 激活
-    * **spring.profile.active = dev**
+
+    `spring.profile.active = dev`
 * yml的多文档块模式
 * 命令行参数
   * arguments
