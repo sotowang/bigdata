@@ -25,7 +25,7 @@
       //2是两个线程
 ```
 * #### spark实现wc
-```
+```scala
 val file = sc.textFile("file:///home/sotowang/user/note/scala/scala相关")
 val a = file.flatMap(line => line.split(" "))
 val b = a.map(word => (word,1))
@@ -40,7 +40,7 @@ val c = b.reduceByKey(_+_)
 # 配置文件
 /conf/spark-env.sh
 
-```
+```properties
 export SPARK_DIST_CLASSPATH=$(hadoop classpath)
 export SPARK_MASTER_IP=sotowang-pc
 export SPARK_WORKER_CORES=1
@@ -131,7 +131,7 @@ intRDD.filter(_ < 3).collect
 stringRDD.filter(x=>x.contains("ra")).collect()
 ```
 
-## distince运算
+## distinct运算
 >distinct运算会删除重复元素
 
 * 删除intRDD重复元素
@@ -472,25 +472,25 @@ kvRDD1.lookup(5)
 ## 不使用Broadcast 广播变量的范例
 * 先创建kvFruit
 
-```
+```scala
 val kvFruit=sc.parallelize(List((1,"apple"),(2,"orange"),(3,"banana"),(4,"grape")))
 ```
 
 * 创建fruitMap对照表
 
-```
+```scala
 val fruitMap = kvFruit.collectAsMap()
 ```
 
 * 创建fruitIds
 
-```
+```scala
 val fruitIds = sc.parallelize(List(2,4,1,3))
 ```
 
 * 使用fruitMap对照表进行转换
 
-```
+```scala
 val fruitNames = fruitIds.map(x=>fruitMap(x)).collect
 ```
 
@@ -502,31 +502,31 @@ val fruitNames = fruitIds.map(x=>fruitMap(x)).collect
 
 * 创建kvFruit
 
-```
+```scala
 val kvFruit=sc.parallelize(List((1,"apple"),(2,"orange"),(3,"banana"),(4,"grape")))
 ```
 
 * 创建fruitMap对照表
 
-```
+```scala
 val fruitMap = kvFruit.collectAsMap()
 ```
 
 * 创建 bcFruitMap广播变量
 
-```
+```scala
 val bcFruitMap = sc.broadcast(fruitMap)
 ```
 
 * 再创建fruitIds
 
-```
+```scala
 val fruitIds = sc.parallelize(List(2,4,1,3))
 ```
 
 * 使用bcFruitMap.value(x) 广播变量进行转换
 
-```
+```scala
 val fruitNames = fruitIds.map(x=>bcFruitMap.value(x)).collect
 ```
 
@@ -534,25 +534,25 @@ val fruitNames = fruitIds.map(x=>bcFruitMap.value(x)).collect
 ## accumulator 累加器范例
 * 创建范例RDD
 
-```
+```scala
 val intRDD = sc.parallelize(List(3,1,2,5,5))
 ```
 
 * 创建total累加器
 
-```
+```scala
 val total = sc.accumulator(0.0)
 ```
 
 * 创建num累加器
 
-```
+```scala
 val num = sc.accumulator(0)
 ```
 
 * 使用foreach 传入参数i,针对每一条数据执行
 
-```
+```scala
 intRDD.foreach(i=>{
 total +=i
 num +=1
@@ -561,13 +561,13 @@ num +=1
 
 * 显示求和,计数
 
-```
+```scala
 println("total="+total.value+",num="+ num.value)
 ```
 
 *计算平均
 
-```
+```scala
 val avg = total.value/num.value
 ```
 
@@ -578,7 +578,7 @@ val avg = total.value/num.value
 ## RDD.persist() 范例
 * 创建范例RDD
 
-```
+```scala
 val intRddMemory = sc.parallelize(List(3,1,2,5,5))
 ```
 

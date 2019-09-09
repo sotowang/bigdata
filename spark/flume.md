@@ -331,7 +331,7 @@ flume-ng agent \
 ### 整合Flume和Kafka(2)_logger-->flume-->kafka
 * streaming2.conf
 
-```
+```properties
 agent1.sources=avro-source
 agent1.sinks=kafka-sink
 agent1.channels=logger-channel
@@ -370,7 +370,7 @@ flume-ng agent \
 选型：access.log ===> 控制台输出
 exec ==> memory ==> logger
 
-```
+```properties
 exec-memory-logger.sources = exec-source
 exec-memory-logger.sinks = logger-sink
 exec-memory-logger.channels = memory-channel
@@ -403,9 +403,9 @@ flume-ng agent \
 	> kafka-server-start.sh -daemon $KAFKA_HOME/config/server.properties
 * 修改Flume配置文件 使得flume sink数据到Kafka
 
-* streaming_project2.conf	
+	 streaming_project2.conf	
 
-```
+```properties
 exec-memory-kafka.sources = exec-source
 exec-memory-kafka.sinks = kafka-sink
 exec-memory-kafka.channels = memory-channel
@@ -448,7 +448,7 @@ flume-ng agent \
 * 需求1
 >创建表
 
-```
+```sql
 create 'course_clickcount','info'
 ```
 
@@ -473,7 +473,7 @@ day_courseid
 
 * 提交
 
-```
+```shell
 spark-submit --master "local[5]" \
 --jars $(echo /home/sotowang/user/aur/hadoop/app/hbase-1.2.0-cdh5.7.0/lib/*.jar | tr ' ' ',') \
 --class com.soto.spark.project.StatStreamingApp \
@@ -485,7 +485,7 @@ sotowang-pc:9092 streamingtopic
 
 ### maven 打包
 
-```
+```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-assembly-plugin</artifactId>
