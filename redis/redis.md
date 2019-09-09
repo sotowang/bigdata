@@ -117,7 +117,7 @@
   * 如果key不存在,则创建并赋值
   * 时间复杂度O(1)
   * 返回值
-    * 设置成功,返回1 ==设置失败,返回0
+    * 设置成功,返回1;设置失败,返回0
     * 即如果设置成功,则没有其他线程执行该代码
 
 ## 如何解决SETNX长期有效的问题?
@@ -131,7 +131,7 @@
 
 ## 最终分布式锁实现方案
 
-```red
+```bash
 SET key value [EX seconds] [PX milliseconds] [NX|XX]
 ```
 
@@ -186,7 +186,18 @@ SET key value [EX seconds] [PX milliseconds] [NX|XX]
 
 ## 内存淘汰策略
 
-* LRU 最近最少使用
+* volatile-lru 
+  * 从设置过期时间的数据集中挑选出最近最少使用
+* volatile-ttl
+  * 从设置过期时间数据中选将要过期数据
+* volatile-random
+  * 从已设置过期时间数据中选任意数据
+* allkeys-lru
+  * 从所有数据集中选最近最少使用
+* allkeys-random
+  * 从所有数据集中任意选数据
+* noeviction
+  * 禁止驱逐数据
 
 # 如何使用Redis做异步队列?
 
@@ -285,13 +296,6 @@ RDB和AOF的优缺点
 * AOF缺点
   * 文件体积大,恢复时间长
 
-# 使用Pipeline的好处
-
-* Pipeline和linux和管道类似
-* Redis基于请求/响应模型,单个请求处理需要一一应答
-* Pipeline批量执行指令,节省多次IO往返的时间
-* 有顺序依赖的指令建议分批发送
-
 # Redis的同步机制
 
 * 全同步过程
@@ -331,7 +335,7 @@ RDB和AOF的优缺点
 
 * 先删除缓存，再更新数据库
 
-# redis 分布式锁有什么缺陷
+
 
 
 

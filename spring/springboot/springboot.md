@@ -359,7 +359,7 @@ thymeleaf公共页面抽取
     @EnableConfigurationProperties //让xxxProperties类生效,加入到容器中
     ```
 
-    * 自动配置类要能加载,将需要启动就加载的自动配置类,配置在META-INF/spring.factories
+    * 自动配置类要能加载,将需要启动就加载的自动配置类,配置在`META-INF/spring.factories`
 
     ```properties
     org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
