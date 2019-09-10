@@ -168,7 +168,7 @@ SET key value [EX seconds] [PX milliseconds] [NX|XX]
 
   * 如果这个master节点发生了主从切换,那么会有锁丢失的情况
 
-    * 在Redis的master节点上拿到了锁,但这个加锁的ke还没有同步到slave节点
+    * 在Redis的master节点上拿到了锁,但这个加锁的key还没有同步到slave节点
     * master故障,发生故障转移,slave节点升级为master节点,导致锁丢失
 
 # Key删除策略

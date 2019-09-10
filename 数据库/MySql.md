@@ -66,7 +66,14 @@
 
 # MyISAM与InnoDB区别
 
-* 存储结构
+* 事务
+  * MyISAM不支持事务，执行速度快，MyISAM读性能强
+  * InnoDB支持事务与外键与行锁
+  * InnoDB不保存具体行数，MyISAM可保存好行数读出即可
+* 索引
+  * MyISAM索引和数据分开且索引有压缩，内存使用率提高不少
+  * InnoDB索引与数据存在一地块
+  * InnoDB不支持全文索引(5.6版本以后支持)
 
 # MySQL 查询优化
 
