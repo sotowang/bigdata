@@ -195,11 +195,36 @@
 ## LinkedHashMap
 
 * 继承自HashMap
+
 * 内部维护一个双链表,用来维护插入顺序或者LRU顺序
   * `final boolean accessOrder;`
     * 默认为false,维护插入顺序
     * true时将最近访问节点放入尾部
+
 * LRU缓存
+
+  ```java
+  class LRULinkedHashMap<K,V> extends LinkedHashMap<K,V>{
+  	//定义缓存的容量
+  	private int capacity;
+  	private static final long serialVersionUID = 1L;
+  	//带参数的构造器	
+  	LRULinkedHashMap(int capacity){
+  		//调用LinkedHashMap的构造器，传入以下参数
+  		super(16,0.75f,true);
+  		//传入指定的缓存最大容量
+  		this.capacity=capacity;
+  	}
+  	//实现LRU的关键方法，如果map里面的元素个数大于了缓存最大容量，则删除链表的顶端元素
+  	@Override
+  	public boolean removeEldestEntry(Map.Entry<K, V> eldest){ 
+  		System.out.println(eldest.getKey() + "=" + eldest.getValue());  
+  		return size()>capacity;
+  	}  
+  
+  ```
+
+  
 
 
 
