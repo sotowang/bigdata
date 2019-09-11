@@ -102,6 +102,28 @@
 - LinkedBlockingDeque
   - 一个由链表结构组成的**双向**阻塞队列
 
+## Iterator与ListIterator区别
+
+* Iterator在Set和List中都有定义。ListIterator仅存在于List接口中
+* ListIterator有`add()`方法，可以向List中添加对象，而Iterator不能
+* ListIterator可以逆向遍历，可以定位当前的索引位置
+* ListIterator可以实现对对象的修改
+
+## 确保一个集合不会被修改
+
+* 使用集合中具，在里面再添加数据时将会报错
+  * `map = Collections.unmodifiableMap(map);`
+  * `list = Collections.unmodifiableList(list);`
+* `
+* `
+* `
+
+ 
+
+ 
+
+ 
+
 # Map
 
 ## HashMap
