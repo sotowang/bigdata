@@ -44,8 +44,7 @@
 * 对象头
   * 实现Synchronized锁对象基础
   * 2个机器码(32位是8字节)存储对象头,如果是数组,则为3机器(12字节)码,多出来一个记录数组长度
-* # 实例数据
-
+* 实例数据
   * 类属性信息,包括父类属性信息
   * 若数组的实例部分要包括数组的长度
   * 4字节对齐
@@ -58,6 +57,38 @@
 1.List和Set都是接口，他们都继承于接口Collection,List是一个有序的可重复的集合，而Set的无序的不可重复的集合。Collection是集合的顶层接口，Collections是一个封装了众多关于集合操作的静态方法的工具类,因为构造方法是私有的，所以不能实例化。
 
 2.List接口实现类有ArrayList,LinkedList,Vector。ArrayList和Vector是基于数组实现的,所以查询的时候速度快，而在进行增加和删除的时候速度较慢LinkedList是基于链式存储结构，所以在进行查询的时候速度较慢但在进行增加和删除的时候速度较快。又因为Vector是线程安全的，所以他和ArrayList相比而言，查询效率要低。
+
+# 创建对象的方式
+
+* 使用new
+
+* Class类的newInstance方法
+
+  * `newInstance()`调用无参构造器（反射）
+
+  * `Class.forName.newInstance`
+
+    ```java
+    User user = User.class.newInstance();
+    User user = (User)Class.forName("根路径.User").newInstance();
+    ```
+
+* 使用Constructor类的`newInstance()`方法
+
+  ```java
+  Constructor<User> constructor = User.class.getConstructor();
+  User user = constructor.newInstance();
+  ```
+
+* 使用`clone()`
+
+  * 需要先实现Cloneable接口并实现`clone方法`
+
+* 反序列化
+
+  * 需实现Serializable接口
+  * 序列化和反序列化对象时，JVM会创建一个单独对象。
+  * 反序列化时，JVM创建对象不会调用任何构造函数
 
 # 类的实例化顺序
 
@@ -178,3 +209,17 @@ switch 语句中的变量类型可以是：
   * 实现方案
     * 序列化`serialization`这个对象,再反序列化回来,就可以得到新的对象
     * 利用`clone()`,对其内的引用类型的变量再进行一次`clone()`
+
+# static
+
+* static方法是否能被覆盖
+  * 不能，因方法覆盖是基于运行时动态绑定的，而static方法是编译时静态绑定的
+* 是否可在static中访问非static变量
+  * 不能，Static属于类，在类加载时就被初始化，此时非静态变量未被加载
+* static 修饰的变量并发下怎么保证变量的安全
+  * 静态变量位于方法区，为所有对象共享，修改对其他对象可见，非线程安全
+  * 静态方法若无使用静态变量，则无线程安全问题
+    * 因静态方法内声明的变量，每个线程调用时都会创建一份，而不会可使用一个存储单元
+  * 加锁
+* static 修饰的变量什么时候赋值
+* static 什么时候使用
