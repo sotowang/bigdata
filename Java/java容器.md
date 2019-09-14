@@ -125,15 +125,6 @@
 * 使用集合中具，在里面再添加数据时将会报错
   * `map = Collections.unmodifiableMap(map);`
   * `list = Collections.unmodifiableList(list);`
-* `
-* `
-* `
-
- 
-
- 
-
- 
 
 # Map
 
@@ -155,7 +146,7 @@
    * 触发时机
       *  Entry数量>=`threshold=loadFactor*capacity`时，且新建Entry刚好落在一个非空桶上
 
-    * 扩容为原来2倍
+    * 扩容为原来2倍，Java8中不需要重新计算hash，看原来hash舉新增和那个bit是1一还是0，是0时索引没变，是1时索引变成`原索引+oldCap`
 
     * 旧桶中链表通过头插法插入新桶中，原链表中的Entry结点并不一定仍在新桶数组同一链表
 
@@ -179,11 +170,14 @@
 
 * 线程不安全
 
-   * 故障现象
-   * 导致原因
+   * 扩容时会形成环形链表，造成死循环
    * 解决方案
       * `Collections.synchronizedMap()`
       * `ConcurrentHashMap`
+
+### HashMap中key可以为任意对象或数据类型么
+
+* 可以为null，不能为可变对象，会导致对象属性改变，hashCode也会改变，查不到已在Map中数据
 
 ## HashTable
 
@@ -195,7 +189,7 @@
 ## ConcurrentHashMap
 
 * 特性
-  * Java7 使用segment分段锁,继承自ReentrantLock
+  * Java7 使用segment分段锁,继承自`ReentrantLock`
   * java8 CAS+synchronized使锁更细化,CAS操作失败时使用synchronized
   * 数组+链表+红黑树
 
@@ -209,7 +203,7 @@
     * 如果是TreeNode（树型结构）则执行树添加操作
   * 链表长度达到8时转换为红黑树
 * get方法的逻辑
-  - get方法就是从Hash表中读取数据，而且与扩容不冲突。该方法没有同步锁。 
+  - 该方法没有同步锁。get方法就是从Hash表中读取数据，而且与扩容不冲突。 
   * 通过key的hash计算索引位置，如果满足条件，直接返回对应的值； 
   * 若相应节点的hash值小于0 ，即该节点在进行扩容，直接在调用ForwardingNodes节点的find方法进行查找。 
   * 否则，遍历当前节点直到找到对应的元素。
