@@ -1,15 +1,35 @@
+# 异常类型
+
+* 受检查的异常(checked)
+  * 需要用throws语句在方法或构造函数上声明
+* 不受检查的异常（unchecked）
+  * 不需在方法或构造函数上声明
+  * 可传播到方法或构造函数外面
+
+# throw和throws区别
+
+* throw关键字用来在程序中明确地抛出异常
+* throws来表明方法不能处理的异常，多个异常用逗号分隔
+
+# 异常机制
+
+* 运行时异常（RuntimeException）
+  * 由JVM接管
+* 检查式异常（checked exception）
+  * IO异常及SQL异常
+  * 需要catch
+
 # Error和Exception的区别
 
+* 父类都为Throwable
 * Error：程序无法处理的系统错误，编译器不做检查,JVM承担的责任
 * Exception：程序可以处理的异常，捕获后可能恢复
   * RuntimeException
     * 不可预知的，程序应当自行避免，由程序承担责任
       * 空指针异常，数组下标越界
-  * 非RuntimeException
-
   * CheckedException可检查异常是Java编译器应该负担的责任
 
-## RuntimeException
+# RuntimeException
 
 * NullPointerException -空指针引用异常
 * ClassCastException -类型强制转换异常
@@ -17,12 +37,12 @@
 * IndexOutOfBoundsException - 下标越界异常
 * NumberFormatException - 数字格式异常 
 
-## 非RuntimeException
+# Checked Exception
 
 * ClassNotFoundException - 找不到指定class异常
 * IOException - IO操作异常
 
-## Error
+# Error
 
 * `NoClassDefFoundError`
   * 类依赖的class或者jar不存在
