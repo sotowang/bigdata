@@ -1,153 +1,93 @@
-# 学习java应该如何理解反射？
-[学习java应该如何理解反射？ - 老顽童周伯通的回答 - 知乎](
-https://www.zhihu.com/question/24304289/answer/147529485)
+# 什么是反射
 
-![](https://pic4.zhimg.com/80/v2-4face8109e0d52ef5894c41c69e4ec6b_hd.jpg)
+* 在运行中获取任何类的所有属性和方法；对于任意一个对象，能够调用它的任意方法和属性
 
-首先我们了解一下JVM，什么是JVM，Java的虚拟机，java之所以能跨平台就是因为这个东西，你可以理解成一个进程，程序，只不过他的作用是用来跑你的代码的。上图是java的内存模型，我们关注的点，一个方法区，一个栈，一个堆，初学的时候老师不深入的话只告诉你java的内存分为堆和栈，易懂点吧！假如你写了一段代码：
-> Object o=new Object();
-
-运行了起来！
-
-首先JVM会启动，你的代码会编译成一个.class文件，然后被类加载器加载进jvm的内存中，你的类Object加载到方法区中，创建了Object类的class对象到堆中，注意这个不是new出来的对象，而是类的类型对象，每个类只有一个class对象，作为方法区类的数据结构的接口。jvm创建对象前，会先检查类是否加载，寻找类对应的class对象，若加载好，则为你的对象分配内存，初始化也就是代码:new Object()。
-
-上面的流程就是你自己写好的代码扔给jvm去跑，跑完就over了，jvm关闭，你的程序也停止了。
-
-反射是什么呢？当我们的程序在运行时，需要动态的加载一些类这些类可能之前用不到所以不用加载到jvm，而是在运行时根据需要才加载，
-
-这样的好处对于服务器来说不言而喻，举个例子我们的项目底层有时是用mysql，有时用oracle，需要动态地根据实际情况加载驱动类，
-
-这个时候反射就有用了，假设
-
-```
-com.java.dbtest.myqlConnection
-com.java.dbtest.oracleConnection
-```
-
-这两个类我们要用，这时候我们的程序就写得比较动态化，通过
-
->Class tc = Class.forName("com.java.dbtest.TestConnection");
-
-通过类的全类名让jvm在服务器中找到并加载这个类，而如果是oracle则传入的参数就变成另一个了。这时候就可以看到反射的好处了，这个动态性就体现出java的特性了！
-
-举多个例子，大家如果接触过spring，会发现当你配置各种各样的bean时，是以配置文件的形式配置的，你需要用到哪些bean就配哪些，spring容器就会根据你的需求去动态加载，你的程序就能健壮地运行。
-
-# 什么是反射？
-
-反射 (Reflection) 是 Java 的特征之一，它允许运行中的 Java 程序获取自身的信息，并且可以操作类或对象的内部属性。
-
-简而言之，通过反射，我们可以在运行时获得程序或程序集中每一个类型的成员和成员的信息。程序中一般的对象的类型都是在编译期就确定下来的，而 Java 反射机制可以动态地创建对象并调用其属性，这样的对象的类型在编译期是未知的。所以我们可以通过反射机制直接创建对象，即使这个对象的类型在编译期是未知的。
-
-**反射的核心是 JVM 在运行时才动态加载类或调用方法/访问属性，它不需要事先（写代码的时候或编译期）知道运行对象是谁。**
-
-Java 反射主要提供以下功能：
-
-```
-在运行时判断任意一个对象所属的类；
-在运行时构造任意一个类的对象；
-在运行时判断任意一个类所具有的成员变量和方法（通过反射甚至可以调用private方法）；
-在运行时调用任意一个对象的方法
-```
-
-重点：是运行时而不是编译时
+* 功能
+  * 在运行时判断任意一个对象所属的类；
+  * 在运行时构造任意一个类的对象；
+  * 在运行时判断任意一个类所具有的成员变量和方法（通过反射甚至可以调用private方法）；
+  * 在运行时调用任意一个对象的方法
 
 # 反射的主要用途
 
-**当我们在使用 IDE(如 Eclipse，IDEA)时，当我们输入一个对象或类并想调用它的属性或方法时，一按点号，编译器就会自动列出它的属性或方法，**这里就会用到反射。
+* IDE中输入一个对象想调用其方法或属性时，按点号会自动列出
+* Spring框架（通过XML配置Bean），根据配置文件运行时动态加载不同的对象或类
 
-反射最重要的用途就是开发各种通用框架。很多框架（比如 Spring）都是配置化的（比如通过 XML 文件配置 Bean），为了保证框架的通用性，它们可能需要根据配置文件加载不同的对象或类，调用不同的方法，这个时候就必须用到反射，运行时动态加载需要加载的对象。
+# 反射的实现
 
-举一个例子，在运用 Struts 2 框架的开发中我们一般会在 struts.xml 里去配置 Action，比如：
+* 获得 Class 对象
 
-```xml
-<action name="login"
-               class="org.ScZyhSoft.test.action.SimpleLoginAction"
-               method="execute">
-           <result>/shop/shop-index.jsp</result>
-           <result name="error">login.jsp</result>
- </action>
-```
+  * `class.getClass()`
 
-配置文件与 Action 建立了一种映射关系，当 View 层发出请求时，请求会被 StrutsPrepareAndExecuteFilter 拦截，然后 StrutsPrepareAndExecuteFilter 会去动态地创建 Action 实例。
+    ```java
+    StringBuilder str = new StringBuilder("123");
+    Class<?> klass = str.getClass();
+    ```
 
-比如我们请求 login.action，那么 StrutsPrepareAndExecuteFilter就会去解析struts.xml文件，检索action中name为login的Action，并根据class属性创建SimpleLoginAction实例，并用invoke方法来调用execute方法，这个过程离不开反射。
+  * `Class.forName()`
 
-对与框架开发人员来说，反射虽小但作用非常大，它是各种容器实现的核心。而对于一般的开发者来说，不深入框架开发则用反射用的就会少一点，不过了解一下框架的底层机制有助于丰富自己的编程思想，也是很有益的。
+    ```java
+    public static Class<?> forName(String className)
+    //比如在 JDBC 开发中常用此方法加载数据库驱动:
+    //...java
+     Class.forName(driver);
+    ```
 
-# 反射的基本运用
+  * `ClassLoader.loadClass()`
 
-上面我们提到了反射可以用于判断任意对象所属的类，获得 Class 对象，构造任意一个对象以及调用一个对象。
+  *  直接获取对象的Class
 
-这里我们介绍一下基本反射功能的使用和实现(反射相关的类一般都在 java.lang.relfect 包里)。
+    ```java
+    Class<?> klass = int.class;
+    Class<?> classInt = Integer.TYPE;
+    ```
 
-## 获得 Class 对象
+* 判断是否为某个类的实例
 
-方法有三种：
+  * `instanceof`关键字
 
-(1) 使用 Class 类的 forName 静态方法:
+  * Class对象的`isInstance()`
 
-```java
-public static Class<?> forName(String className)
-//比如在 JDBC 开发中常用此方法加载数据库驱动:
-//...java
- Class.forName(driver);
-```
+    ```java
+    public native boolean isInstance(Object obj);
+    ```
 
-(2)直接获取某一个对象的 class，比如:
+* 创建实例
 
-```java
-Class<?> klass = int.class;
-Class<?> classInt = Integer.TYPE;
-```
+  * `Class.forName()`
+  * `ClassLoader.loadClass()`
 
-(3)调用某个对象的 getClass() 方法，比如:
+## Class.forName与Classloader.loadClass区别
 
-```java
-StringBuilder str = new StringBuilder("123");
-Class<?> klass = str.getClass();
-```
+* 初始化不同
 
-## 判断是否为某个类的实例
-一般地，我们用 instanceof 关键字来判断是否为某个类的实例。同时我们也可以借助反射中 Class 对象的 isInstance() 方法来判断是否为某个类的实例，它是一个 native 方法：
+  * `Class.forName()`会对类初始化；`loadClass()`只会装载和链接
+  * `forName()`在类加载时会执行静态代码块（初始化）；`loadClass()`只有在调用`newInstance()`时才会执行静态代码块
 
-```java
-public native boolean isInstance(Object obj);
-```
+* 类加载器不同
 
-## 创建实例
-通过反射来生成对象主要有两种方式。
+  * `Class.forName(String)`只有一个参数，使用调用forName方法代码的类加载器
 
-* 使用Class对象的newInstance()方法来创建Class对象对应类的实例。
+  * `ClassLoader.loadClass()`是一个实例方法（非静态方法），调用时需要指定类加载器
 
-```java
-Class<?> c = String.class;
-Object str = c.newInstance();
-```
+    ```java
+    ClassLoader classLoader = new ClassLoader() {
+                @Override
+                public Class<?> loadClass(String name) throws ClassNotFoundException {
+                    return super.loadClass(name);
+                }
+            };
+    ```
 
-* 先通过Class对象获取指定的Constructor对象，再调用Constructor对象的newInstance()方法来创建实例。这种方法可以用指定的构造器构造类的实例。
+    
 
-```java
-//获取String所对应的Class对象
-Class<?> c = String.class;
-//获取String类带一个String参数的构造器
-Constructor constructor = c.getConstructor(String.class);
-//根据构造器创建实例
-Object obj = constructor.newInstance("23333");
-System.out.println(obj);
-```
-
-## 获取方法
-获取某个Class对象的方法集合，主要有以下几个方法：
-
-* getDeclaredMethods 方法返回类或接口声明的所有方法，包括公共、保护、默认（包）访问和私有方法，但不包括继承的方法。
-
-* getMethods 方法返回某个类的所有公用（public）方法，包括其继承类的公用方法。
-
-* getMethod 方法返回一个特定的方法，其中第一个参数为方法名称，后面的参数为方法的参数对应Class的对象。
-
-程序运行的结果如下:
-
-可以看到，通过 getMethods() 获取的方法可以获取到父类的方法,比如 java.lang.Object 下定义的各个方法。
+*  获取方法
+   *  `getDeclaredMethods()`
+      *  返回类或接口的所有方法，不包括继承的方法
+   *  `getMethods()` 
+      *  返回某类所有public方法，包括其继承类的public方法
+   *  `getMethod()` 
+      *  返回特定的方法，第一个参数为方法名称，后面参数为方法的参数的Class类型
 
 ## 获取构造器信息
 
