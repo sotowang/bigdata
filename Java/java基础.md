@@ -223,3 +223,37 @@ switch 语句中的变量类型可以是：
   * 加锁
 * static 修饰的变量什么时候赋值
 * static 什么时候使用
+
+# 序列化
+
+* 定义
+  * 将实现Serializable接口的对象转换成一个字节序列，并在以后恢复成原来的对象，序列化可以弥补不同操作系统之间差异
+* 作用
+  * Java远程方法调用RMI
+  * 对Java Beans进行序列化
+
+## 如何实现序列化与反序列化
+
+* 序列化
+  * 实现Serializable接口
+    * 若不改变方法中`readObject()`和`writeObject()`方法，则采取默认序列化机制
+    * 可使用transient关键字修饰不必序列化的属性
+  * 实现`ExternalSerializable`接口
+    * 自己要对序列化内容进行控制，控制那些属性能被序列化
+* 反序列化
+  * 不需调用构造方法，完全基于字节
+  * 实现`ExternalSerializable`接口的方法在反序列化时会调用构造方法
+* 注
+  * 被static修饰属性不会序列化
+  * 方法不会被序列化
+  * 通过网络，文件序列化时，必须按照写入的顺序读取对象
+  * 反序列化时须有序列化对象的class文件
+  * 最好显示声明serializableID,因不同JVM间，默认生成serializableID可能不同
+* 序列化前和后对象关系是equal关系，深复制
+
+# Comparable接口与Comparator接口区别
+
+* Comparable接口
+  * 使用Array或Collection中排序方法时，需实现接口中的`compareTo()`方法，若this比传递参数小（负整数），相等（0），更大（正整数）
+* Comparator接口
+  * 可基于多个字段排序，Comparable只能基于一个字段
