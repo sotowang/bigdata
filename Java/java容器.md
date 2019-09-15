@@ -43,6 +43,17 @@
       * 内部使用ReentrantLock加锁
       * 好处是可对容器进行并发读而不需加锁，读写分离的思想
 
+#### Array与ArrayList的区别
+
+* Array可包含基本类型和对象类型，ArrayList只能包含对象类型
+* Array大小固定，ArrayList大小动态变化
+* Array存储同一类型元素
+
+#### 什么时候使用Array而不是ArrayList
+
+* 程序运行期间存在且不变用Array
+* 频繁对元素查找，用ArrayList
+
 ### LinkedList
 
 ### Vector
@@ -51,7 +62,11 @@
 * 最好使用ArrayList,因同步操作完全可由程序员控制
 * Vector扩容每次扩大2倍(可通过构造函数设置增长量),而ArrayList是1.5倍
 
-## Array与ArrayList的区别
+#### ArrayList与Vector区别
+
+* 都基于索引和数组，都根据插入顺序获取元素
+* 迭代器都是fail-fast，都允许null值，使用索引对元素随机访问
+* Vector线程安全，同步，速度比ArrayList慢
 
 ## Set
 
@@ -113,19 +128,6 @@
 - LinkedBlockingDeque
   - 一个由链表结构组成的**双向**阻塞队列
 
-## Iterator与ListIterator区别
-
-* Iterator在Set和List中都有定义。ListIterator仅存在于List接口中
-* ListIterator有`add()`方法，可以向List中添加对象，而Iterator不能
-* ListIterator可以逆向遍历，可以定位当前的索引位置
-* ListIterator可以实现对对象的修改
-
-## 确保一个集合不会被修改
-
-* 使用集合中具，在里面再添加数据时将会报错
-  * `map = Collections.unmodifiableMap(map);`
-  * `list = Collections.unmodifiableList(list);`
-
 # Map
 
 ## HashMap
@@ -181,10 +183,13 @@
 
 ## HashTable
 
-* Hashtable与HashMap的区别
-  * HashMap不是线程安全的;HashTable是线程安全,使用synchronized同步 
-  * HashMap允许空（null）的键和值（key），HashTable则不允许。
-  * HashMap性能优于Hashtable
+### Hashtable与HashMap的区别
+
+* HashMap不是线程安全的;HashTable是线程安全,使用synchronized同步 
+* HashMap允许空（null）的键和值（key），HashTable则不允许。
+* HashMap性能优于Hashtable
+* Hashtable默认初始容量为11，增加方式为`old*2+1`;HashMap是为16，为2的指数
+* HashTable基于Dictionary类，而HashMap基于AbstractMap类
 
 ## ConcurrentHashMap
 
@@ -251,7 +256,14 @@
   
   ```
 
-  
+
+### LinkedHashMap与HashMap区别
+
+* LinkedHashMap是HashMap子类
+* LinkedHashMap中Entry有两个指针before和after,用于维护双向链接列表
+* LinkedHashMap中向哈希表中插入新Entry时，会通过Entry的addBefore() 将其链入双向链表中
+* LinkedHashMap对rehash过程（`transfer`）进行重写
+* LinkedHashMap重写了HashMap的get方法，通过HashMap中的getEntry()获取Entry对象，在此基础上进一步获取指定键对应的值
 
 
 
@@ -269,13 +281,42 @@
 
 
 
+# Collections工具类
 
+## `Collections.sort()`内部原理
 
+* 对于基础类型按照字符表，数字大小排列；对于自定义类型，通过实现Comparable接口，重写Comparator外比较器
+* 内部调用`Arrays.sort()`。对于Arrays类，`sort(Object)`使用归并排序，`sort(int)`使用快排
 
+## Iterator与ListIterator区别
 
+- Iterator在Set和List中都有定义。ListIterator仅存在于List接口中
+- ListIterator有`add()`方法，可以向List中添加对象，而Iterator不能
+- ListIterator可以逆向遍历，可以定位当前的索引位置
+- ListIterator可以实现对对象的修改
 
+## 快速失败(fail-fast)与安全失败(fail-safe)的区别
 
+* 快速失败原因
+  * 迭代器遍历时访问集合中内容，并使用modCount变量，集合在遍历期间内容改变会改变modCount值，此时会抛出异常
+* 安全失败原因
+  * 记历时是先复制原集合内容，在拷贝集合上遍历，在遍历过程中对原集合修改不能被迭代器检测，故不会抛异常
+* `java.util`下所有集合类都是快速失败；`java.util.concurrent`下所有类为安全失败
+* 快速失败会抛出`ConcurrentModificationException`
 
+## Enumeration接口和Iterator接口区别
+
+* Enumeration接口速度是Iterator的2倍，占用更少内存
+* Iterator更安全，因其他线程不能修改正在被iterator遍历对象（失败机制）
+* Iterator允许调用者删除集合中元素
+
+## 确保一个集合不会被修改
+
+- 使用集合中具，在里面再添加数据时将会报错
+  - `map = Collections.unmodifiableMap(map);`
+  - `list = Collections.unmodifiableList(list);`
+
+## 
 
 
 
