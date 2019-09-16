@@ -482,13 +482,43 @@
           		}
           ```
 
-          
 
+# Spring中设计模式
 
+## 简单工厂
 
+* 由一个工厂类根据传入的参数动态决定应该创建哪一个产品类
+* Spring的BeanFactory是简单工厂模式的体现
 
+## 单例模式
 
+* 提供了全局和访问点BeanFactory
+* Spring默认Bean为singleton
 
+## 适配器模式
+
+* Aop中使用Advice增强被代理类的功能
+
+## 代理模式
+
+* 为其他对象提供一种代理以控制对这个对象的访问
+* 结构上与装饰器模式类似，但代理模式是控制，更像是一种对功能的限制，而装饰器模式是增加职责
+* 在Aop中体现，如JdkDynamicAopProxy和Cglib2AopProxy
+
+## 观察者模式
+
+* 当一对象改变，所有依赖于它的对象都得到通知并更新
+* Spring中listener的实现，如ApplicationListener
+
+## 策略模式
+
+* 定义一系列算法，将它们一个个封装起来，使他们可以相互替换，使得算法独立于使用客户
+* spring在实例化对象时用到Strategy模式
+
+## 模板方法模式
+
+* 定义一个操作中算法骨架，将一些步骤延迟到子类中
+* JdbcTemplate中的execute方法
 
 
 
