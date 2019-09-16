@@ -16,7 +16,7 @@
   * 消息模块
   * 测试模块
 * Spring框架好处
-  * 与EJB容器比较，IOC容器更加轻量级，IOC容器在有限的内存和CPU资源情况下进行应用程序的开发和发布变得有利
+  * 与EJB容器比较，IOC容器更加轻量级（2MB），IOC容器在有限的内存和CPU资源情况下进行应用程序的开发和发布变得有利
 
 # IOC
 
@@ -58,16 +58,12 @@
   * MessageSource：能够实现国际化等工能
   * ApplicationEventPublisher：能够注册监听器，实现监听机制
 
-**BeanFactory与ApplicationContext比较**
+## BeanFactory与ApplicationContext区别
 
-* BeanFactory是Spring框架的基础设施，面向Spring
-* ApplicationContext面向使用Spring框架的开发者
-* BeanFactory 采用的是延迟加载，第一次getBean的时候才会初始化Bean
-* ApplicationContext是对BeanFactory的扩展，提供了更多的功能
-  - 国际化处理
-  - 事件传递
-  - Bean自动装配
-  - 各种不同应用层的Context实现
+* BeanFactory没有扩展Spring中MessageResource接口，因此不支持国际化功能；ApplicationContext支持
+* ApplicationContext事件机制通过ApplicationEvent和ApplicationListener两个接口提供，当ApplicationContext中发布事件时，所有扩展了ApplicationListener的Bean都会收到并处理（事件就涉及到观察者模式）
+* ApplicationContext扩展了ResourceLoader（资源加载器接口），可用来加载多个Resource，而BeanFactory没有
+* ApplicationContext在容器启动时一次性加载所有Bean，可了现Spring在配置中的错误。而BeanFactory延迟加载
 
 ## Spring IOC 支持的功能
 
@@ -89,7 +85,7 @@
 
 ![img](https://img-blog.csdn.net/20160317082518227)
 
-## Spring Bean的作用域(scope控制)
+## Bean的作用域(scope控制)
 
 * singleton(默认)
 
@@ -194,37 +190,23 @@
     * 默认获取到的是工厂Bean调用getObject创建的对象
     * 要获取工厂Bean本身，我们需要给id前面加一个&标识
 
-## Spring Bean的生命周期
-
-bean的生命周期：bean的创建--初始化--销毁的过程，由容器管理bean的生命周期
+## Bean生命周期
 
 * 创建
   * 单实例，在容器启动的时候创建对象
   * 多实例，每次获取的时候创建对象
 * 初始化
-  * 对象创建完成，并赋值好，调用初始化方法
+  * 若Bean实现了BeanNameAware接口，会调用它实现的`setBeanName(String)`，传递的值为Spring配置文件中Bean的id
+  * 若Bean实现了BeanFactoryAware接口，会调用它实现的`setBeanFactory(BeanFactory)`传递的是Spring工厂自身
+  * 若Bean实现了ApplicationContextAware接口，会调用`setApplicationContext(ApplicationContext)`，传入Spring上下文
+  * 若Bean郑不了BeanPostProcessor接口，将调用`postProcessBeforeInitialization(Object obj,String s)`,该接口经常被用于Bean内容更改，是在Bean初始化结束时调用的方法，也可应用于内存或缓存技术
+  * 若Bean在Spring配置文件中配置init-method属性会自动调用其配置的初始化方法
+  * 若Bean关联BeanPostProcessor接口，将会调用`postProcessAfterInitialization(Object obj,String s)`
 * 销毁
-  * 单实例：容器关闭的时候
-  * 多实例：容器不会管理这个bean；容器不会调用销毁方法
-* 初始化和销毁方法
-
-  * 通过@Bean指定init-method和destroy-method
-  * Bean实现InitializingBean
-    * 定义初始化逻辑（afterPropertiesSet方法）
-  * Bean实现DisposableBean接口
-    * 定义销毁逻辑(destroy方法)
-  * @PostConstruct
-    * bean创建完成并且属性赋值完成，未执行初始化方法
-  * @PreDestroy
-    * 在容器销毁bean之前通知进行清理工作
-  * BeanPostProcessor接口
-    * Bean的后置处理器
-    * postProcessBeforeInitialization
-      * 初始化之前
-    * postProcessAfterInitialization
-      * 初始化之后
+  * 如果Bean实现DisposableBean接口，会调用`destroy()`方法
+  * 若Bean的Spring中配置destroy-method属性，会自动调用其配置的销毁方法
 * 自定义组件实现xxxAware
-  * 在创建对象的时候，会调用接口元宝的方法注入相关组件：Aware
+  * 在创建对象的时候，会调用接口的方法注入相关组件：Aware
   * 把Spring底层一些组件注入到自定义的Bean中
   * xxxAware：功能使用xxxProcessor
 
@@ -264,86 +246,33 @@ bean的生命周期：bean的创建--初始化--销毁的过程，由容器管�
 *  编译时织入
      * 需要特殊的Java编译器,如AspectJ
 *  类加载时织入
-  * 需要特殊的Java编译器,如AspectJ和AspectWerkz
+       * 需要特殊的Java编译器,如AspectJ和AspectWerkz
 *  运行时织入
-  * Spring采用的方式,通过动态代理的方式,实现简单
+       *  Spring采用的方式,通过动态代理的方式,实现简单
 
 ## AOP原理
 
-AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoProxy想要往容器中导的组件
+* 基于动态代理
+  * 调用者Bean尝试调用目标方法，但是被生成代理截胡
+  * 代理根据Advice种类对Advice进行调用代理调用目标方法
+  * 返回调用结果给调用者Bean
 
-会执行以下步骤：
+### 动态代理
 
-* 获取当前bean的所有增强器（通知方法）Object[] specificInterceptors
+* 动态代理机制两个重要的类或接口
+  * InvocationHandler
+    * 每个动态代理都实与该接口，当通过代理对象调用一方法时，会被转发为InvocationHandler接口的`invoke`方法调用
+  * Proxy
+    * 用来动态创建一个代理对象的类，类中用最多的是`newProxyInstance()`
 
-  * 找到候选的所有增强器（找到哪些通知方法是需要切入当前bean方法）
-  * 获取到能在bean使用的增强器
-  * 给增强器排序
+### cglib动态代理
 
-* 保存当前bean在advisedBeans中
+* 通过继承业务类，生成的动态代理为业务类子类，通过重写业务方法进行代理
+* 比JDK创建的动态代理性能高，但创建代理对象工镄时间多，对于单例对象可用cglib
+* 因采用动态创建子类的方法，对于final方法无法进行代理
+  * 子类重写了被代理类中所有非final方法，在子类中采用方法拦截技术拦截所有父类方法的调用，顺势植入横切逻辑
 
-* 如果当前bean需要增强，创建当前bean的代理对象
-
-  * 获取所有增强器（通知方法）
-
-  * 保存到proxyFactory
-
-  * 创建代理对象：Spring自动决定
-
-    * ```java
-      if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
-      				return new JdkDynamicAopProxy(config);
-      			}
-      //在默认情况下，如果目标对象没有实现任何接口，Spring会选择CGLIB代理， 其生成的动态代理对象是目标类的子类。
-      ```
-
-    * JdkDynamicAopProxy(config）
-
-      * Jdk动态代理
-
-    * ObjensisCglibAopProxy(config)
-
-      * cglib的动态代理
-
-* 给容器中返回当前组件使用cglib增强了的对象
-
-* 以后容器中获取到的就是这个组件的代理对象，执行目标方法的时候，代理对象就会执行通知方法的流程
-
-
-
-**目标方法执行原理**
-
-* 容器中保存了组件的代理对象（cglib增强后的对象），这个对象里面保存了详细信息（比如增强器，目标对象）
-
-  * CglibAopProxy.intercept()
-
-    * 拦截目标方法的执行
-
-  * 根据ProxyFactory对象获取将要执行的目标方法拦截器链
-
-    * List<Object> interceptorList保存所有拦截器（一个国碎的ExposeInvocationInterceptor和4个增强器）
-    * 遍历所有的增强器，将其转为Interceptor
-    * 将增强器转为List<MethodInterceptor>
-      * 如果是MethodInterceptor，直接加入到集合
-      * 如果不是使用AdvisorAdapter将增强器转为MethodInterceptor
-      * 转换完成返回MethodInterceptor数组
-
-  * 如果没有拦截器链，直接执行目标方法
-
-  * 如果有拦截器链，把需要执行的目标对象，目标方法，拦截器链等信息传入创建一个CglibMethodInvocation对象，并调用proceed方法
-
-    * ```java
-      MethodInvocation invocation = new CglibMethodInvocation(proxy, this.target, method, args,this.targetClass, this.adviceChain, methodProxy);
-      
-      Object retVal = invocation.proceed();
-      ```
-
-  * 拦截器链的触发过程
-
-    * 如果没有拦截器执行目标方法，或者拦截器的索引和拦截器数组-1大小一样（指定到了最后一个拦截器）
-    * 链式获取每一个拦截器，拦截器执行invoke方法，每一个拦截器等待下一个拦截器执行完成返回以后再来执行；拦截器链的机制，保证通知方法与目标方法的执行顺序。
-
-### 总结
+## 总结
 
 * @EnableAspectJAutoProxy 开启AOP功能
 * @EnableAspectJAutoProxy会给容器注册一个组件AnnotationAwareAspectJAutoProxyCreator
@@ -364,7 +293,15 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
       * 正常执行： 前置通知-->目标方法-->后置通知-->返回通知
       * 出现异常：前置通知-->目标方法-->后置通知-->异常通知
 
-# 声明式事务
+# 事务
+
+## 事务的实现方法
+
+* 编程式事务
+  * 对于POJO应用来说是唯一选择，需在代码中调用`beginTransaction()` `commit()` `rollback()`
+* 基于TransactionalProxyFactoryBean的声明式事务管理
+* 基于@Transactional的声明式事务管理
+* 基于Aspectj AOP配置事务
 
 * 环境搭建
   * 导入相关依赖
@@ -374,6 +311,22 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
   * @EnableTransactionManagement 开启基于注解的事务管理功能
   * 配置事务管理器控制事务
 
+## 事务传播级别
+
+* `PROPAGATION_REQUIRED` ， 默认的 spring 事务传播级别
+  * 若上下文中已存在事务，则加入事务，若不存在事务，则新建事务执行
+* ` PROPAGATION_SUPPORTS`
+* `PROPAGATION_MANDATORY `
+  * 要求上下文中必须存在事务，否则抛出异常
+* ` PROPAGATION_REQUIRES_NEW `
+  * 每次都要一个新事务，且同时将上下文中事务挂起，当前事务完成后，上下文事务恢复再执行
+* `PROPAGATION_NOT_SUPPORTED `
+  * 上下文中存在事务，则挂起事务，执行当前逻辑，结束后恢复上下文中事务
+* `PROPAGATION_NEVER`
+  * 上下文中不能存在事务，一旦有事务，就抛出runtime异常，强制停止执行
+* `PROPAGATION_NESTED`
+  * 若上下文中存在事务，则嵌套事务执行，若不存在事务，则新建事务
+
 ## 事务原理
 
 * 通过TransactionManagementConfigurationSelector给容器导入组件
@@ -381,16 +334,6 @@ AnnotationAwareAspectJAutoProxyCreator(后置处理器）是EnableAspectJAutoPro
   ```java
   @Import(TransactionManagementConfigurationSelector.class)
   ```
-
-# BeanFactoryPostProcessor
-
-* BeanPostProcessor
-  * bean后置处理器，bean创建对象初始化前后进行拦截工作
-* BeanFactoryPostProcessor
-  * beanFactory的后置处理器
-  * 在BeanFactory标准初始化之后调用，所有的bean定义已经保存加载到beanFactory
-
-# BeanDefinitionRegistryPostProcessor
 
 # ApplicationListener
 
