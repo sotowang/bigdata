@@ -110,27 +110,23 @@ sed -i 'Integer/d' replace.java //删除Integer所在行
 
 
 
-# 何看当前Linux系统有几颗物理CPU和每颗CPU的核数？
+# 查看物理CPU和每颗CPU的核数
 
-答：
-
-```
-[root@centos6 ~ 10:55 #35]# cat /proc/cpuinfo|grep -c 'physical id'
+```shell
+cat /proc/cpuinfo|grep -c 'physical id'
 4
-[root@centos6 ~ 10:56 #36]# cat /proc/cpuinfo|grep -c 'processor'
+cat /proc/cpuinfo|grep -c 'processor'
 4
 ```
 
-#  查看系统负载有两个常用的命令，是哪两个？这三个数值表示什么含义呢？
+#  查看系统负载有两个常用的命令
 
-答：
-
-```
-[root@centos6 ~ 10:56 #37]# w
+```shell
+ w
 10:57:38 up 14 min,  1 user,  load average: 0.00, 0.00, 0.00
 USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
 root     pts/0    192.168.147.1    18:44    0.00s  0.10s  0.00s w
-[root@centos6 ~ 10:57 #38]# uptime
+uptime
 10:57:47 up 14 min,  1 user,  load average: 0.00, 0.00, 0.00
 ```
 
@@ -163,13 +159,10 @@ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
 
 单位都是KB
 
+# buffer和cache如何区分
 
-
-# linux系统里，您知道buffer和cache如何区分吗？
-
-答：
-
-buffer和cache都是内存中的一块区域，当CPU需要写数据到磁盘时，由于磁盘速度比较慢，所以CPU先把数据存进buffer，然后CPU去执行其他任务，buffer中的数据会定期写入磁盘；当CPU需要从磁盘读入数据时，由于磁盘速度比较慢，可以把即将用到的数据提前存入cache，CPU直接从Cache中拿数据要快的多。
+* CPU写数据到磁盘时，先将数据存入buffer
+* CPU读数据时，先将数据存入cache
 
 # 常用linux命令
 
@@ -208,9 +201,60 @@ buffer和cache都是内存中的一块区域，当CPU需要写数据到磁盘时
 
 
 
+# 统计文件中出现次数最多的前10个词
 
+```shell
+cat words.txt |sort |uniq -c |sort -k1,1nr |head -10
+```
 
+* `sort` 对一行一个单词的列表进行排序
+* `uniq -c`对排序好的单词列表统计每个单词出现的次数
+* 再用`sort`按照单词出现的次数从大到小排序，若出现频率相同，再按字母顺序排序
+* `sort -n `使用纯数字进行排序
+* `sort -r`倒序
+* `sork -k` 指定那个字段
+* `sort -t`指定分隔符
 
+# VIM
+
+* 打开与退出
+
+  * vi file： 打开文件 file
+  * :q ： 退出 vi 编辑器
+  * :wq： 保存缓冲区的修改并退出编辑器
+  * :q!： 不保存直接退出
+  * :w 保存缓冲区内容至默认的文件
+  * :w file 保存缓冲区内容至 file 文件
+
+* 插入文本
+
+  * a : 在当前光标的右边插入文本
+  * A : 在当前光标行的末尾插入文本
+  * i : 在当前光标的左边插入文本
+  * I : 在当前光标所在行的开始处插入文本
+  * o: 在当前行在下面新建一行
+  * O:在当前行的上面新建一行
+  * R:替换当前光标位置以及以后的若干文本
+  * J:连接光标所在行和下一行
+
+* 删除文本
+
+  * x: 删除一个字符
+  * dd: 删除一行
+  * ndd: 删除 n 行
+  * u: 撤销上一次操作
+  * U: 撤销对当前行的所有操作
+
+* 搜索
+
+  * /word 从前向后搜索第一个出现的 word
+
+  * ？ word 从后向前搜索第一个出现的 word
+
+* 设置行号
+
+  * :set nu 在屏幕上显示行号
+  * :set nonu 取消行号
 
 
 
