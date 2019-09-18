@@ -212,9 +212,9 @@
 
 ---
 
-#  Spring AOP
+#  AOP
 
-## AOP主要名词概念
+## 概念
 
 在程序运行期间动态的将某段代码切入到指定方法指定位置进行运行的编程方式
 
@@ -246,9 +246,9 @@
 *  编译时织入
      * 需要特殊的Java编译器,如AspectJ
 *  类加载时织入
-       * 需要特殊的Java编译器,如AspectJ和AspectWerkz
+   *  需要特殊的Java编译器,如AspectJ和AspectWerkz
 *  运行时织入
-       *  Spring采用的方式,通过动态代理的方式,实现简单
+   * Spring采用的方式,通过动态代理的方式,实现简单
 
 ## AOP原理
 
@@ -268,9 +268,15 @@
 ### cglib动态代理
 
 * 通过继承业务类，生成的动态代理为业务类子类，通过重写业务方法进行代理
-* 比JDK创建的动态代理性能高，但创建代理对象工镄时间多，对于单例对象可用cglib
+* 比JDK创建的动态代理性能高，但创建代理对象耗费时间多，对于单例对象可用cglib
 * 因采用动态创建子类的方法，对于final方法无法进行代理
   * 子类重写了被代理类中所有非final方法，在子类中采用方法拦截技术拦截所有父类方法的调用，顺势植入横切逻辑
+
+### AOP中创建的是哪种代理（JDK或CGLIB）
+
+* 通过`createAopProxy()`方法决定创建何种proxy
+  * 若目标类是接口类（目标实现了接口），则用JDKProxy
+  * 其他情况用cglib
 
 ## 总结
 
@@ -278,7 +284,7 @@
 * @EnableAspectJAutoProxy会给容器注册一个组件AnnotationAwareAspectJAutoProxyCreator
 * AnnotationAwareAspectJAutoProxyCreator是一个后置处理器
 * 容器的创建流程
-  * registerBeanPostProcessors()注册后置处理器，创建AnnotationAwareAspectJAutoProxyCreator
+  * `registerBeanPostProcessors()`注册后置处理器，创建AnnotationAwareAspectJAutoProxyCreator
   * finishBeanFactoryInitialization()初始化剩下的单实例bean
     * 创建业务逻辑组件和切面组件
     * AnnotationAwareAspectJAutoProxyCreator拦截组件的创建过程
