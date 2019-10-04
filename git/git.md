@@ -1,7 +1,9 @@
 # GitHub常用操作
 
 * 查询关键词
-  * `keyword in:name,readme,description`
+
+* `keyword in:name,readme,description`
+
 * 范围查询
   * 按点赞数`springboot starts:>=5000`
   * 按forks数`springboot forks:>=500`
