@@ -492,7 +492,7 @@ thymeleaf公共页面抽取
 
 ## 定时任务
 
-* @EnableScheduling
+* `@EnableScheduling` 启动定时任务
 * @Scheduled(cron=“0 * * * * MON-SAT”)
 
 ## 邮件任务
