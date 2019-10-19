@@ -146,22 +146,23 @@
 
 * 扩容
    * 触发时机
-      *  Entry数量>=`threshold=loadFactor*capacity`时，且新建Entry刚好落在一个非空桶上
-
-    * 扩容为原来2倍，Java8中不需要重新计算hash，看原来hash舉新增和那个bit是1一还是0，是0时索引没变，是1时索引变成`原索引+oldCap`
-
-    * 旧桶中链表通过头插法插入新桶中，原链表中的Entry结点并不一定仍在新桶数组同一链表
-
-    * HashMap容量为2的幂
-
-       * 通过键的Hash值定位桶时，调用`indexFor(hash,table.length)`方法
-
+      
+*  Entry数量>=`threshold=loadFactor*capacity`时，且新建Entry刚好落在一个非空桶上
+      
+ * 扩容为原来2倍，Java8中不需要重新计算hash，看原来hash舉新增和那个bit是1一还是0，是0时索引没变，是1时索引变成`原索引+oldCap`
+   
+ * 旧桶中链表通过头插法插入新桶中，原链表中的Entry结点并不一定仍在新桶数组同一链表
+   
+ * HashMap容量为2的幂
+   
+    * 通过键的Hash值定位桶时，调用`indexFor(hash,table.length)`方法
+   
          ```java
          static int indexFor(int h, int length) {
              return h & (length-1);  //与操作得出对应的桶的位置，&运算比%/运算快10倍，会提高性能，只有length是一个2的幂娄时，h&(length-1)和h%length结果一致
          }
-         ```
-
+      ```
+   
 * put方法的逻辑
   * 如果HashMap未被初始化过，则初始化
   * 对key求Hash值，然后再计算下标
@@ -180,6 +181,11 @@
 ### HashMap中key可以为任意对象或数据类型么
 
 * 可以为null，不能为可变对象，会导致对象属性改变，hashCode也会改变，查不到已在Map中数据
+
+### 为何容量必须为2的幂
+
+* HashMap是取模操作为`hash & (length-1)`
+  * 当length为`2^n`时,对应的二进制为`10000...`,减1后为`1111..`,以时hash为32位二进制int数,按位与(&)时,能快速拿到数组下标,且分布均匀
 
 ## HashTable
 
