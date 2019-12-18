@@ -233,64 +233,16 @@ docker version :显示 Docker 版本信息
   - 缩减层的体积。在**同一条命令**的最后，尽可能删除所有中间步骤的遗留文件。见下节示例-1。
   - 减少层的数量。因为是增量存储，所以即便是删除操作，也不会有负体积的层出现。主要作用在于拉取镜像时，减少处理层与层关系的时间。见下节示例-2。
 - 充分复用已经存在下层镜像
-  - 使用公共的基础镜像。我们在 library 命名空间下提供了经过修改的标准镜像，包括 YUM 源与时区的本地化等，比如 docker-registry.qiyi.virtual/library/centos6:1.6。见下节示例-3。
+  - 使用公共的基础镜像。我们在 library 命名空间下提供了经过修改的标准镜像，包括 YUM 源与时区的本地化等，比如 docker-registry.***。见下节示例-3。
   - Dockerfile 语句按修改频率排序。这样，不但可以减少拉镜像时的工作量，而且在制作镜像时也可以充分利用之前的缓存，达到加速效果。也可以把不易变的部分提取出来，做自己的基础镜像。见下节示例-4。
 
 **以上只是优化的原则，如果这些操作影响到应用部署的复杂性，请酌情采纳**
 
 1. 缩减层体积
 
-```shell
- # 清理缓存
- RUN yum update -y \
-     && yum clean all && rm -rf /var/cache/yum/
-```
-
-```shell
- # 清理编译结果
- RUN mvn package \
-     && mv target/scala/myapp.jar /root/myapp.jar \
-     && mvn clean
-```
-
 2. 减少层数量
-
-```shell
- # 合并为同一条命令，即合并为一层
- RUN mkdir -p /data/cache /data/result \
-     && cat /root/data >> /data/cache/data \
-     && mv /data/cache/data /data/result/data
-```
 
 3. 使用公共基础镜像
 
-```shell
-FROM docker-registry.qiyi.virtual/library/centos7:7-iqiyi-13
-```
-
-```shell
-FROM docker pull docker-registry.qiyi.virtual/library/java:8-3
-```
-
 4. Dockerfile 重排序
-
-```shell
- # 不易变的放在前边
- FROM docker-registry.qiyi.virtual/library/java:8-3
- EXPOSE 9000
- ENTRYPOINT ["java", "-jar", "/root/myapp.jar"]
- # 可能会变的放中间
- ENV ARG1 arg1
- ENV ARG2 arg2
- # 易变的放最后
- COPY target/myapp.jar /root/myapp.jar
-```
-
-```shell
- # 用上例前四行制作自己的基础镜像 myapp_base
- FROM docker-registry.qiyi.virtual/zhaowei/myapp_base:1.0
- ENV ARG1 arg1
- ENV ARG2 arg2
- COPY target/myapp.jar /root/myapp.jar
-```
 
