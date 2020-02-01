@@ -1,39 +1,45 @@
+[TOC]
+
+
+
+# 一
+
 **作者：索罗娃·多卡纳 链接：<https://www.nowcoder.com/discuss/203984> 来源：牛客网**
 
-# 一面  
+## 一面  
 
-## cookie和session的区别  
+### cookie和session的区别  
 
 * cookie 在客户端
 * session在服务端
 * 通过cookie实现session
 
-## session的生命周期  
+### session的生命周期  
 
-* session调用 inValidate
-* session到期,maxAge=-1
+* session调用 `inValidate`
+* session到期,`maxAge=-1`
 
-## 有n个服务器，怎样去协调他们使用redis
+### 有n个服务器，怎样去协调他们使用Redis
 
 分布式锁
 
-set key value px ... nx 
+`set key value px ... nx `
 
-## redis持久化方式  
+### Redis 持久化方式  
 
 * RDB
 * AOF
 * RDB-AOF(官方推荐)
 
-## Mysql索引结构  
+### MySQL索引结构  
 
 * B树
 * B+树
 * Hash
 
-## Mysql查询优化  
+### MySQL查询优化  
 
-## 最左匹配原则
+### 最左匹配原则
 
 例子  有ABCD，建立了index(A,C,D)  
 
@@ -43,70 +49,70 @@ set key value px ... nx
 
 查C = xx and A = xx可以吗
 
-## 算法
+### 算法
 
-给定数组nums=[1,2,3,2,3,5,4],和一个常数K，找到有没有可能将nums分成k个子集，使得每个子集的和相等  (5),(1,4),(2,3),(2,3) 
+给定数组`nums=[1,2,3,2,3,5,4]`,和一个常数K，找到有没有可能将`nums`分成k个子集，使得每个子集的和相等 ` (5),(1,4),(2,3),(2,3) `
 
-# 二面
+## 二面
 
 https://www.nowcoder.com/discuss/210068
 
-## HTTPS和HTTP的区别  
+### HTTPS和HTTP的区别  
 
 * SSL加密,更安全
 * 端口80与443
 * https需要到ca申请证书,一般收费
 * HTTP为明文传输
 
-## java GC分为哪几种  
+### java GC分为哪几种  
 
 * Minor GC
 * Full GC
 
-## TCP/UDP区别  
+### TCP/UDP区别  
 
 * 面向连接VS无连接
 * 大量数据VS少量数据
 * 可靠(三次握手,段标号)VS不可靠
 * 慢VS快
 
-## TCP连接建立的过程  
+### TCP连接建立的过程  
 
 * 三次握手
 
-## 要是服务器发送的最后一个报文时，客户端挂了会怎样  
+### 要是服务器发送的最后一个报文时，客户端挂了会怎样  
 
 A B C D 建立了A，C，D三个索引  ,A = x and C = x 用到了几个索引  
 
 * 一次查询只能用到一个索引
 
-## 算法题
+### 算法题
 
 求最长不重复子序列  
 
-# 三面
+## 三面
 
-## 堆排序实现
+### 堆排序实现
 
-## Inoodb与MyISM的区别
+### Inoodb与MyISAM的区别
 
 * 行级锁与表级锁
 * 支持事务
 * 索引
 
-## TCP的TIMED_WAITING  
+### TCP的TIMED_WAITING  
 
 * 保证最后一个ACK报文到达B
 * 防止失效的报文连接请求
 
-## 如何写一个多线程  
+### 如何写一个多线程  
 
 * 继承Thread(实现了Runnable接口)
 * 实现Runanable(推荐)
 * 实现Callable
 * 线程池
 
-## 线程池有哪几个组件  
+### 线程池有哪几个组件  
 
 * 线程池管理器
 * 工作线程
@@ -117,17 +123,19 @@ A B C D 建立了A，C，D三个索引  ,A = x and C = x 用到了几个索引
 
 ---
 
+# 二
+
 https://www.nowcoder.com/discuss/167644 
 
-# 一面 
+## 一面 
 
-## 算法
+### 算法
 
 * 找出数组中只出现一次的那个数，其他都出现两次；(异或) 
 
 * 接上面，如果数组中有两个数只出现一次呢？（懵...纸上划了划，还好几分钟后突然灵光一现） 
 
-## 悲观锁和乐观锁 
+### 悲观锁和乐观锁 
 
 * 悲观锁
   * 适用于多写,如数据库 行锁,表锁,写锁等
@@ -141,7 +149,7 @@ https://www.nowcoder.com/discuss/167644
   * 版本号机制
     * 通过对比Version  确定是否更新
 
-## 讲讲你知道的锁
+### 讲讲你知道的锁
 
 * 悲观锁
 * 乐观锁
@@ -150,7 +158,7 @@ https://www.nowcoder.com/discuss/167644
 * 可重入锁
 * 分段锁
 
-## ReentrantLock实现原理
+### ReentrantLock实现原理
 
 * 实现前提为AQS
   * CountDownLatch,FurureTask,Semaphore,Renentrantlock是该抽象类的子类
@@ -164,7 +172,7 @@ https://www.nowcoder.com/discuss/167644
   * 释放锁
     * 头节点是获取锁的线程,先移除头节点,再通知后面的节点获取锁(sync.release(1))
 
-## 讲讲AQS怎么实现的Fair和NoFair； 
+### 讲讲AQS怎么实现的Fair和NoFair； 
 
 * FairSync
   * 重写tryAcquire方法,参数为1
@@ -174,7 +182,7 @@ https://www.nowcoder.com/discuss/167644
   * 若state==0,获得锁
   * 当前线程为拥有锁的线程,获得锁
 
-##  ssh是什么原理？ 
+###  ssh是什么原理？ 
 
 * client向Server发起ssh连接请求
 * server向client发起版本协商
@@ -191,12 +199,12 @@ https://www.nowcoder.com/discuss/167644
     * Server用Client公钥加密256位随机字符串，客户端接收后私钥解密，将字符串与会话id合并，对其用MD5散列函数并把散列值返回给服务器。服务器匹配成功，允许登陆
 * 交互阶段
 
-## RSA非对称加密，生成一个公钥和一个私钥
+### RSA非对称加密，生成一个公钥和一个私钥
 
 * 公钥加密
 * 私钥解密
 
-## redis的哪些特性 
+### Redis的哪些特性 
 
 * 速度快，数据存在内存中，可持久化
   * AOF
@@ -206,7 +214,7 @@ https://www.nowcoder.com/discuss/167644
 * 操作原子性
 * 数据库，缓存，消息中间件
 
-## redis的单进程单线程模型 
+### Redis的单进程单线程模型 
 
 * CPU不是Redis瓶颈，内存，网络带宽才是
 * 单线程无法充分利用CPU，可启用多个实例，充分利用CPU
@@ -214,7 +222,7 @@ https://www.nowcoder.com/discuss/167644
 * 多线程涉及到锁
 * 基于IO多路利用技术
 
-## 延伸到IO多路复用 
+### 延伸到IO多路复用 
 
 * 利用select ,epoll,poll监察多个流的IO事件
 
@@ -223,7 +231,7 @@ https://www.nowcoder.com/discuss/167644
 * 多路指多个网络连接（流），利用指使用同一进程
 
 
-## epoll、poll、select
+### epoll、poll、select
 
 * select 
   * 优势是跨平台,select通过监视文件描述符,调用后select函数阻塞,直到fd就绪或超时,函数返回
@@ -239,15 +247,15 @@ https://www.nowcoder.com/discuss/167644
 
   
 
-## 再次手撕代码，BST中任意两个节点差的最小值；（题应该算简单的，一紧张脑子就不好用了，磨蹭了会儿才搞出来）； 
+### 再次手撕代码，BST中任意两个节点差的最小值；（题应该算简单的，一紧张脑子就不好用了，磨蹭了会儿才搞出来）； 
 
-## 序列化； 
+### 序列化； 
 
-## 看到简历上有写zookeeper，zookeeper怎么保证数据一致性的； 
+### 看到简历上有写zookeeper，zookeeper怎么保证数据一致性的； 
 
-# 二面 
+## 二面 
 
-## redis支持哪些数据类型
+### Redis支持哪些数据类型
 
 * String
 * List
@@ -255,7 +263,7 @@ https://www.nowcoder.com/discuss/167644
 * Set
 * ZSet
 
-## Redis中的字符串类型是怎么实现的
+### Redis中的字符串类型是怎么实现的
 
 * 通过SDS封装了C中的Char数组
 * SDS中有free，len，以及char[] ,char[]用来存储字符
@@ -265,9 +273,9 @@ https://www.nowcoder.com/discuss/167644
   * 减少字符串改变造成的空间分配次数
   * 相比原生api更加安全。将分配内存的事进行封装
 
-## 关于Redis对象系统的一个问题
+### 关于Redis对象系统的一个问题
 
-## cookie、session、token三者区别以及优缺点
+### cookie、session、token三者区别以及优缺点
 
 * cookie在客户端，session在服务端（Tomcat默认20min失效）
 * session可通过cookie实现（JSESSIONID设置age为-1）
@@ -276,7 +284,7 @@ https://www.nowcoder.com/discuss/167644
 * token会增加服务器额外开销，因为每个访问都要token验证
 * token可以防止CSRF攻击，用于单点登陆验证，可以支持跨域访问
 
-## 一致性hash
+### 一致性hash
 
 * 将空间划分出2^32个哈希环
 * 将服务器哈希，分散在哈希槽中
@@ -288,17 +296,17 @@ https://www.nowcoder.com/discuss/167644
   * 将数据key同样哈希算法哈希，找到node
   * 进行node的映射，将虚节点映射到实际节点上
 
-## git rebase实现原理
+### git rebase实现原理
 
 rebase会改变server端合并历史，尽量不要使用
 
-## 判断二叉树是否中心对称
+### 判断二叉树是否中心对称
 
-## 大数相乘
+### 大数相乘
 
-# 三面开始（40min） 
+## 三面 
 
-## 堆排序
+### 堆排序
 
 项目用到了netty，问了netty相关的一个问题，具体是什么忘了。。 
 
@@ -308,4 +316,34 @@ rebase会改变server端合并历史，尽量不要使用
 
 3. 项目用到了zookeeper，讲讲你对zk的理解吧；（主要讲了zk的数据模型和watch机制，zab记得不牢不敢讲） 
 
+---
 
+https://www.nowcoder.com/discuss/363312?type=0&order=0&pos=59&page=1
+
+# 三
+
+## 一面
+
+面试题（面了一个小时，只记得一小部分了，不分先后）
+
+### 讲讲项目
+
+### 在浏览器的url栏里输入一个https的请求会发生什么？balabala.
+
+### 三次握手，close_wait, time_wait原理
+
+### 内存泄露原因，举例子，怎么排查，OOM异常
+
+### 静态内部类会被编译成几个class？为什么内部类可以访问外部类的private的方法？
+
+### 多线程安全，线程池相关问题
+
+### 集合框架源码，concurrenthashmap，hashmap,linkedhashmap实现LRU
+
+### 为什么需要锁，你知道几种锁,说说AQS,说说CAS
+
+### synchronized原理，jdk6对他的优化，（偏向锁等），JNI，逃逸分析，对象的markword
+
+### 知道几个设计模式，怎么用，手写双重检查锁单例模式
+
+### 以下代码题输出什么？（巨坑，输出100，从泛型+向上转型+map+equals原理上想）
