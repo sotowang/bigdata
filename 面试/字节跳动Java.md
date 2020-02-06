@@ -64,7 +64,7 @@ https://www.nowcoder.com/discuss/210068
 * https需要到ca申请证书,一般收费
 * HTTP为明文传输
 
-### java GC分为哪几种  
+### Java GC分为哪几种  
 
 * Minor GC
 * Full GC
@@ -318,19 +318,49 @@ rebase会改变server端合并历史，尽量不要使用
 
 ---
 
-https://www.nowcoder.com/discuss/363312?type=0&order=0&pos=59&page=1
-
 # 三
+
+https://www.nowcoder.com/discuss/363312?type=0&order=0&pos=59&page=1
 
 ## 一面
 
-面试题（面了一个小时，只记得一小部分了，不分先后）
-
 ### 讲讲项目
 
-### 在浏览器的url栏里输入一个https的请求会发生什么？balabala.
+### 在浏览器的URL栏里输入一个HTTPS的请求会发生什么？
 
-### 三次握手，close_wait, time_wait原理
+* DNS域名解析
+* 建立TCP连接（3次握手）
+* 发送HTTP请求
+* 服务器返回响应体
+* 浏览器接收响应内容并渲染
+* 关闭连接
+
+### 三次握手
+
+* 主机A向B发送SYN=1，Seq=x  **状态：SYN_SEND**
+* B看到SYN=1，知道此时有人要建立连接，于是向A发送ack=x+1,ACK=1,seq=y,SYN=1  **状态：SYN_RECV**
+* A检查ACK=1且ack=x+1都正确，此时向B发送ack=y+1,ACK=1,建立连接  **状态：ESTABLISHED**
+
+### 四次挥手
+
+* A发送FIN报文给B（fin-wait-1）
+* B发送ACK报文给A (CLOSE_WAIT)
+* B发送FIN报文给A
+* A发送ACK报文给B(time_wait)
+
+### CLOSE_WAIT ，TIME_WAIT原理
+
+* CLOSE_WAIT
+  * 被动关闭连接时，当Client已收到FIN报文后，未发送自己的FIN报文给Server，此时处于CLOSE_WAIT
+  * 该状态时Client因在做一些其它的事情，如读或写文件未能发送FIN报文
+  * 该状态默认至少有2个小时
+
+* TIME_WAIT
+  * 发起关闭连接方会在最后发送ACK时处于该状态
+  * 作用
+    * 若最后ACK未能在2MSL内发送到Client，Client会触发超时重传
+    * 让旧连接能够及时关闭，杜绝在新连接中出现旧连接
+      * 如在linux中关闭一个服务器后，再打开会发现端口占用
 
 ### 内存泄露原因，举例子，怎么排查，OOM异常
 
@@ -338,11 +368,11 @@ https://www.nowcoder.com/discuss/363312?type=0&order=0&pos=59&page=1
 
 ### 多线程安全，线程池相关问题
 
-### 集合框架源码，concurrenthashmap，hashmap,linkedhashmap实现LRU
+### 集合框架源码，ConcurrentHashmap，HashMap,LinkedHashMap实现LRU
 
 ### 为什么需要锁，你知道几种锁,说说AQS,说说CAS
 
-### synchronized原理，jdk6对他的优化，（偏向锁等），JNI，逃逸分析，对象的markword
+### synchronized原理，jdk6对他的优化，（偏向锁等），JNI，逃逸分析，对象的mark word
 
 ### 知道几个设计模式，怎么用，手写双重检查锁单例模式
 
