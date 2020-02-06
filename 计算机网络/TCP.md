@@ -85,7 +85,7 @@ push标志指示接收端应尽快将数据提交给应用层。如果send函数
 * **第一次握手**
   * 主机A发送位码为syn＝1,随机产生seq number=x的数据包到服务器，主机B由SYN=1知道，A要求建立联机，此时状态为SYN_SENT； 
 * **第二次握手**
-  * 主机B收到请求后要确认联机信息，向A发送ack number=(主机A的seq+1),syn=1,ack=1,随机产生seq=y的包，此时状态由LISTEN变为SYN_RECV； 
+  * 主机B收到请求后要确认联机信息，向A发送ack number=(主机A的seq+1),SYN=1,ACK=1,随机产生seq=y的包，此时状态由LISTEN变为SYN_RECV； 
 * **第三次握手**
   * 主机A收到后检查ack number是否正确，即第一次发送的seq number+1,以及位码ack是否为1，若正确，主机A会再发送ack number=(主机B的seq+1),ack=1，主机B收到后确认seq值与ack=1则连接建立成功，双方状态ESTABLISHED。
 
@@ -108,30 +108,46 @@ push标志指示接收端应尽快将数据提交给应用层。如果send函数
 ![深度截图_选择区域_20190609112731.png](https://i.loli.net/2019/06/09/5cfc7cb4489e369847.png)
 
 1. 第一次分手：主机1（可以使客户端，也可以是服务器端），设置Sequence Number和Acknowledgment Number，向主机2发送一个FIN报文段；此时，主机1进入FIN_WAIT_1状态；这表示主机1没有数据要发送给主机2了；
-2. 第二次分手：主机2收到了主机1发送的FIN报文段，向主机1回一个ACK报文段，Acknowledgment Number为Sequence Number加1；主机1进入FIN_WAIT_2状态；主机2告诉主机1，我“同意”你的关闭请求；
+2. 第二次分手：主机2收到了主机1发送的FIN报文段，向主机1回一个ACK报文段，Acknowledgment Number(**ack**)为Sequence Number加1；主机1进入FIN_WAIT_2状态；主机2告诉主机1，我“同意”你的关闭请求；
 3. 第三次分手：主机2向主机1发送FIN报文段，请求关闭连接，同时主机2进入LAST_ACK状态；
 4. 第四次分手：主机1收到主机2发送的FIN报文段，向主机2发送ACK报文段，然后主机1进入TIME_WAIT状态；主机2收到主机1的ACK报文段以后，就关闭连接；此时，主机1等待2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，主机1也可以关闭连接了。
+
+* 简化版
+  * Client -> FIN  -> Server   
+  * Client <- ACK  <- Server   这时候Client端处于FIN_WAIT_2状态；而Server 程序处于CLOSE_WAIT状态。   
+  * Client <- FIN  <- Server   这时Server 发送FIN给Client，Server 就置为LAST_ACK状态。   
+  * Client -> ACK  -> Server   Client回应了ACK，那么Server 的套接字才会真正置为CLOSED状态。    
 
 ## 为什么需要四交握手才能关闭连接
 
 * 因为全双工,发送方和接收方都需要FIN报文和ACK报文
 
+## [何时处于CLOSE_WAIT状态](https://blog.csdn.net/dj0379/article/details/61416189)
+
+* 在被动关闭连接情况下，在已经接收到FIN，但还没有发送自己的FIN时刻，连接处于CLOSE_WAIT状态
+
 ## 服务器出现大量CLOSE_WAIT状态的原因
 
-* 对方关闭socket连接,我方忙于读或写,没有关闭读写
-  * 检查代码,特别是释放资源的代码
-  * 检查配置,特别是处理请求的线程配置
+* Server处于CLOSE_WAIT状态时说明还未发FIN给Client,可能在关闭连接之前还有一些事情要做
+  * 对方关闭socket连接,我方忙于读或写,没有关闭连接
+    * 检查代码,特别是释放资源的代码
+    * 检查配置,特别是处理请求的线程配置
+* 通常一个CLOSE_WAIT会持续至少2小时，造成资源浪费
 
 ## 为什么要有四次挥手的TIME_WAIT的状态 
 
 * 保证最后一个的一个ACK报文能到达B**。**
+  
   * **这个ACK报文有可能丢失，因而使得处在LAST_ACK状态得不到对已发送的FIN+ACK报文的确认，**B会超时重传这个FIN+ACk ,而A就能在这TIME_WAIT时间（2MSL）里收到这个重传的报文，A就可以重传一次确认，如果没有这个TIME_WAIT， 那B重传的FIN_ACK，可A早就走了，自然不会再重发确认，这样B就无法按照正常步骤进入CLOSE 状态。 
+  
+    > *RFC 793*中规定*MSL*为*2*分钟，实际应用中常用的是*30*秒，*1*分钟和*2*分钟等。
 * 防止“**已失效的报文连接请求**”
+  
   * A在TIME_WAIT中，经过这2MSL的时间，就可以使本链接持续的时间内产生的所有连接消失，**这样就可以使下一个新的连接中不会出现这样旧的连接请求报文段**。 
 * **谁先关闭谁就有一个TIME_WAIT的状态；**
 
 
-在linux的网络编程中，如果服务器如果先关闭，你会发现，现在想要立马再次启动服务器，就会报错说这个端口号被占用着，那就是因为有这个TIME_WAIT，2msl的时间.那么怎么解决 ？ 
+在linux的网络编程中，如果服务器如果先关闭，你会发现，现在想要立马再次启动服务器，就会报错说这个端口号被占用着，那就是因为有这个TIME_WAIT，2msl（**Maximum Segment Lifetime==>报文最大生存时间**）的时间.那么怎么解决 ？ 
 
 解决：setsockopt（）函数。在这就不多说了。
 
@@ -167,7 +183,7 @@ push标志指示接收端应尽快将数据提交给应用层。如果send函数
 
 * 确认   
   * 积累确认（ACK）
-    * ​  接收方通告期望接收下一节点seqnum，忽略失序到达报文。
+    *   接收方通告期望接收下一节点seqnum，忽略失序到达报文。
     * 在TCP首部的32位ACK字段用于积累确认，它的值仅在ACK标志为1时才有效
   * 选择确认（SACK`selective acknowledgment`）
     * SACK要报告失序的数据块及重复的报文段
