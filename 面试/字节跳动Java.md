@@ -364,11 +364,24 @@ https://www.nowcoder.com/discuss/363312?type=0&order=0&pos=59&page=1
 
 ### 内存泄露原因，举例子，怎么排查，OOM异常
 
-### 静态内部类会被编译成几个class？为什么内部类可以访问外部类的private的方法？
+* 在代码中使用的对象未被及时清理，可能是代码问题导致
+  * 如在类方法中使用一个对象，且该对象为该类的一个属性，虽然该对象只在方法中使用一次就不用了，但却无法回收
+* 排查
+  * 使用JMAP
+* OOM异常
+
+### 静态内部类会被编译成几个class？
+
+* 一个
+
+### [为什么内部类可以访问外部类的private的方法？](https://blog.csdn.net/zhangjg_blog/article/details/20000769)
+
+* 内部类对象的创建依赖外部类
+* 内部类对象 持有 指向外部类对象的引用
 
 ### 多线程安全，线程池相关问题
 
-### 集合框架源码，ConcurrentHashmap，HashMap,LinkedHashMap实现LRU
+### 集合框架源码，ConcurrentHashmap，HashMap, LinkedHashMap 实现LRU
 
 ### 为什么需要锁，你知道几种锁,说说AQS,说说CAS
 
