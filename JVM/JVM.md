@@ -412,6 +412,7 @@ Eden与Survivor区比例（-XX:SurvivorRatio）、
 * 优点:并发收集、低停顿 
 * 缺点：产生大量空间碎片、并发阶段会降低吞吐量
   
+
 参数控制：
 
    ```
@@ -628,7 +629,7 @@ jps主要用来输出JVM中运行的进程状态信息。语法格式如下：
 
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117155624724-701376587.png)
 
-```
+```java 
 public class StackOnTest {  
     public static void alloc() {  
         byte[] b = new byte[2];  
@@ -643,7 +644,7 @@ public class StackOnTest {
 }
 ```
 
-上述代码执行三次，就有三个进程，注意此时不能在console里输入信息，这样程序就会卡在 Scanner sc=new Scanner(System.in); 这里，执行三次就有三个进程
+上述代码执行三次，就有三个进程，注意此时不能在console里输入信息，这样程序就会卡在 `Scanner sc=new Scanner(System.in);`这里，执行三次就有三个进程
 
 ![](https://images2017.cnblogs.com/blog/1072930/201801/1072930-20180117155947256-878754721.png)
 
@@ -685,7 +686,7 @@ public class StackOnTest {
 -flag <name>=<value> pid：设置指定JVM参数的值
 ```
 
-```
+```java
  public class JInfoTest {
     private static void s2() {
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -1158,6 +1159,8 @@ at org.eclipse.jetty.io.nio.DirectNIOBuffer.<init>
 
 * class文件中的信息是一项一项排列的， 每项数据都有它的固定长度， 有的占一个字节， 有的占两个字节， 还有的占四个字节或8个字节， 数据项的不同长度分别用u1, u2, u4, u8表示， 分别表示一种数据项在class文件中占据一个字节， 两个字节， 4个字节和8个字节。 可以把u1, u2, u3, u4看做class文件数据项的“类型” 。
 
+
+
 #### Class文件中存储数据的类型：无符号数和表
 
 [深入理解JVM之Java字节码（.class）文件详解](https://windysha.github.io/2018/01/18/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JVM%E4%B9%8BJava%E5%AD%97%E8%8A%82%E7%A0%81%EF%BC%88-class%EF%BC%89%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/)
@@ -1199,7 +1202,7 @@ Class中有很多不同的表。
 
 2、minor_version 和 major_version
 
-紧接着魔数的四个字节是class文件的此版本号和主版本号。
+紧接着魔数的四个字节是class文件的次版本号和主版本号。
 
 ```
 随着Java的发展， class文件的格式也会做相应的变动。 
