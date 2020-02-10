@@ -379,7 +379,17 @@ https://www.nowcoder.com/discuss/363312?type=0&order=0&pos=59&page=1
 * 内部类对象的创建依赖外部类
 * 内部类对象 持有 指向外部类对象的引用
 
-### 多线程安全，线程池相关问题
+### 多线程安全
+
+* 使用Synchronized锁或同步锁
+
+### 线程池相关问题
+
+* 创建多线程的方式
+  * 继承Thread类
+  * 实现Runnable接口
+  * 实现Callable接口
+  * 线程池
 
 ### 集合框架源码，ConcurrentHashmap，HashMap, LinkedHashMap 实现LRU
 
