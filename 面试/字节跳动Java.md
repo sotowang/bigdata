@@ -1,7 +1,5 @@
 [TOC]
 
-
-
 # 一
 
 **作者：索罗娃·多卡纳 链接：<https://www.nowcoder.com/discuss/203984> 来源：牛客网**
@@ -324,79 +322,124 @@ https://www.nowcoder.com/discuss/363312?type=0&order=0&pos=59&page=1
 
 ## 一面
 
-### 讲讲项目
+* 讲讲项目
+* 在浏览器的URL栏里输入一个HTTPS的请求会发生什么？
+  * DNS域名解析
+  * 建立TCP连接（3次握手）
+  * 发送HTTP请求
+  * 服务器返回响应体
+  * 浏览器接收响应内容并渲染
+  * 关闭连接
+* 三次握手
+  * 主机A向B发送SYN=1，Seq=x  **状态：SYN_SEND**
+  * B看到SYN=1，知道此时有人要建立连接，于是向A发送ack=x+1,ACK=1,seq=y,SYN=1  **状态：SYN_RECV**
+  * A检查ACK=1且ack=x+1都正确，此时向B发送ack=y+1,ACK=1,建立连接  **状态：ESTABLISHED**
+* 四次挥手
+  * A发送FIN报文给B（fin-wait-1）
+  * B发送ACK报文给A (CLOSE_WAIT)
+  * B发送FIN报文给A
+  * A发送ACK报文给B(time_wait)
+* CLOSE_WAIT ，TIME_WAIT原理
+  * CLOSE_WAIT
+    * 被动关闭连接时，当Client已收到FIN报文后，未发送自己的FIN报文给Server，此时处于CLOSE_WAIT
+    * 该状态时Client因在做一些其它的事情，如读或写文件未能发送FIN报文
+    * 该状态默认至少有2个小时
 
-### 在浏览器的URL栏里输入一个HTTPS的请求会发生什么？
-
-* DNS域名解析
-* 建立TCP连接（3次握手）
-* 发送HTTP请求
-* 服务器返回响应体
-* 浏览器接收响应内容并渲染
-* 关闭连接
-
-### 三次握手
-
-* 主机A向B发送SYN=1，Seq=x  **状态：SYN_SEND**
-* B看到SYN=1，知道此时有人要建立连接，于是向A发送ack=x+1,ACK=1,seq=y,SYN=1  **状态：SYN_RECV**
-* A检查ACK=1且ack=x+1都正确，此时向B发送ack=y+1,ACK=1,建立连接  **状态：ESTABLISHED**
-
-### 四次挥手
-
-* A发送FIN报文给B（fin-wait-1）
-* B发送ACK报文给A (CLOSE_WAIT)
-* B发送FIN报文给A
-* A发送ACK报文给B(time_wait)
-
-### CLOSE_WAIT ，TIME_WAIT原理
-
-* CLOSE_WAIT
-  * 被动关闭连接时，当Client已收到FIN报文后，未发送自己的FIN报文给Server，此时处于CLOSE_WAIT
-  * 该状态时Client因在做一些其它的事情，如读或写文件未能发送FIN报文
-  * 该状态默认至少有2个小时
-
-* TIME_WAIT
-  * 发起关闭连接方会在最后发送ACK时处于该状态
-  * 作用
-    * 若最后ACK未能在2MSL内发送到Client，Client会触发超时重传
-    * 让旧连接能够及时关闭，杜绝在新连接中出现旧连接
-      * 如在linux中关闭一个服务器后，再打开会发现端口占用
-
-### 内存泄露原因，举例子，怎么排查，OOM异常
-
-* 在代码中使用的对象未被及时清理，可能是代码问题导致
-  * 如在类方法中使用一个对象，且该对象为该类的一个属性，虽然该对象只在方法中使用一次就不用了，但却无法回收
-* 排查
-  * 使用JMAP
-* OOM异常
-
-### 静态内部类会被编译成几个class？
-
-* 一个
-
-### [为什么内部类可以访问外部类的private的方法？](https://blog.csdn.net/zhangjg_blog/article/details/20000769)
-
-* 内部类对象的创建依赖外部类
-* 内部类对象 持有 指向外部类对象的引用
-
-### 多线程安全
-
-* 使用Synchronized锁或同步锁
-
-### 线程池相关问题
-
+  * TIME_WAIT
+    * 发起关闭连接方会在最后发送ACK时处于该状态
+    * 作用
+      * 若最后ACK未能在2MSL内发送到Client，Client会触发超时重传
+      * 让旧连接能够及时关闭，杜绝在新连接中出现旧连接
+        * 如在linux中关闭一个服务器后，再打开会发现端口占用
+* 内存泄露原因，举例子，怎么排查，OOM异常
+  * 在代码中使用的对象未被及时清理，可能是代码问题导致
+    * 如在类方法中使用一个对象，且该对象为该类的一个属性，虽然该对象只在方法中使用一次就不用了，但却无法回收
+  * 排查
+    * 使用JMAP
+  * OOM异常
+* 静态内部类会被编译成几个class？
+  * 一个	
+* [为什么内部类可以访问外部类的private的方法？](https://blog.csdn.net/zhangjg_blog/article/details/20000769)
+  * 内部类对象的创建依赖外部类
+  * 内部类对象 持有 指向外部类对象的引用
+* 多线程安全
+  * 使用Synchronized锁或同步锁
+* 线程池相关问题
 * 创建多线程的方式
   * 继承Thread类
   * 实现Runnable接口
   * 实现Callable接口
   * 线程池
+* 集合框架源码
+  * ConcurrentHashMap
+  * HashMap
+  * LinkedHashMap 实现LRU
+* 为什么需要锁，你知道几种锁,说说AQS,说说CAS
+* synchronized原理，jdk6对他的优化，（偏向锁等）
+* JNI，逃逸分析，对象的mark word
+* 知道几个设计模式，怎么用，手写双重检查锁单例模式
+* 以下代码题输出什么？（巨坑，输出100，从泛型+向上转型+map+equals原理上想）
 
-### 集合框架源码，ConcurrentHashmap，HashMap, LinkedHashMap 实现LRU
+## 二面
 
-### 为什么需要锁，你知道几种锁,说说AQS,说说CAS
+面试题（面了一个小时，只记得一部分了，不分先后） 算法题：
 
-### synchronized原理，jdk6对他的优化，（偏向锁等），JNI，逃逸分析，对象的mark word
+介绍自己
 
-### 知道几个设计模式，怎么用，手写双重检查锁单例模式
+说说项目，说说你的开源项目
 
-### 以下代码题输出什么？（巨坑，输出100，从泛型+向上转型+map+equals原理上想）
+剑指offer62:圆圈剩下的数字
+
+写一个快排
+
+给出一个数组nums，一个值k，找出数组中的两个下标 i，j 使得 nums[i] + nums[j] = k. 2种解法，排序数组+双指针o(n)遍历或使用HashMap额外存储空间。
+
+泛型 List<Integer> 与 List<String> 这两个的getClass是否相对？（泛型擦除，中间还有一个小插曲，面试官问我<? extends String> 有什么作用？
+
+我说：String不是不可继承的嘛，被final修饰的。相视而笑）
+
+说说你知道的设计模式，说说项目里用到的设计模式，说说策略模式，设计一个下棋的场景问如何结合设计模式使用，设计模式什么时候继承，什么时候委托？
+
+说说MySQL Innodb 索引底层实现，说说join，说说GroupBy
+
+说说抽象类与接口区别？说说从设计模式层面的理解，为什么要有这么2个东西？
+
+说说操作系统内存模型不连续空间分配，说说分段，分页，虚拟内存，页淘汰算法...., 11.说说Redis底层实现，说说他和MySQL的区别
+
+说说volatile，说说线程同步，说说JVM线程模型
+
+说说动态***，说说你知道的AOP，项目中是怎样使用AOP的？
+
+有没有使用过责任链模式？如果有...个场景，如何选择使用设计模式
+
+你还有什么问题？
+
+## 三面（面了一个小时，只记得一部分了，不分先后）
+
+自我介绍
+
+项目用户量3w+，怎么做到的？如何协调团队？
+
+说说项目中如何使用的Redis，如果有10w请求插入Redis，如何优化？
+
+说说你理解的线程池
+
+说说操作系统组成
+
+手撕一个阻塞队列，生产者生产0~100的随机数，消费者消费后将其存储到一个list，需要保持list中元素保持递增。(信号量+线程安全)
+
+说说hashmap的resize死循环
+
+说说hashtable和hahsmap区别，说说copyOnwriteArrayList以及他们分别采用的并发修改当然(fast-fail,fast-safe）
+
+说说你的优缺点。
+
+说说你对字节的了解？
+
+## hr
+
+1. 介绍下自己
+2. 这个项目3w的用户量如何统计的？如何处理团队问题？
+3. 为什么想来字节？（喜欢张一鸣）
+4. 什么时候来？
+5. 口头offer
