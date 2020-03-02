@@ -1,3 +1,5 @@
+[TOC]
+
 # Collection
 
 ## List
@@ -23,12 +25,12 @@
     * 将指定元素添加至列表尾
     * `ensureCapacityInternal()`会检查添加后元素个数是否会超过当前数组长度，若超出则扩容
   * `add(int index,E element)`
-  * addAll(Collection<? extends E> c)
+  * `addAll(Collection<? extends E> c)`
 
 * 扩容
 
   * 将老数组无数拷贝进新数组，容量为原容量的1.5倍，实际使用应避免数组扩张
-  * 当可预知保存元素数量时，在构造ArrayList时就指定容量，以避免扩容，或根据实际需求，通过调用`ensureCapacity()`手动增加容量
+  * 当可预知保存元素数量时，在构造`ArrayList`时就指定容量，以避免扩容，或根据实际需求，通过调用`ensureCapacity()`手动增加容量
 
 * 线程不安全
 
@@ -40,7 +42,7 @@
     * `Collections.synchronizedList(new ArrayList<>());`
     * 写时复制`new CopyOnWriteArrayList<>();`
       * 往一个 容器添加元素时不直接在容器添加，而是将当前容器Object[]进行copy复制出一个新容器`Object[] newElements`,然后在新容器中添加元素，添加完成后，将原容器引用指向新数组`setArray(newElements)`
-      * 内部使用ReentrantLock加锁
+      * 内部使用`ReentrantLock`加锁
       * 好处是可对容器进行并发读而不需加锁，读写分离的思想
 
 #### Array与ArrayList的区别
@@ -145,23 +147,30 @@
       *  ConcurrentHashMap采用分段锁技术，其中Segment继承于`ReentrantLock`，不会像HashTable `put` `get`操作都需加锁，支持Segment数组数量的线程并发，当一线程占用锁Segment时，不影响其它Segment
 
 * 扩容
+   
    * 触发时机
-      
+   
 *  Entry数量>=`threshold=loadFactor*capacity`时，且新建Entry刚好落在一个非空桶上
-      
- * 扩容为原来2倍，Java8中不需要重新计算hash，看原来hash舉新增和那个bit是1一还是0，是0时索引没变，是1时索引变成`原索引+oldCap`
+   
+ * 扩容为原来2倍，Java8中不需要重新计算hash，看原来hash值新增的那个bit是1一还是0，是0时索引没变，是1时索引变成`原索引+oldCap`
    
  * 旧桶中链表通过头插法插入新桶中，原链表中的Entry结点并不一定仍在新桶数组同一链表
    
  * HashMap容量为2的幂
    
     * 通过键的Hash值定位桶时，调用`indexFor(hash,table.length)`方法
-   
+     
          ```java
+         //jdk7
          static int indexFor(int h, int length) {
              return h & (length-1);  //与操作得出对应的桶的位置，&运算比%/运算快10倍，会提高性能，只有length是一个2的幂娄时，h&(length-1)和h%length结果一致
-         }
-      ```
+      }
+     //jdk8  通过hashCode()的高16位异或低16位实现的
+     static final int hash(Object key) {
+             int h;
+             return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+     }
+     ```
    
 * put方法的逻辑
   * 如果HashMap未被初始化过，则初始化
@@ -184,12 +193,12 @@
 
 ### 为何容量必须为2的幂
 
-* HashMap是取模操作为`hash & (length-1)`
+* HashMap是取模操作为`hash & (length-1)`(jdk7)
   * 当length为`2^n`时,对应的二进制为`10000...`,减1后为`1111..`,以时hash为32位二进制int数,按位与(&)时,能快速拿到数组下标,且分布均匀
 
 ## HashTable
 
-### Hashtable与HashMap的区别
+### HashTable与HashMap的区别
 
 * HashMap不是线程安全的;HashTable是线程安全,使用synchronized同步 
 * HashMap允许空（null）的键和值（key），HashTable则不允许。
