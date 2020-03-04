@@ -20,7 +20,7 @@
   * 多态的存在有三个前提
     * 要有继承关系 
     	 子类要重写((override))父类的方法	
-    * 父类引用指向子类对象,
+    * 父类引用指向子类对象
 * 多态性主要表现在如下两个方面:
 
   * 方法重载
@@ -173,7 +173,7 @@ switch 语句中的变量类型可以是：
 
 # equals与hashCode()
 
-- 若两对象相同.equals返回true,则hashCode值必相同
+- 若两对象相同equals返回true,则hashCode值必相同
 - 若两对象hashCode相同,equals可能为false
 - hashCode
   - 对象比较时先进行hashCode比较.若不同,则没有后序比较必要.减少了equals比较次数,效率提高
@@ -251,9 +251,9 @@ switch 语句中的变量类型可以是：
   * 最好显示声明serializableID,因不同JVM间，默认生成serializableID可能不同
 * 序列化前和后对象关系是equal关系，深复制
 
-# Comparable接口与Comparator接口区别
+# [Comparable接口与Comparator接口区别](https://cloud.tencent.com/developer/article/1118794)
 
 * Comparable接口
-  * 使用Array或Collection中排序方法时，需实现接口中的`compareTo()`方法，若this比传递参数小（负整数），相等（0），更大（正整数）
+  * 需要修改源码,在源码中实现`compareTo() `方法,是一个内比较器
 * Comparator接口
-  * 可基于多个字段排序，Comparable只能基于一个字段
+  * 不用修改源码,实现`compare()`方法,一个外比较器
