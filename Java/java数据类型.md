@@ -1,4 +1,4 @@
-# Boxing and UnBoxing
+# 装箱和拆箱
 
 * new Integer(2) == 2?
   * true
@@ -19,3 +19,14 @@
 * 自动装箱
   * 调用 `Integer.valueOf()`
   * 缓冲池大小`-128-127`,上界可通过`-XX:AutoBoxCacheMax=<size>`调整
+
+# 基本数据类型
+
+* int 4字节
+* char 2字节
+* byte 1字节
+* short 2字节
+* long 8字节
+* double 8字节
+* float 4字节
+* boolean 1字节

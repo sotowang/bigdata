@@ -57,7 +57,7 @@
   * `Class.forName()`
   * `ClassLoader.loadClass()`
 
-## Class.forName与Classloader.loadClass区别
+## `Class.forName`与`Classloader.loadClass`区别
 
 * 初始化不同
 
@@ -66,7 +66,7 @@
 
 * 类加载器不同
 
-  * `Class.forName(String)`只有一个参数，使用调用forName方法代码的类加载器
+  * `Class.forName(String)`只有一个参数，使用调用`forName`方法代码的类加载器
 
   * `ClassLoader.loadClass()`是一个实例方法（非静态方法），调用时需要指定类加载器
 
@@ -99,8 +99,8 @@
 
 主要是这几个方法，在此不再赘述：
 
-* getFiled：访问公有的成员变量
-* getDeclaredField：所有已声明的成员变量，但不能得到其父类的成员变量
+* `getFiled`：访问公有的成员变量
+* `getDeclaredField`：所有已声明的成员变量，但不能得到其父类的成员变量
 
 getFileds 和 getDeclaredFields 方法用法同上（参照 Method）。
 
@@ -201,10 +201,9 @@ arrayOop Reflection::reflect_new_array(oop element_mirror, jint length, TRAPS) {
 
 另外，Array 类的 set 和 get 方法都为 native 方法，在 HotSpot JVM 里分别对应 Reflection::array_set 和 Reflection::array_get 方法，这里就不详细解析了。
     
-# 反射的一些注意事项
+# 反射缺点
 
-由于反射会额外消耗一定的系统资源，因此如果不需要动态地创建一个对象，那么就不需要用反射。
-
-另外，反射调用方法时可以忽略权限检查，因此可能会破坏封装性而导致安全问题。
+* 额外消耗系统资源,若不需动态创建对象,则不需要用反射
+* 反射调用方法时可忽略权限检查,可能会破坏封装性而导致安全问题
 
 

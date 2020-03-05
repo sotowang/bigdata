@@ -36,10 +36,15 @@
 
 * 能够及时返回数据，无延迟
 * 用户需付出性能的代价
+* 常用类
+  * InputStream
+  * OutputStream
+  * Reader
+  * Writer
 
 ## 同步非阻塞NIO
 
-* 轮询检查内核数据，直到数据准备好，再拷贝数据到进程，进行处理
+* 轮询检查内核数据，直到数据准备好，再拷贝数据到进程(用户空间)，进行处理
 
 * 优点
   * 能够在等待任务完成的时间里干其他活
@@ -57,7 +62,7 @@
 
 * 核心组件
   * 通道`Channels`
-    * Scatter: 从一个Channel读取的信息分散到N个缓冲区中(Buufer).
+    * Scatter: 从一个Channel读取的信息分散到N个缓冲区中(Buffer).
     * Gather: 将N个Buffer里面内容按照顺序发送到一个Channel.
     * 类型
       * `FileChannel`从文件读写数据 
@@ -87,7 +92,7 @@
 
 ## IO多路复用
 
-* select , poll, epoll
+* `select , poll, epoll`   (系统级别)
   * 单个process就可以同时处理多个网络连接的IO
   * 不断轮询所负责的所有socket，当某个socket有数据到达，就通知用户进程
 * 实际中对于每一个socket，一般都设置成NIO，但是整个用户的process其实是一直被block的，不过process是被block这个函数block，而不是被socket IO给Block
@@ -103,7 +108,7 @@
 # blocking与non-blocking区别
 
 * blocling会一直block对应的进程直到操作完成
-* non-blocking在kernel还准备数据的情况下立刻返回
+* non-blocking在kernel(内核)还准备数据的情况下立刻返回
 
 # 同步IO与异步IO的区别
 
