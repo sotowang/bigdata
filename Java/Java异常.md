@@ -6,25 +6,32 @@
   * 不需在方法或构造函数上声明
   * 可传播到方法或构造函数外面
 
+# 异常机制
+
+- 运行时异常（unchecked）
+  - 由JVM接管,比如空指针异常
+- 检查式异常（checked exception）
+  - IO异常及SQL异常
+  - 需要catch,不管我们是否愿意,都要写
+
 # throw和throws区别
 
 * throw关键字用来在程序中明确地抛出异常
 * throws来表明方法不能处理的异常，多个异常用逗号分隔
 
-# 异常机制
+# Throwable
 
-* 运行时异常（RuntimeException）
-  * 由JVM接管
-* 检查式异常（checked exception）
-  * IO异常及SQL异常
-  * 需要catch
+* 是所有错误和异常的超类
+* 2个子类
+  * Error
+  * Exception
 
-# Error和Exception的区别
+## Error和Exception的区别
 
 * 父类都为Throwable
-* Error：程序无法处理的系统错误，编译器不做检查,JVM承担的责任
+* Error：程序无法处理的系统错误，编译器不做检查,JVM承担的责任,大部分会终止线程
 * Exception：程序可以处理的异常，捕获后可能恢复
-  * RuntimeException
+  * unCheckedException
     * 不可预知的，程序应当自行避免，由程序承担责任
       * 空指针异常，数组下标越界
   * CheckedException可检查异常是Java编译器应该负担的责任
