@@ -144,10 +144,10 @@
    *  Hash冲突严重时，链表变长，查找效率降低
    *  解决
       *  java1.8中使用数组+链表+红黑树
-      *  ConcurrentHashMap采用分段锁技术，其中Segment继承于`ReentrantLock`，不会像HashTable `put` `get`操作都需加锁，支持Segment数组数量的线程并发，当一线程占用锁Segment时，不影响其它Segment
+      *  `ConcurrentHashMap` 采用分段锁技术，其中Segment继承于`ReentrantLock`，不会像HashTable `put` `get`操作都需加锁，支持Segment数组数量的线程并发，当一线程占用锁Segment时，不影响其它Segment
 
 * 扩容
-   
+  
    * 触发时机
    
 *  Entry数量>=`threshold=loadFactor*capacity`时，且新建Entry刚好落在一个非空桶上
@@ -159,18 +159,18 @@
  * HashMap容量为2的幂
    
     * 通过键的Hash值定位桶时，调用`indexFor(hash,table.length)`方法
-     
-         ```java
-         //jdk7
-         static int indexFor(int h, int length) {
-             return h & (length-1);  //与操作得出对应的桶的位置，&运算比%/运算快10倍，会提高性能，只有length是一个2的幂娄时，h&(length-1)和h%length结果一致
+    
+      ```java
+      //jdk7
+      static int indexFor(int h, int length) {
+          return h & (length-1);  //与操作得出对应的桶的位置，&运算比%/运算快10倍，会提高性能，只有length是一个2的幂娄时，h&(length-1)和h%length结果一致
       }
-     //jdk8  通过hashCode()的高16位异或低16位实现的
-     static final int hash(Object key) {
+       //jdk8  通过hashCode()的高16位异或低16位实现的
+       static final int hash(Object key) {
              int h;
              return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
-     }
-     ```
+       }
+      ```
    
 * put方法的逻辑
   * 如果HashMap未被初始化过，则初始化
