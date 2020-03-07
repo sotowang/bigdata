@@ -1,3 +1,28 @@
+# 内存泄漏
+
+* 程序分配了内存,但在程序结束时未被释放,导致那部分内存不可用
+
+  ``` java
+  Student s1 = new Student();
+  Student s2 = new Student();
+  //在ArrayList里放入s1和s2,再将s1和s2置为null,此时两对象所占内存不会被释放
+  ```
+
+## 如何避免内存泄漏
+
+* 尽早释放无用对象的引用
+* 使用临时变量时,让引用在退出活动域后自动设置为null,暗示垃圾收集器收集该对象
+* 程序进行字符串处理时,避免使用String,而使用StringBuffer,因每一个Stringcfqj都会独立占用内存一块区域
+
+## 检查内存泄漏工具
+
+* MemoryAnalyzer
+  * Java堆转储文件分析工具,可帮助发现内存漏洞和减少内存消耗
+* EclipseMAT
+  * 开源的Java内存分析软件,查找内存泄漏,能容易找到大块内存并验证谁在一直占用它
+* JProbe
+  * 分析Java的内存泄漏
+
 # 基于JDK命令行工具的监控
 
 * JVM参数类型
@@ -140,8 +165,6 @@
 * ngx_http_stub_status监控连接信息
 * ngxtop监控请求信息
 * ngx-rrd图形化监控
-
-
 
 # JVM GC调优
 
