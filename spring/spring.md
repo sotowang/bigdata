@@ -280,8 +280,8 @@
 
 ## 总结
 
-* @EnableAspectJAutoProxy 开启AOP功能
-* @EnableAspectJAutoProxy会给容器注册一个组件AnnotationAwareAspectJAutoProxyCreator
+* `@EnableAspectJAutoProxy `开启AOP功能
+* `@EnableAspectJAutoProxy`会给容器注册一个组件AnnotationAwareAspectJAutoProxyCreator
 * AnnotationAwareAspectJAutoProxyCreator是一个后置处理器
 * 容器的创建流程
   * `registerBeanPostProcessors()`注册后置处理器，创建AnnotationAwareAspectJAutoProxyCreator

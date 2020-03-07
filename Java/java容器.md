@@ -130,6 +130,17 @@
 - LinkedBlockingDeque
   - 一个由链表结构组成的**双向**阻塞队列
 
+### `LinkedBlockingQueue`和`ArrayBlockingQueue`的区别
+
+* 队列大小不同
+  * LinkedBlockingQueue是无界的,ArrayBlockingQueue是有界的
+* 数据存储容器不同
+  * ArrayBlockingQueue基于数组,在插入或删除元素时,不会产生或销毁任何额外的对象实例
+  * LinkedBlockingQueue基于链表,会生成一个额外的Node对象,在长时间内需要高效并发地处理大批数据时,对GC可能有影响
+* 队列添加或移除时的锁不同
+  * ArrayBlockingQueue实现的队列中的锁是没有分离,即添加和删除操作是同一个ReenterLock
+  * LinkedBlockingQueue添加使用的是putLock,删除使用的是takeLock,可大大提高吞吐量,提高并发性能
+
 # Map
 
 ## HashMap
