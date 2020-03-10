@@ -1,7 +1,7 @@
 # 两个进程通信方式
 
 * 管道
-* 内存共享
+* 共享内存
 * 信号量
 * 消息队列
 
@@ -262,11 +262,36 @@ DHCP服务器提供三种IP分配方式：
 
 # ICMP Internet控制[报文](https://baike.baidu.com/item/%E6%8A%A5%E6%96%87/3164352)协议
 
-
-
 ICMP是（Internet Control Message Protocol）Internet控制[报文](https://baike.baidu.com/item/%E6%8A%A5%E6%96%87/3164352)协议。它是[TCP/IP协议簇](https://baike.baidu.com/item/TCP%2FIP%E5%8D%8F%E8%AE%AE%E7%B0%87)的一个子协议，用于在IP[主机](https://baike.baidu.com/item/%E4%B8%BB%E6%9C%BA/455151)、[路由](https://baike.baidu.com/item/%E8%B7%AF%E7%94%B1)器之间传递控制消息。控制消息是指[网络通](https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E9%80%9A)不通、[主机](https://baike.baidu.com/item/%E4%B8%BB%E6%9C%BA/455151)是否可达、[路由](https://baike.baidu.com/item/%E8%B7%AF%E7%94%B1/363497)是否可用等网络本身的消息。这些控制消息虽然并不传输用户数据，但是对于用户数据的传递起着重要的作用。
 
+# 服务器常用端口及作用
 
+* 21 FTP
+* 23 TELNET
+* 25 SMTP
+* 80 HTTP
+* 3306 MYSQL
 
+# 网络编程中,需要调用哪些函数
 
+* 客户端
+  * connect() 连接服务器
+  * send() 发送消息
+  * close() 关闭socket
+* 服务端
+  * bind() 绑定端口
+  * listen() 监听端口
+  * accept() 接收连接
+  * recv() 接收消息
+  * close() 关闭socket
 
+# TCP/IP协议栈分几层
+
+* 应用层
+  * FTP,SMTP HTTP
+* 传输层
+  * TCP UDP
+* 网络层
+  * ICMP IGMP
+* 网络接口层(物理层+链路层)
+  * ARP

@@ -68,9 +68,9 @@ private final Map<String, Object> earlySingletonObjects = new HashMap<String, Ob
 ```
 
 * 指
-  * singletonObjects`单例对象Cache
-  * `singletonFactories`单例工厂Cache
-  * `earlySingletonObjects`提前曝光的单例对象cache
+  * `singletonObjects`单例对象Cache(一级)
+  * `singletonFactories`单例工厂Cache(三级)
+  * `earlySingletonObjects`提前曝光的单例对象cache(二级)
 
 * 三级缓存用法
 
