@@ -567,7 +567,7 @@ public class Test02 {
 
  测试代码
 
-```
+```java 
 package org.eds.homework.jvm;  
       
     public class StackOnTest {  

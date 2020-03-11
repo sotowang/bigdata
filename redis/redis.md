@@ -125,32 +125,91 @@
    *  不保证每次执行都返回某个给定数量的元素,支持模糊查询
    *  一次返回的数量不可控.只能是大概率符合count参数
 
-# Redis 怎么实现分布式锁？
+# [Redis 怎么实现分布式锁？](https://www.cnblogs.com/zhili/p/redisdistributelock.html)
 
 * 分布式锁需要解决的问题
   * 互斥性
   * 安全性
   * 死锁
   * 容错
-* `SETNX key value`
-  * 如果key不存在,则创建并赋值
-  * 时间复杂度O(1)
-  * 返回值
-    * 设置成功,返回1;设置失败,返回0
-    * 即如果设置成功,则没有其他线程执行该代码
 
-## 如何解决SETNX长期有效的问题?
+## 加锁的错误方式1
 
-* `EXPIRE key seconds`
-  * 设置key的生存时间.当key过期时(生存时间为0),会被自动删除
+* `SETNX key value`和`expire key seconds`
+  
+  * setnx 和expire是2条redis指令,不具备原子性,若程序崩溃,则不会释放锁
+  
+  ```java
+  public static void wrongGetLock1(Jedis jedis, String lockKey, String requestId, int expireTime) {
+          Long result = jedis.setnx(lockKey, requestId);
+          if (result == 1) {
+              // 若在这里程序突然崩溃，则无法设置过期时间，将发生死锁
+              jedis.expire(lockKey, expireTime);
+          }
+      }
+  ```
 
-* 缺点
+## 加锁的错误方式2
 
-  * 原子性得不到满足,如果设置好setnx后,程序挂掉,来不及设置过期时间,则该资源得不到释放
+* 客户端自己生成过期时间,强制要求分布式环境下所有客户端的时间必须同步
+* 当锁,如果多个客户端同时执行jedis.getSet()方法,虽只有一个客户端是加锁的,但这个客户端的锁的过期时间可能被其他客户端覆盖,不具备加锁和解锁必须是同一客户端的特性
+  * **解决上面这段代码的方式就是为每个客户端加锁添加一个唯一标示，已确保加锁和解锁操作是来自同一个客户端。**
 
-## 最终分布式锁实现方案
+``` java
+ public static boolean wrongGetLock2(Jedis jedis, String lockKey, int expireTime) {
+        long expires = System.currentTimeMillis() + expireTime;
+        String expiresStr = String.valueOf(expires);
+        // 如果当前锁不存在，返回加锁成功
+        if (jedis.setnx(lockKey, expiresStr) == 1) {
+            return true;
+        }
 
-```bash
+        // 如果锁存在，获取锁的过期时间
+        String currentValueStr = jedis.get(lockKey);
+        if (currentValueStr != null && Long.parseLong(currentValueStr) < System.currentTimeMillis()) {
+            // 锁已过期，获取上一个锁的过期时间，并设置现在锁的过期时间
+            String oldValueStr = jedis.getSet(lockKey, expiresStr);
+            if (oldValueStr != null && oldValueStr.equals(currentValueStr)) {
+                // 考虑多线程并发的情况，只有一个线程的设置值和当前值相同，它才有权利加锁
+                return true;
+            }
+        }
+        // 其他情况，一律返回加锁失败
+        return false;
+    }
+```
+
+## 解锁的错误方式1
+
+* 这种不先判断拥有者而直接解锁的方式，会导致任何客户端都可以随时解锁。即使这把锁不是它上锁的。
+
+* ```java
+   public static void wrongReleaseLock1(Jedis jedis, String lockKey) {
+          jedis.del(lockKey);
+      }
+  ```
+
+## 解锁的错误方式2
+
+* 判断和删除不是一个原子性操作。在并发的时候很可能发生解除了别的客户端加的锁。
+
+  * 客户端A加锁，一段时间之后客户端A进行解锁操作时，在执行jedis.del()之前，锁突然过期了，此时客户端B尝试加锁成功，然后客户端A再执行del方法，则客户端A将客户端B的锁给解除了。从而不也不满足加锁和解锁必须是同一个客户端特性。
+  * **解决思路就是需要保证GET和DEL操作在一个事务中进行，保证其原子性。**
+
+* ```java
+  public static void wrongReleaseLock2(Jedis jedis, String lockKey, String requestId) {
+  
+          // 判断加锁与解锁是不是同一个客户端
+          if (requestId.equals(jedis.get(lockKey))) {
+              // 若在此时，这把锁突然不是这个客户端的，则会误解锁
+              jedis.del(lockKey);
+          }
+  
+  ```
+
+## 加锁正确方式
+
+```redis
 SET key value [EX seconds] [PX milliseconds] [NX|XX]
 ```
 
@@ -190,37 +249,50 @@ SET key value [EX seconds] [PX milliseconds] [NX|XX]
     * 在Redis的master节点上拿到了锁,但这个加锁的key还没有同步到slave节点
     * master故障,发生故障转移,slave节点升级为master节点,导致锁丢失
 
-# 分布式锁续期
+## 分布式锁续期
 
 * 默认情况下加锁时间30s，若业务未执行完锁到20s时，会进行一次续期，锁重置为30s
 * 若超过30s，客户端还想持有这把锁怎么办
   * 客户端一旦加锁成功。就会启动一个watch dog看门狗，是一个后台线程，每隔10s检查一下，如客户端还持有锁key,就不断延长key生存时间
 
-# Key删除策略
+# [Redis内存回收原理](https://leetcode-cn.com/circle/article/ztZkJJ/)
 
-* 定期删除
-  * 默认每隔100ms随机抽取设置过过期时间的key，若过期则删除
-* 惰性删除
-  * 当获取某key时，检查是否过期，过期删除且不返回任何东西
+* 围绕两个方面
+  * Redis过期策略
+    * 删除过期时间的key值
+  * Redis 淘汰策略
+    * 内存使用 达到maxmemory上限触发内存淘汰数据
+    * 内存淘汰策略用于处理内存不足时的需要申请额外空间的数据.内存淘汰策略的选取并不会影响过期的key的处理,过期策略用于处理过期的缓存数据
 
-## 大量的key同时过期的注意事项
+## Redis过期策略
+
+* 定时过期
+  * 每个设置过期时间的key都要创建一个定时器,到过期时间立即删除,该策略可以立即删除过期的数据,对内存很友好;但会占用大量CPU资源去处理过期数据,从而降低缓存响应时间和吞吐量
+* 惰性过期(惰性删除)
+  * 当获取某key时，检查是否过期，过期删除且不返回任何东西.对内存不友好,极端情况可能出现大量的过期key没有被再次访问
+* 定期过期(定期删除)
+  * 每隔一定时间(默认100ms),会扫描一定数量的数据库expires字典中一定数量的key,并其中已过期的key
+
+### 大量的key同时过期的注意事项
 
 * 集中过期, 由于清除大量的key很耗时,会出现短暂的卡顿现象
 * 解决
-  * 在设置key过期时间的时候,给每个key的过期时间加上随机值,使时间分散
+  * 在设置key过期时间的时候,给每个key的**过期时间加上随机值**,使时间分散
 
-## 内存淘汰策略
+## Redis内存淘汰策略
+
+当内存使用达到maxmemory极限时,需要使用LRU淘汰算法来决定清理掉哪些数据,以保证新数据的存入
 
 * volatile-lru 
-  * 从设置过期时间的数据集中挑选出最近最少使用
+  * 从**设置过期时间的数据**集中挑选出最近最少使用
 * volatile-ttl
-  * 从设置过期时间数据中选将要过期数据
+  * 从**设置过期时间数据**中选将要过期数据
 * volatile-random
-  * 从已设置过期时间数据中选任意数据
+  * 从**已设置过期时间数据**中选任意数据
 * allkeys-lru
-  * 从所有数据集中选最近最少使用
+  * 从**所有数据集**中选最近最少使用
 * allkeys-random
-  * 从所有数据集中任意选数据
+  * 从**所有数据集**中任意选数据
 * noeviction
   * 禁止驱逐数据
 
@@ -352,31 +424,56 @@ RDB和AOF的优缺点
     * 往响应缓存写入指令
   * 将缓存中的数据发送给Slave
 
-# 缓存雪崩
+# [缓存引发的问题](https://blog.csdn.net/zeb_perfect/article/details/54135506)
 
-* 缓存挂后大量数据请求落在数据库，导致数据库挂掉
-* 缓解
-  * 事前
-    * 保证redis高可用
-  * 事中
-    * 在系统内部增加ehcache缓存，系统先在ehcache查找数据，再去redis
-    * 通过Hystrix限流，限制请求通达数量
-  * 事后
-    * redis持久化机制，redis恢复时从磁盘恢复数据
+## 缓存雪崩
 
-# 缓存穿透
-
-* 恶意攻击，数据库中无请求数据，缓存中也无请求数据
+* 设置缓存时采用了相同的过期时间,导致缓存在某一时刻同时失效,请求全部转发到DB,DB瞬时压力过大雪崩
 * 解决
-  * 将未查到的请求写一个空值到Redis中
+  * 加锁或队列的方式保证缓存的单线程写,从而避免失效时大量的并发请求落到底层存储系统上
+  * 在原有失效时间上加一个随机值,比如1-5分钟随机,这样缓存时间重复率就会降低,很难引发集体失效事件
 
-# 如何保证缓存和数据库一致性
+## 缓存击穿
 
-* 先操作数据库，再操作缓存
-  * 通过数据库的binlog来异步淘汰key
-  * 可使用阿里的canal将binlog日志采集了送到MQ队列。通过ACK机制确认处理这条更新消息，删除缓存，保证一致性
-  * 如果是主从数据库。binlog取自从库
-  * 如果是一主多从，每个从库都权采集binlog，然后消费端收到最后一台binlog数据才删除缓存
+* 对一些设置了过期时间的key,如果这些key(热点数据)可能会在某些时间被超高并发地访问,与缓存雪崩的区别是这里针对某一key,前者是很多key
+* 缓存在某个时间点过期的时候，恰好在这个时间点对这个Key有大量的并发请求过来，这些请求发现缓存过期一般都会从后端DB加载数据并回设到缓存，这个时候大并发的请求可能会瞬间把后端DB压垮。
+* 解决
+  * 使用互斥锁(mutex key)
+    * 在缓存失效的时候（判断拿出来的值为空），不是立即去load db，而是先使用缓存工具的某些带成功操作返回值的操作（比如Redis的SETNX或者Memcache的ADD）**去set一个mutex key，当操作返回成功时，再进行load db的操作并回设缓存**；否则，就重试整个get缓存的方法。
+    * 
+
+## 缓存穿透
+
+* 查询一个一定不存在的数据,**由于缓存是不命中时被动写的**，并且出于容错考虑，如果从存储层查不到数据则不写入缓存，这将导致这个不存在的数据每次请求都要到存储层去查询，失去了缓存的意义。在流量大时，可能DB就挂掉了，要是有人利用不存在的key频繁攻击我们的应用，这就是漏洞。
+* 解决
+  * 如果一个查询返回的数据为空（不管是数 据不存在，还是系统故障），我们仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过五分钟。
+
+## 
+
+# [缓存和数据库一致性](https://juejin.im/post/5c96fb795188252d5f0fdff2)
+
+* **采用延时双删策略**
+
+  * 在写库前后都进行redis.del(key)操作，并且设定合理的超时时间。(只能保证最终一致性,无法保证实时一致性)
+
+    ```java
+    public void write( String key, Object data )
+    {
+        //先删除缓存
+    	redis.delKey( key );
+        //再写数据库
+    	db.updateData( data );
+        //休眠500毫秒
+    	Thread.sleep( 500 );
+        //再次删除缓存
+    	redis.delKey( key );
+    }
+    ```
+
+* **异步更新缓存(基于订阅binlog的同步机制)**
+
+  * **读取binlog后分析 ，利用消息队列,推送更新各台的redis缓存数据。**
+  * 一旦MySQL中产生了新的写入、更新、删除等操作，就可以把binlog相关的消息推送至Redis，Redis再根据binlog中的记录，对Redis进行更新。
 
 
 
