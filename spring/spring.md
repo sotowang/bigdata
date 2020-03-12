@@ -27,7 +27,7 @@
 * Constructor
 * Annotation
 
-## Spring IOC容器创建过程
+## [Spring IOC容器创建过程](https://blog.csdn.net/hxpjava1/article/details/78307150)
 
 * Spring容器在启动的时候，先会保存所有注册进来的Bean的定义信息
   * xml注册Bean: <bean>
@@ -301,7 +301,7 @@
 
 # 事务
 
-## 事务的实现方法
+## [事务的实现方法](https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html)
 
 * 编程式事务
   * 对于POJO应用来说是唯一选择，需在代码中调用`beginTransaction()` `commit()` `rollback()`
@@ -322,6 +322,7 @@
 * `PROPAGATION_REQUIRED` ， 默认的 spring 事务传播级别
   * 若上下文中已存在事务，则加入事务，若不存在事务，则新建事务执行
 * ` PROPAGATION_SUPPORTS`
+  * 若存在事务,则加入事务,若不存在,则不用事务
 * `PROPAGATION_MANDATORY `
   * 要求上下文中必须存在事务，否则抛出异常
 * ` PROPAGATION_REQUIRES_NEW `

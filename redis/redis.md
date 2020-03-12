@@ -407,7 +407,9 @@ RDB和AOF的优缺点
 * AOF缺点
   * 文件体积大,恢复时间长
 
-# Redis的同步机制
+# [Redis的主从同步机制]([https://github.com/AobingJava/JavaFamily/blob/master/docs/redis/%E9%9B%86%E7%BE%A4%E9%AB%98%E5%8F%AF%E7%94%A8%E3%80%81%E5%93%A8%E5%85%B5%E3%80%81%E6%8C%81%E4%B9%85%E5%8C%96%E3%80%81LRU.md](https://github.com/AobingJava/JavaFamily/blob/master/docs/redis/集群高可用、哨兵、持久化、LRU.md))
+
+master机器去写，数据同步给别的slave机器，他们都拿去读，分发掉大量的请求那是不是好很多，而且扩容的时候还可以轻松实现水平扩容。
 
 * 全同步过程
   * Slave发送sync命令到Master
@@ -447,8 +449,24 @@ RDB和AOF的优缺点
 * 查询一个一定不存在的数据,**由于缓存是不命中时被动写的**，并且出于容错考虑，如果从存储层查不到数据则不写入缓存，这将导致这个不存在的数据每次请求都要到存储层去查询，失去了缓存的意义。在流量大时，可能DB就挂掉了，要是有人利用不存在的key频繁攻击我们的应用，这就是漏洞。
 * 解决
   * 如果一个查询返回的数据为空（不管是数 据不存在，还是系统故障），我们仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过五分钟。
+  * 使用**布隆过滤器**
 
-## 
+### [布隆过滤器(Bloom Filter)](https://juejin.im/post/5db69365518825645656c0de)
+
+* 原理
+  * 当一个元素被加入集合时，**通过K个散列函数**将这个元素映射成一个位数组中的K个点，把它们置为1。
+
+  * 检索时，我们只要看看这些点是不是都是1就（大约）知道集合中有没有它了：
+
+    * 如果这些点有任何一个0，则被检元素一定不在；如果都是1，则被检元素很可能在。这就是布隆过滤器的基本思想。
+
+    ![img](https://user-gold-cdn.xitu.io/2019/10/28/16e112fbd031fe71?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+* 缺点
+
+  * bloom filter之所以能做到在时间和空间上的效率比较高，是因为牺牲了判断的准确率、删除的便利性
+    * 存在误判，可能要查到的元素并没有在容器中，但是hash之后得到的k个位置上值都是1。如果bloom filter中存储的是黑名单，那么可以通过建立一个白名单来存储可能会误判的元素。
+    * 删除困难。一个放入容器的元素映射到bit数组的k个位置上是1，删除的时候不能简单的直接置为0，可能会影响其他元素的判断。可以采用[Counting Bloom Filter](http://wiki.corp.qunar.com/confluence/download/attachments/199003276/US9740797.pdf?version=1&modificationDate=1526538500000&api=v2)
 
 # [缓存和数据库一致性](https://juejin.im/post/5c96fb795188252d5f0fdff2)
 
@@ -475,7 +493,18 @@ RDB和AOF的优缺点
   * **读取binlog后分析 ，利用消息队列,推送更新各台的redis缓存数据。**
   * 一旦MySQL中产生了新的写入、更新、删除等操作，就可以把binlog相关的消息推送至Redis，Redis再根据binlog中的记录，对Redis进行更新。
 
+# Redis集群高可用
 
+* 哨兵集群**sentinel**,哨兵必须用三个实例去保证自己的健壮性的，哨兵+主从并**不能保证数据不丢失**，但是可以保证集群的**高可用**
+
+  ![img](https://camo.githubusercontent.com/15f2ac7d26b5fe90069a405529a099ba672bb753/68747470733a2f2f747661312e73696e61696d672e636e2f6c617267652f30303679386d4e366c793167387039676a337179616a333039333039707765692e6a7067)
+
+* 哨兵组件的主要功能：
+
+  * 集群监控：负责监控 Redis master 和 slave 进程是否正常工作。
+  * 消息通知：如果某个 Redis 实例有故障，那么哨兵负责发送消息作为报警通知给管理员。
+  * 故障转移：如果 master node 挂掉了，会自动转移到 slave node 上。
+  * 配置中心：如果故障转移发生了，通知 client 客户端新的 master 地址。
 
 
 
