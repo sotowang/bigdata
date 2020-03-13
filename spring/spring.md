@@ -527,5 +527,34 @@
 * 定义一个操作中算法骨架，将一些步骤延迟到子类中
 * JdbcTemplate中的execute方法
 
+# [Spring中同一接口有多个实现类时如何注入](https://blog.csdn.net/u010476994/article/details/80986435)
+
+* @Autowired
+
+  * @Autowired 的注入方式是 **byType** 注入， 当要注入的类型在容器中存在多个时，Spring是不知道要引入哪个实现类的，所以会报错。
+
+* @Resource 
+
+  * 默认是按照 byName 的方式注入的， 如果通过 byName 的方式匹配不到，再按 byType 的方式去匹配
+
+    ``` java
+    public class AnimalController {
+        @Resource(name="dogImpl")        //实现类1中 @Service注解中标定的名称
+        private IAnimal dogImpl;
+        ......
+    
+    ```
+
+* @Qualifier 
+
+  * 注解也是 byName的方式，但是与@Resource 有区别，@Qualifier 使用的是 **类名**,必须和Autowired一起用
+
+  * ```java
+    
+    public class AnimalController {
+        @Qualifier("DaoImpl")        //实现类1的类名。注意区分与@Resource(name="dogImpl") 的区别。
+        private IAnimal dogImpl;
+    ```
+
 
 
