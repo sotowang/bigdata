@@ -127,6 +127,8 @@
 
 # [Redis 怎么实现分布式锁？](https://www.cnblogs.com/zhili/p/redisdistributelock.html)
 
+[教程2](https://juejin.im/post/5b16148a518825136137c8db)
+
 * 分布式锁需要解决的问题
   * 互斥性
   * 安全性
@@ -249,7 +251,9 @@ SET key value [EX seconds] [PX milliseconds] [NX|XX]
     * 在Redis的master节点上拿到了锁,但这个加锁的key还没有同步到slave节点
     * master故障,发生故障转移,slave节点升级为master节点,导致锁丢失
 
-## 分布式锁续期
+## [分布式锁续期](https://juejin.im/post/5bf3f15851882526a643e207)
+
+如果在公司里落地生产环境用分布式锁的时候，一定是会用开源类库的，比如Redis分布式锁，一般就是用**Redisson**框架就好了，非常的简便易用。
 
 * 默认情况下加锁时间30s，若业务未执行完锁到20s时，会进行一次续期，锁重置为30s
 * 若超过30s，客户端还想持有这把锁怎么办
