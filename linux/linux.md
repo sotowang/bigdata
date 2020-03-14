@@ -1,3 +1,40 @@
+# [常用linux命令](https://mp.weixin.qq.com/s/HtLwChoLzqhbM4pKldLDng)
+
+```bash
+ps aux|grep java 查看java进程
+ps aux 查看所有进程
+ps –ef|grep tomcat 查看所有有关tomcat的进程
+ps -ef|grep --color java 高亮要查询的关键字
+kill -9 19979 终止线程号位19979的进程
+```
+
+
+
+
+
+- 整机
+  - `top`
+    - 查看系统资源占用情况
+  - `uptime`
+    - 系统运行时间
+    - `load average`负载情况
+- CPU
+  - `vmstat -n 2 3`
+    - 2:采样的时间间隔数（s）；3:采样的次数
+    - `us+sy>80`说明cpu不足
+  - `mpstat -P ALL 2`
+    - 查看所有CPU核信息
+- 内存
+  - `free -m`查看总的内存
+  - `pidstat -p PID -r 采样间隔秒数`
+- 硬盘
+  - `df -h`
+    - h表示human
+- 磁盘IO
+  - `iostat -xdk 2 3`
+- 网络IO
+  - `ifstat`
+
 # 查找特定的文件
 
 >  find path [options] params
@@ -163,31 +200,6 @@ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
 
 * CPU写数据到磁盘时，先将数据存入buffer
 * CPU读数据时，先将数据存入cache
-
-# 常用linux命令
-
-* 整机
-  * `top`
-    * 查看系统资源占用情况
-  * `uptime`
-    * 系统运行时间
-    * `load average`负载情况
-* CPU
-  * `vmstat -n 2 3`
-    * 2:采样的时间间隔数（s）；3:采样的次数
-    * `us+sy>80`说明cpu不足
-  * `mpstat -P ALL 2`
-    * 查看所有CPU核信息
-* 内存
-  * `free -m`查看总的内存
-  * `pidstat -p PID -r 采样间隔秒数`
-* 硬盘
-  * `df -h`
-    * h表示human
-* 磁盘IO
-  * `iostat -xdk 2 3`
-* 网络IO
-  * `ifstat`
 
 # CPU占用过高分析
 

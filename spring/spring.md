@@ -304,18 +304,14 @@
 ## [事务的实现方法](https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html)
 
 * 编程式事务
+  
   * 对于POJO应用来说是唯一选择，需在代码中调用`beginTransaction()` `commit()` `rollback()`
 * 基于TransactionalProxyFactoryBean的声明式事务管理
 * 基于@Transactional的声明式事务管理
 * 基于Aspectj AOP配置事务
 
-* 环境搭建
-  * 导入相关依赖
-    * 数据源，数据驱动，Spring-jdbc
-  * 配置数据源，JdbcTemplate(Spring提供的简化数据库扣伯的工具)操作数据
-  * 给方法上标注@Tranactional表示当前方法是一个事务方法
-  * @EnableTransactionManagement 开启基于注解的事务管理功能
-  * 配置事务管理器控制事务
+  
+
 
 ## 事务传播级别
 
