@@ -268,9 +268,12 @@ cat words.txt |sort |uniq -c |sort -k1,1nr |head -10
   * :set nu 在屏幕上显示行号
   * :set nonu 取消行号
 
+# [Linux操作系统网络服务器模型](https://yq.aliyun.com/articles/131978)
 
-
-
+* 并发服务器
+  * 并发服务器就是在同一个时刻可以处理来自多个客户端的请求;
+* 循环服务器
+  * 循环服务器是指服务器在同一时刻指可以响应一个客户端的请求
 
 
 
