@@ -1,22 +1,194 @@
-# Spring框架及其模块
+# [对于Spring IOC及AOP的理解](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
 
-* 什么是Spring框架
-  * 轻量级（相对于EJB）DI和AOP框架
-    * DI
-      * 传统开发中，由调用者来创建被调用者实例
-      * 使用IOC容器被调用对象由Spring完成，在容器实例化对象的时候主动将被调用者注入给调用对象
-    * AOP
-      * 将运行过程分解成切面，提取业务处理过程的切面
-  * Spring不用new创建对象，而使用依赖注入，基于Spring开发的应用一般不依赖于Spring类
-* 主要模块
-  * IOC容器
-  * 面向切面编程AOP
-  * 数据访问/集成
-  * Web
-  * 消息模块
-  * 测试模块
-* Spring框架好处
-  * 与EJB容器比较，IOC容器更加轻量级（2MB），IOC容器在有限的内存和CPU资源情况下进行应用程序的开发和发布变得有利
+## IOC
+
+* IoC（Inverse of Control:控制反转）是一种**设计思想**，就是 **将原本在程序中手动创建对象的控制权，交由Spring框架来管理。** IoC 在其他语言中也有应用，并非 Spirng 特有。 **IoC 容器是 Spring 用来实现 IoC 的载体， IoC 容器实际上就是个Map（key，value）,Map 中存放的是各种对象。**
+* 将对象之间的相互依赖关系交给 IoC 容器来管理，并由 IoC 容器完成对象的注入。这样可以很大程度上简化应用的开发，把应用从复杂的依赖关系中解放出来。 **IoC 容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件/注解即可，完全不用考虑对象是如何被创建出来的。** 在实际项目中一个 Service 类可能有几百甚至上千个类作为它的底层，假如我们需要实例化这个 Service，你可能要每次都要搞清这个 Service 所有底层类的构造函数，这可能会把人逼疯。如果利用 IoC 的话，你只需要配置好，然后在需要的地方引用就行了，这大大增加了项目的可维护性且降低了开发难度。
+* Spring 时代我们一般通过 XML 文件来配置 Bean，后来开发人员觉得 XML 文件来配置不太好，于是 SpringBoot 注解配置就慢慢开始流行起来。
+
+### IOC初始化过程
+
+* **Spring IoC的初始化过程：**
+
+  ![Spring IoC的初始化过程](https://mmbiz.qpic.cn/mmbiz_png/iaIdQfEric9TxiaKwgUUHQX0aVpNnuopm5wZ4f7md6eOwW9ZSpk2LV0C5FNYLlBgCIE2pFC6kswRIVsUc8z9jicBxA/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+
+## [AOP](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+* AOP(Aspect-Oriented Programming:面向切面编程)能够将那些与业务无关，**却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来**，便于**减少系统的重复代码**，**降低模块间的耦合度**，并**有利于未来的可拓展性和可维护性**。
+
+* <span style='color:red'>Spring AOP就是基于动态代理的</span>，如果要代理的对象，实现了某个**接口，那么Spring AOP会使用JDK Proxy**，去创建代理对象，而对于**没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候Spring AOP会使用Cglib** ，这时候Spring AOP会使用 Cglib 生成一个被代理对象的子类来作为代理，如下图所示：
+
+  ![img](https://mmbiz.qpic.cn/mmbiz_jpg/iaIdQfEric9TxiaKwgUUHQX0aVpNnuopm5wIpBukqk0x4zl3jOOuhf7kUnzXkgRtaMF4CGKBnRP0axAeTc4TkbWkQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+
+* 当然你也可以使用 AspectJ ,Spring AOP 已经集成了AspectJ ，**AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了**。
+
+
+### Spring AOP 和 AspectJ AOP 区别
+
+* **Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。** Spring AOP 基于代理(Proxying)，而 AspectJ 基于字节码操作(Bytecode Manipulation)。
+
+* Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。AspectJ 相比于 Spring AOP 功能更加强大，但是 Spring AOP 相对来说更简单，
+
+* 如果我们的切面比较少，那么两者性能差异不大。但是，<span style='color:red'>当切面太多的话，最好选择 AspectJ ，它比Spring AOP 快很多</span>。
+
+## [Bean](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+### bean 的作用域(scope控制)
+
+- singleton : 唯一 bean 实例，Spring 中的 bean **默认**都是单例的。
+- prototype : 每次请求都会创建一个新的 bean 实例。
+- request : 每一次HTTP请求都会产生一个新的bean，该bean仅在当前HTTP request内有效。
+- session : 每一次HTTP请求都会产生一个新的 bean，该bean仅在当前 HTTP session 内有效。
+- global-session：全局session作用域，仅仅在基于portlet的web应用中才有意义，**Spring5已经没有了**。Portlet是能够生成语义代码(例如：HTML)片段的小型Java Web插件。它们基于portlet容器，可以像servlet一样处理HTTP请求。但是，与 servlet 不同，每个 portlet 都有不同的会话
+
+### 单例 bean 的线程安全问题
+
+* 大部分时候我们并没有在系统中使用多线程，所以很少有人会关注这个问题。单例 bean 存在线程问题，主要是因为当多个线程操作同一个对象的时候，对这个对象的非静态成员变量的写操作会存在线程安全问题。
+* 常见的有两种解决办法：
+  1. 在Bean对象中尽量避免定义可变的成员变量（不太现实）。
+  2. <span style="color:red">在类中定义一个ThreadLocal成员变量，将需要的可变成员变量保存在 ThreadLocal 中（推荐的一种方式）。</span>
+
+### Bean生命周期
+
+- Bean 容器找到配置文件中 Spring Bean 的定义。
+- Bean 容器利用 Java Reflection API 创建一个Bean的实例。
+- 如果涉及到一些属性值 利用 `set()`方法设置一些属性值。
+- 如果 Bean 实现了 `BeanNameAware` 接口，调用 `setBeanName()`方法，传入Bean的名字。
+  - 如果 Bean 实现了 `BeanClassLoaderAware` 接口，调用 `setBeanClassLoader()`方法，传入 `ClassLoader`对象的实例。
+  - 如果Bean实现了 `BeanFactoryAware` 接口，调用 `setBeanClassLoader()`方法，传入 `ClassLoade` r对象的实例。
+  - 与上面的类似，如果实现了其他 `*.Aware`接口，就调用相应的方法。
+- 如果有和加载这个 Bean 的 Spring 容器相关的 `BeanPostProcessor` 对象，执行`postProcessBeforeInitialization()` 方法
+- 如果Bean实现了`InitializingBean`接口，执行`afterPropertiesSet()`方法。
+- 如果 Bean 在配置文件中的定义包含 init-method 属性，执行指定的方法。
+- 如果有和加载这个 Bean的 Spring 容器相关的 `BeanPostProcessor` 对象，执行`postProcessAfterInitialization()` 方法
+- 当要销毁 Bean 的时候，如果 Bean 实现了 `DisposableBean` 接口，执行 `destroy()` 方法。
+- 当要销毁 Bean 的时候，如果 Bean 在配置文件中的定义包含 destroy-method 属性，执行指定的方法。
+
+与之比较类似的中文版本:
+
+![img](https://mmbiz.qpic.cn/mmbiz_jpg/iaIdQfEric9TxiaKwgUUHQX0aVpNnuopm5wibfdy0aVDtF5TS6Zcg8zSghhliapibEyzibtCibsu3a1HTYic2SZ07a7icKJQ/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+
+### [@Component 和 @Bean 的区别](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+1. 作用对象不同: `@Component` 注解作用于类，而`@Bean`注解作用于方法。
+2. `@Component`通常是通过类路径扫描来自动侦测以及自动装配到Spring容器中（我们可以使用 `@ComponentScan` 注解定义要扫描的路径从中找出标识了需要装配的类自动装配到 Spring 的 bean 容器中）。`@Bean` 注解通常是我们在标有该注解的方法中定义产生这个 bean,`@Bean`告诉了Spring这是某个类的示例，当我需要用它的时候还给我。
+3. `@Bean` 注解比 `Component` 注解的自定义性更强，而且很多地方我们只能通过 `@Bean` 注解来注册bean。**比如当我们引用第三方库中的类需要装配到 `Spring`容器时，则只能通过 `@Bean`来实现。**
+
+## [Spring中设计模式](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+### 简单工厂
+
+- 由一个工厂类根据传入的参数动态决定应该创建哪一个产品类
+- Spring的BeanFactory是简单工厂模式的体现
+
+### 单例模式
+
+- 提供了全局和访问点BeanFactory
+- Spring默认Bean为singleton
+
+### 适配器模式
+
+- Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配`Controller`。
+
+### 代理模式
+
+- 为其他对象提供一种代理以控制对这个对象的访问
+- 结构上与装饰器模式类似，但代理模式是控制，更像是一种对功能的限制，而装饰器模式是增加职责
+- **在Aop中体现**，如JdkDynamicAopProxy和Cglib2AopProxy
+
+### 观察者模式
+
+- 当一对象改变，所有依赖于它的对象都得到通知并更新
+- Spring中listener的实现，如ApplicationListener
+
+### 策略模式
+
+- 定义一系列算法，将它们一个个封装起来，使他们可以相互替换，使得算法独立于使用客户
+- spring在实例化对象时用到Strategy模式
+
+### 模板方法模式
+
+- 定义一个操作中算法骨架，将一些步骤延迟到子类中
+- JdbcTemplate中的execute方法
+
+### **包装器设计模式** 
+
+- 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。
+
+## [事务](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+### [Spring 管理事务的方式](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+1. 编程式事务，在代码中硬编码。(不推荐使用)
+2. <span style="color:red">声明式事务，在配置文件中配置（推荐使用）</span>
+   1. 基于XML的声明式事务
+   2. 基于注解的声明式事务
+
+### [Spring 事务中的隔离级别](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+* default
+  * 使用后端数据库默认的隔离级
+* 未提交读
+  * 最低的隔离级别，允许读取尚未提交的数据变更，**可能会导致脏读、幻读或不可重复读**
+* 已提交读
+  * 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，**可以阻止脏读和不可重复读，但幻读仍有可能发生。**
+* 可序列化
+  * 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，**该级别可以防止脏读、不可重复读以及幻读**。但是这将严重影响程序的性能。通常情况下也不会用到该级别。
+
+### 事务传播行为
+
+* 支持<span style="color:red">当前</span>事务的情况
+  * `PROPAGATION_REQUIRED` ， 默认的 spring 事务传播级别
+    - 若上下文中已存在事务，则加入事务，若不存在事务，则新建事务执行
+  * ` PROPAGATION_SUPPORTS`
+    - 若存在事务,则加入事务,若不存在,则不用事务
+  * `PROPAGATION_MANDATORY `
+    * 要求上下文中必须存在事务，否则抛出异常
+* 不支持<span style="color:red">当前</span>事务的情况
+  * ` PROPAGATION_REQUIRES_NEW `
+    - 每次都要一个新事务，且同时将上下文中事务挂起，当前事务完成后，上下文事务恢复再执行
+  * `PROPAGATION_NOT_SUPPORTED `
+    - 上下文中存在事务，则挂起事务，执行当前逻辑，结束后恢复上下文中事务
+  * `PROPAGATION_NEVER`
+    - 上下文中不能存在事务，一旦有事务，就抛出runtime异常，强制停止执行
+* 其他情况
+  * `PROPAGATION_NESTED`
+    - 若上下文中存在事务，则嵌套事务执行，若不存在事务，则新建事务
+
+### @Transactional(rollbackFor = Exception.class)注解
+
+* 我们知道：Exception分为运行时异常RuntimeException和非运行时异常。事务管理对于企业应用来说是至关重要的，即使出现异常情况，它也可以保证数据的一致性。
+
+* 当`@Transactional`注解作用于类上时，**该类的所有 public 方法将都具有该类型的事务属性**，同时，我们也可以在方法级别使用该标注来覆盖类级别的定义。如果类或者方法加了这个注解，那么这个类里面的方法抛出异常，就会回滚，数据库里面的数据也会回滚。
+
+* 在`@Transactional`注解中如果不配置`rollbackFor`属性,那么事物只会在遇到`RuntimeException`的时候才会回滚,加上`rollbackFor=Exception.class`,可以让事物在遇到非运行时异常时也回滚。
+
+
+
+### 事务原理
+
+- 通过TransactionManagementConfigurationSelector给容器导入组件
+
+  ```java
+  @Import(TransactionManagementConfigurationSelector.class)
+  ```
+
+## [如何使用JPA在数据库中非持久化一个字段](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
+
+* 一般使用后面两种方式比较多，我个人使用注解的方式比较多。
+
+```java
+static String transient1; // not persistent because of static
+
+final String transient2 = “Satish”; // not persistent because of final
+
+transient String transient3; // not persistent because of transient
+
+@Transient
+String transient4; // not persistent because of @Transient
+```
+
+
 
 # IOC
 
@@ -85,24 +257,7 @@
 
 ![img](https://img-blog.csdn.net/20160317082518227)
 
-## Bean的作用域(scope控制)
 
-* singleton(默认)
-
-  * 容器里拥有唯一的Bean实例
-  * IOC容器启动会调用方法创建对象放到ico容器中
-  * 以后每次获取直接从窗口(map.get())创建
-  * 可使用@Lazy懒加载
-* prototype
-  * 针对每个getBean请求,容器都会创建一个Bean实例
-  * IOC容器启动并不会去调用方法创建对象放在容器中
-  * 每次获取的时候才会调用方法创建对象
-* request
-  * 会为每个Http请求创建一个Bean实例
-* session
-  * 会为每个session创建一个Bean实例
-* globalSession
-  * 会为每个全局Http Session 创建一个Bean实例,该作用域仅对Porlet有效
 
 ## 注解
 
@@ -189,26 +344,6 @@
   * 实现FactoryBean(工厂Bean)接口
     * 默认获取到的是工厂Bean调用getObject创建的对象
     * 要获取工厂Bean本身，我们需要给id前面加一个&标识
-
-## Bean生命周期
-
-* 创建
-  * 单实例，在容器启动的时候创建对象
-  * 多实例，每次获取的时候创建对象
-* 初始化
-  * 若Bean实现了BeanNameAware接口，会调用它实现的`setBeanName(String)`，传递的值为Spring配置文件中Bean的id
-  * 若Bean实现了BeanFactoryAware接口，会调用它实现的`setBeanFactory(BeanFactory)`传递的是Spring工厂自身
-  * 若Bean实现了ApplicationContextAware接口，会调用`setApplicationContext(ApplicationContext)`，传入Spring上下文
-  * 若Bean郑不了BeanPostProcessor接口，将调用`postProcessBeforeInitialization(Object obj,String s)`,该接口经常被用于Bean内容更改，是在Bean初始化结束时调用的方法，也可应用于内存或缓存技术
-  * 若Bean在Spring配置文件中配置init-method属性会自动调用其配置的初始化方法
-  * 若Bean关联BeanPostProcessor接口，将会调用`postProcessAfterInitialization(Object obj,String s)`
-* 销毁
-  * 如果Bean实现DisposableBean接口，会调用`destroy()`方法
-  * 若Bean的Spring中配置destroy-method属性，会自动调用其配置的销毁方法
-* 自定义组件实现xxxAware
-  * 在创建对象的时候，会调用接口的方法注入相关组件：Aware
-  * 把Spring底层一些组件注入到自定义的Bean中
-  * xxxAware：功能使用xxxProcessor
 
 ---
 
@@ -298,45 +433,6 @@
     * 效果：
       * 正常执行： 前置通知-->目标方法-->后置通知-->返回通知
       * 出现异常：前置通知-->目标方法-->后置通知-->异常通知
-
-# 事务
-
-## [事务的实现方法](https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html)
-
-* 编程式事务
-  
-  * 对于POJO应用来说是唯一选择，需在代码中调用`beginTransaction()` `commit()` `rollback()`
-* 基于TransactionalProxyFactoryBean的声明式事务管理
-* 基于@Transactional的声明式事务管理
-* 基于Aspectj AOP配置事务
-
-  
-
-
-## 事务传播级别
-
-* `PROPAGATION_REQUIRED` ， 默认的 spring 事务传播级别
-  * 若上下文中已存在事务，则加入事务，若不存在事务，则新建事务执行
-* ` PROPAGATION_SUPPORTS`
-  * 若存在事务,则加入事务,若不存在,则不用事务
-* `PROPAGATION_MANDATORY `
-  * 要求上下文中必须存在事务，否则抛出异常
-* ` PROPAGATION_REQUIRES_NEW `
-  * 每次都要一个新事务，且同时将上下文中事务挂起，当前事务完成后，上下文事务恢复再执行
-* `PROPAGATION_NOT_SUPPORTED `
-  * 上下文中存在事务，则挂起事务，执行当前逻辑，结束后恢复上下文中事务
-* `PROPAGATION_NEVER`
-  * 上下文中不能存在事务，一旦有事务，就抛出runtime异常，强制停止执行
-* `PROPAGATION_NESTED`
-  * 若上下文中存在事务，则嵌套事务执行，若不存在事务，则新建事务
-
-## 事务原理
-
-* 通过TransactionManagementConfigurationSelector给容器导入组件
-
-  ```java
-  @Import(TransactionManagementConfigurationSelector.class)
-  ```
 
 # ApplicationListener
 
@@ -484,44 +580,6 @@
           			}
           		}
           ```
-
-
-# Spring中设计模式
-
-## 简单工厂
-
-* 由一个工厂类根据传入的参数动态决定应该创建哪一个产品类
-* Spring的BeanFactory是简单工厂模式的体现
-
-## 单例模式
-
-* 提供了全局和访问点BeanFactory
-* Spring默认Bean为singleton
-
-## 适配器模式
-
-* Aop中使用Advice增强被代理类的功能
-
-## 代理模式
-
-* 为其他对象提供一种代理以控制对这个对象的访问
-* 结构上与装饰器模式类似，但代理模式是控制，更像是一种对功能的限制，而装饰器模式是增加职责
-* 在Aop中体现，如JdkDynamicAopProxy和Cglib2AopProxy
-
-## 观察者模式
-
-* 当一对象改变，所有依赖于它的对象都得到通知并更新
-* Spring中listener的实现，如ApplicationListener
-
-## 策略模式
-
-* 定义一系列算法，将它们一个个封装起来，使他们可以相互替换，使得算法独立于使用客户
-* spring在实例化对象时用到Strategy模式
-
-## 模板方法模式
-
-* 定义一个操作中算法骨架，将一些步骤延迟到子类中
-* JdbcTemplate中的execute方法
 
 # [Spring中同一接口有多个实现类时如何注入](https://blog.csdn.net/u010476994/article/details/80986435)
 
