@@ -67,20 +67,7 @@
   * 500 Internal Server Error-- 报务器发生不可预期的错误
   * 503 Server Unavailable--服务器当前不能处理客户端的请求,一段时间后可能恢复正常
 
-# http如何保持连接 
 
-* HTTP/1.0中默认使用的是短连接，每一次HTTP操作就建立一次连接，任务结束就中断
-* HTTP/1.1默认使用长连接，并在响应头加入`Connection:keep-alive`
-  * 当一个网页打开后，用于传输数据的TCP不会关闭，再次访问此服务器网页时会继续使用该连接
-  * 实质是TCP协议的长连接和短连接
-
-# 什么时候用长连接，短连接
-
-* 长连接
-  * 操作频繁，点对点的通讯，而且连接数不能太多
-  * 如数据库的连接
-* 短连接
-  * Web的http服务，长连接对服务端会消耗一定资源，而web连接频繁使用短连接更节省资源
 
 # GET请求和POST请求的区别
 
@@ -150,30 +137,81 @@
     * 登录受信任网站A，并在本地生成Cookie。
     * 在不登出A的情况下，访问危险网站B。
 
-# Https与Http的区别
 
-* HTTPS协议需要到ca申请证书,一般免费证书上较少,因而需要一定的费用
+# [HTTP2.0与HTTP1.0区别](https://juejin.im/entry/5981c5df518825359a2b9476)
 
-* HTTP是超文本传输协议,信息明文传输,HTTPS具有安全性的ssl加密协议
+* **新的二进制格式**（Binary Format），HTTP1.x的解析是基于文本。基于文本协议的格式解析存在天然缺陷，文本的表现形式有多样性，要做到健壮性考虑的场景必然很多，二进制则不同，只认0和1的组合。基于这种考虑HTTP2.0的协议解析决定采用二进制格式，实现方便且健壮。
+* **多路复用**（MultiPlexing），即连接共享，即每一个request都是是用作连接共享机制的。一个request对应一个id，这样一个连接上可以有多个request，每个连接的request可以随机的混杂在一起，接收方可以根据request的 id将request再归属到各自不同的服务端请求里面。
+* **header压缩**，如上文中所言，对前面提到过HTTP1.x的header带有大量信息，而且每次都要重复发送，HTTP2.0使用encoder来减少需要传输的header大小，通讯双方各自cache一份header fields表，既避免了重复header的传输，又减小了需要传输的大小。
+* **服务端推送**（server push），同SPDY一样，HTTP2.0也具有server push功能。
 
-* Http端口80,HTTPS端口443
+# [HTTP1.0与HTTP1.1的区别](https://juejin.im/entry/5981c5df518825359a2b9476)
 
+* **缓存处理**，在HTTP1.0中主要使用header里的If-Modified-Since,Expires来做为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略例如Entity tag，If-Unmodified-Since, If-Match, If-None-Match等更多可供选择的缓存头来控制缓存策略。
+* **带宽优化及网络连接的使用**，HTTP1.0中，存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能，HTTP1.1则在请求头引入了range头域，**它允许只请求资源的某个部分**，即返回码是206（Partial Content），这样就方便了开发者自由的选择以便于充分利用带宽和连接。
+* **错误通知的管理**，**在HTTP1.1中新增了24个错误状态响应码**，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除。
+* **Host头处理**，在HTTP1.0中认为每台服务器都绑定一个唯一的IP地址，因此，请求消息中的URL并没有传递主机名（hostname）。但随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机（Multi-homed Web Servers），并且它们共享一个IP地址。HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request）。
+* **长连接**，HTTP 1.1支持长连接（PersistentConnection）和请求的流水线（Pipelining）处理，**在一个TCP连接上可以传送多个HTTP请求和响应**，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。
 
-# HTTP2.0与HTTP1.0区别
+## [**HTTP2.0的多路复用和HTTP1.X中的长连接复用有什么区别？**](https://juejin.im/entry/5981c5df518825359a2b9476)
 
-* HTTP1.x的解析是基于文本,2.0基于二进制,实现方便且健壮性强
+- HTTP/1.* 一次请求-响应，建立一个连接，用完关闭；每一个请求都要建立一个连接；
+- HTTP/1.1 Pipeling解决方式为，若干个请求排队串行化单线程处理，后面的请求等待前面请求的返回才能获得执行机会，一旦有某请求超时等，后续请求只能被阻塞，毫无办法，也就是人们常说的线头阻塞；
+- HTTP/2多个请求可同时在一个连接上并行执行。某个请求任务耗时严重，不会影响到其它连接的正常执行；
 
-* 多路复用
+## **为什么需要头部压缩？**
 
-  * 建立起一个连接后,可以在该连接上一直发送,不用等上个连接收到回复
+* 假定一个页面有100个资源需要加载（这个数量对于今天的Web而言还是挺保守的）, 而每一次请求都有1kb的消息头（这同样也并不少见，因为Cookie和引用等东西的存在）, 则至少需要多消耗100kb来获取这些消息头。HTTP2.0可以维护一个字典，差量更新HTTP头部，大大降低因头部传输产生的流量。
 
-* Header压缩
+## HTTP2.0多路复用有多好？**
 
-  * 避免重复Header的传输,又减少了传输大小
+* HTTP 性能优化的关键并不在于高带宽，而是低延迟。TCP 连接会随着时间进行自我「调谐」，起初会限制连接的最大速度，如果数据成功传输，会随着时间的推移提高传输的速度。这种调谐则被称为 TCP **慢启动**。由于这种原因，让原本就具有突发性和短时性的 HTTP 连接变的十分低效。HTTP/2 通过让所有数据流共用同一个连接，可以更有效地使用 TCP 连接，让高带宽也能真正的服务于 HTTP 的性能提升。
 
-* 服务端推送
+## http如何保持连接 
 
-  * 客户端在请求html时,服务器顺带把此html需要的css,js推送给客户端,而不像1.0 中需要请求一次html,然后再 请求一次css,再请求一次js
+- HTTP/1.0中默认使用的是短连接，每一次HTTP操作就建立一次连接，任务结束就中断
+- HTTP/1.1默认使用长连接，并在响应头加入`Connection:keep-alive`
+  - 当一个网页打开后，用于传输数据的TCP不会关闭，再次访问此服务器网页时会继续使用该连接
+  - 实质是TCP协议的长连接和短连接
 
-    
+## 什么时候用长连接，短连接
 
+- 长连接
+  - 操作频繁，点对点的通讯，而且连接数不能太多
+  - 如数据库的连接
+- 短连接
+  - Web的http服务，长连接对服务端会消耗一定资源，而web连接频繁使用短连接更节省资源
+
+# HTTPS
+
+## [Https与Http的区别](https://juejin.im/entry/5981c5df518825359a2b9476)
+
+- HTTPS协议需要到CA申请证书，一般免费证书很少，需要交费。
+- HTTP协议运行在TCP之上，所有传输的内容都是明文，HTTPS运行在SSL/TLS之上，SSL/TLS运行在TCP之上，所有传输的内容都经过加密的。
+- HTTP和HTTPS使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
+- HTTPS可以有效的防止运营商劫持，解决了防劫持的一个大问题。
+
+![img](https://user-gold-cdn.xitu.io/2017/8/3/b6daabee3a064fdc750cf0ff41c69871?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+## [SSL/TLS](https://mp.weixin.qq.com/s?__biz=Mzg2MjEwMjI1Mg==&mid=2247492447&idx=2&sn=3be29da93c22a3bc6229864f9f132333&chksm=ce0e54dcf979ddcacc01e1de018b7ac546469da293431342abd91a18bd137eb4421af9ba2e35&scene=90&xtrack=1&subscene=93&clicktime=1584536737&enterid=1584536737&ascene=56&devicetype=android-28&version=27000c37&nettype=3gnet&abtest_cookie=AAACAA%3D%3D&lang=zh_CN&exportkey=AcmlXA0esDsHZzA1gEdl5nE%3D&pass_ticket=irm%2BHTRtaZYTm4GA1uVi1bNLpr8shcXNEyWzng7T6o60Iro22tS1e93iOqSoqotA&wx_header=1)
+
+* SSL 是一个独立的协议，不只有 HTTP 可以使用，其他应用层协议也可以使用，比如 `SMTP(电子邮件协议)`、`Telnet(远程登录协议)` 等都可以使用。处于OSI七层模型第五层--会话层
+
+* SSL 即`安全套接字层`，它在 OSI 七层网络模型中处于第五层，SSL 在 1999 年被 `IETF(互联网工程组)`更名为 TLS ，即`传输安全层`，直到现在，TLS 一共出现过三个版本，1.1、1.2 和 1.3 ，目前最广泛使用的是 1.2，所以接下来的探讨都是基于 TLS 1.2 的版本上的。
+
+* TLS 在根本上使用`对称加密`和 `非对称加密` 两种形式。**TLS 是使用`对称加密`和`非对称加密` 的混合加密方式来实现机密性。**
+
+  ### 对称加密
+
+  * `对称加密(Symmetrical Encryption)`顾名思义就是指**加密和解密时使用的密钥都是同样的密钥**。只要保证了密钥的安全性，那么整个通信过程也就是具有了机密性。**对称加密存在风险**。
+
+  ![img](https://mmbiz.qpic.cn/mmbiz_png/libYRuvULTdVx8X5NPwkUl0kJzNPoo0jFZWtH35sBYfuVAFemVoA6JsMh6wYmntZg6iatCGh8AgmktXhdEc0rwQg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+  * TLS 里面有比较多的加密算法可供使用，比如 DES、3DES、AES、ChaCha20、TDEA、Blowfish、RC2、RC4、RC5、IDEA、SKIPJACK 等。目前最常用的是  AES-128, AES-192、AES-256 和 ChaCha20。
+
+  ### 非对称加密
+
+  * `非对称加密(Asymmetrical Encryption)` 也被称为`公钥加密`，相对于对称加密来说，非对称加密是一种新的改良加密方式。密钥通过网络传输交换，它能够确保及时密钥被拦截，也不会暴露数据信息。非对称加密中有两个密钥，一个是公钥，一个是私钥，公钥进行加密，私钥进行解密。公开密钥可供任何人使用，私钥只有你自己能够知道。
+
+    ![img](https://mmbiz.qpic.cn/mmbiz_png/libYRuvULTdVx8X5NPwkUl0kJzNPoo0jFW0icuPhVqHB0cJN5G3XBLibAAYLIGZ2vqO4OMHoC48oNHqItUCzzNgLQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+
+  * 
