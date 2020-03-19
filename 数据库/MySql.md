@@ -261,16 +261,3 @@
 * 注意
   * 会损失极少量的数据,如果表的数据特别大,同时又要保证数据完整性,最好停机操作
 
-# [实现MySQL数据库的实时备份](https://www.cnblogs.com/wu-jian/p/9396739.html)
-
-1. Master中的所有数据库变更事件写入Binary Log文件
-
-2. 当在Slave中执行“SLAVE START”命令时，开启Slave I/O Thread，并连接Master
-
-3. Master侦测到Slave I/O Thread的连接，开启Log Jump Thread进行响应
-
-4. Master Binary Log经Master Log Jump Thread和Slave I/O Thread传输至Slave Relay Log 
-
-5. Slave SQL Thread将Relay Log还原至数据，同步完成
-
-注：可使用“SHOW PROCESSLIST”命令在Master和Slave中查看对应线程的运行情况
