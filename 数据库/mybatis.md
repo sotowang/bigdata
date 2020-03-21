@@ -5,6 +5,8 @@
   * 原sql： `select count(*) from admin where username = 'test' and password = 'test'`
   * [注入](https://blog.csdn.net/u012436758/article/details/53871290)： `select count(*) from admin where username = ' 'or 1=1-- ' and password = ' ' "`sql在招行时，`"--"`将`and`及之后的语句都注释了
 * `$`方式一般用于传入数据库对象，例如传入表名
+* 简单说#{}是经过预编译的,是安全的,而${}是未经过预编译的,仅仅是取变量的值,是非安全的,存在sql注入。
+*   只能`${}的情况,order by、like 语句只能用${}`了,用#{}会多个' '导致sql语句失效.此外动态拼接sql也要用${}。
 
 # 一级缓存和二级缓存
 

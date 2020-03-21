@@ -74,6 +74,16 @@
 2. `@Component`通常是通过类路径扫描来自动侦测以及自动装配到Spring容器中（我们可以使用 `@ComponentScan` 注解定义要扫描的路径从中找出标识了需要装配的类自动装配到 Spring 的 bean 容器中）。`@Bean` 注解通常是我们在标有该注解的方法中定义产生这个 bean,`@Bean`告诉了Spring这是某个类的示例，当我需要用它的时候还给我。
 3. `@Bean` 注解比 `Component` 注解的自定义性更强，而且很多地方我们只能通过 `@Bean` 注解来注册bean。**比如当我们引用第三方库中的类需要装配到 `Spring`容器时，则只能通过 `@Bean`来实现。**
 
+### [如何判断bean是否加载完](https://www.cnblogs.com/0201zcr/p/4720803.html)
+
+* **onApplicationEvent**（）方法，**在Spring容器将所有的Bean都初始化完成之后，就会执行该方法**
+
+* **应用场景**：很多时候我们想要在某个类加载完毕时干某件事情，但是使用了spring管理对象，我们这个类引用了其他类（可能是更复杂的关联），所以当我们去使用这个类做事情时发现包空指针错误，这是因为我们这个类有可能已经初始化完成，但是引用的其他类不一定初始化完成，所以发生了空指针错误，解决方案如下： 
+
+  1、写一个类继承spring的`ApplicationListener`监听，并监控`ContextRefreshedEvent`事件（容易初始化完成事件） 
+
+  2、定义简单的`bean：<bean id="beanDefineConfigue" class="com.creatar.portal.webservice.BeanDefineConfigue"></bean>  `
+
 ## [Spring中设计模式](https://mp.weixin.qq.com/s/wcK2qsZxKDJTLIGqEIyaNg)
 
 ### 简单工厂
