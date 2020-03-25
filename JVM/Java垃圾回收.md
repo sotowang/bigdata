@@ -73,7 +73,12 @@
 
   
 
-# 触发Full GC的条件
+# [触发Minor GC条件](https://blog.csdn.net/qq_23410909/article/details/90211521)
+
+* Eden(伊甸园)空间不足。
+
+# [触发Full GC的条件](https://blog.csdn.net/qq_23410909/article/details/90211521)
+
 * 老年代空间不足
 * 永久代(JDK 8已无)空间不足
 * CMS GC时出现promotion failed,concurrent mode failure
