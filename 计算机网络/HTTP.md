@@ -150,7 +150,7 @@
 * **缓存处理**，在HTTP1.0中主要使用header里的If-Modified-Since,Expires来做为缓存判断的标准，HTTP1.1则引入了更多的缓存控制策略例如Entity tag，If-Unmodified-Since, If-Match, If-None-Match等更多可供选择的缓存头来控制缓存策略。
 * **带宽优化及网络连接的使用**，HTTP1.0中，存在一些浪费带宽的现象，例如客户端只是需要某个对象的一部分，而服务器却将整个对象送过来了，并且不支持断点续传功能，HTTP1.1则在请求头引入了range头域，**它允许只请求资源的某个部分**，即返回码是206（Partial Content），这样就方便了开发者自由的选择以便于充分利用带宽和连接。
 * **错误通知的管理**，**在HTTP1.1中新增了24个错误状态响应码**，如409（Conflict）表示请求的资源与资源的当前状态发生冲突；410（Gone）表示服务器上的某个资源被永久性的删除。
-* **Host头处理**，在HTTP1.0中认为每台服务器都绑定一个唯一的IP地址，因此，请求消息中的URL并没有传递主机名（hostname）。但随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机（Multi-homed Web Servers），并且它们共享一个IP地址。HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request）。
+* **Host头处理**，在HTTP1.0中认为每台服务器都绑定一个唯一的IP地址，因此，请求消息中的URL并没有传递主机名（hostname）。但随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机（Multi-homed Web Servers），并且它们共享一个IP地址。**HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（**400 Bad Request）。
 * **长连接**，HTTP 1.1支持长连接（PersistentConnection）和请求的流水线（Pipelining）处理，**在一个TCP连接上可以传送多个HTTP请求和响应**，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive，一定程度上弥补了HTTP1.0每次请求都要创建连接的缺点。
 
 ## [**HTTP2.0的多路复用和HTTP1.X中的长连接复用有什么区别？**](https://juejin.im/entry/5981c5df518825359a2b9476)
@@ -193,6 +193,56 @@
 
 ![img](https://user-gold-cdn.xitu.io/2017/8/3/b6daabee3a064fdc750cf0ff41c69871?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
 
+## [Https建立连接过程](https://www.jianshu.com/p/33d0f8631f90)
+
+* **客户端访问https连接**
+
+  * 这一步，就是相当于我们在浏览器上输入url回车的过程。这个时候浏览器或者客户端（接下来统一为客户端）会把我们客户端支持的加密算法Cipher Suite（密钥算法套件）带给服务端
+
+* ##### 服务端发送证书（公钥）给客户端
+
+  * 服务端接收Cipher后，和自己支持的加密算法进行比对，如果不符合，则断开连接。否则，服务端会把符合的算法和证书发给客户端，包括证书时间、证书日期、证书颁发的机构。
+
+* ##### 2.2.4- 2.2.5 客户端验证服务端的证书
+
+  * 1、**客户端验证证书**，包括颁发证书的机构是否合法与是否过期，证书中包含的网站地址是否与正在访问的地址一致等
+
+  * 2、验证通过后（或者用户接受了不信任的证书），**客户端会生成一个随机字符串，然后用服务端的公钥进行加密。这里就保证了只有服务端才能看到这串随机字符串**（因为服务端拥有公钥对应的私钥，RSA解密，可以知道客户端的随机字符串）。
+
+  * 3、生成握手信息  用约定好的HASH算法，对握手信息进行取HASH，然后**用随机字符串加密握手信息和握手信息的签名HASH值，把结果发给服务端**。这里之所以要带上握手信息的HASH是因为，防止信息被篡改。如果信息被篡改，那么服务端接收到信息进行HASH时，就会发现HASH值和客户端传回来的不一样。这里就保证了信息不会被篡改。
+
+* ##### 2.2.6 - 2.2.7 服务端接收加密信息，解密得到客户端提供的随机字符串
+
+  * 服务端接收到加密信息后，**首先用私钥解密得到随机字符串。然后用随机字符串解密握手信息**，获得握手信息和握手信息的HASH值，服务端对握手信息进行HASH，比对客户端传回来的HASH。如果相同，则说明信息没有被篡改。
+
+  * 服务端验证完客户端的信息以后，同样使用随机字符串加密握手信息和握手信息的HASH值发给客户端。
+
+* ##### 2.2.8 客户端验证服务端返回的握手信息，完成握手
+
+  * 客户端接收到服务端发回来的握手信息后，用一开始生成的随机字符串对密文进行解密，得到握手信息和握手信息的HASH值，像上一步服务端验证一样对握手信息进行校验，**校验通过后，握手完毕**。从这里开始，**客户端和服务端的通信就使用那串随机字符串进行AES对称加密通信**。
+
+* #### 2.3 验证总结
+
+  * 使用RSA非对称算法，服务端向客户端发送公钥，**公钥包含了域名、颁发机构、过期日期。保证了公钥的合法性和服务端的身份正确性**（而不会被黑客冒充）
+  * 客户端向第三方验证公钥的合法性，验证通过后向服务端约定对称加密的随机字符号。保证了随机字符串只有通信双方知道。
+     接下来的通信就使用这个随机字符号进行加密通信。因为随机字符串只有双方知道，所以信息不会被截获。
+
+## [客户端验证证书的合法性](https://www.jianshu.com/p/33d0f8631f90)
+
+* 为了验证证书的合法性，首先客户端要知道一些合法的证书机构，这就是我们所说的根证书。而根证书会保存在用户的浏览器或者其它客户端，像jdk的根证书列表。
+
+* 当然证书不可能只有几个机构进行颁发的，所以证书的颁发是一级一级的。客户端在验证证书也是一级一级往下验证。下面是阿里的证书：
+
+
+
+
+
+![img](https:////upload-images.jianshu.io/upload_images/9294298-4a1e99efb189af38.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/409/format/webp)
+
+阿里证书
+
+* 最顶级的VeriSign Class 3 Public Primary Certification Authori... 就是根证书了， 这个证书一般会保存在客户端，在客户端安装时就有一组根证书了，如果服务端根证书在客户端的信任列表中，那么就会向根证书验证二级证书的合法性，然后再向二级证书机构验证三级证书的合法性，以此类推。
+
 ## [SSL/TLS](https://mp.weixin.qq.com/s?__biz=Mzg2MjEwMjI1Mg==&mid=2247492447&idx=2&sn=3be29da93c22a3bc6229864f9f132333&chksm=ce0e54dcf979ddcacc01e1de018b7ac546469da293431342abd91a18bd137eb4421af9ba2e35&scene=90&xtrack=1&subscene=93&clicktime=1584536737&enterid=1584536737&ascene=56&devicetype=android-28&version=27000c37&nettype=3gnet&abtest_cookie=AAACAA%3D%3D&lang=zh_CN&exportkey=AcmlXA0esDsHZzA1gEdl5nE%3D&pass_ticket=irm%2BHTRtaZYTm4GA1uVi1bNLpr8shcXNEyWzng7T6o60Iro22tS1e93iOqSoqotA&wx_header=1)
 
 * SSL 是一个独立的协议，不只有 HTTP 可以使用，其他应用层协议也可以使用，比如 `SMTP(电子邮件协议)`、`Telnet(远程登录协议)` 等都可以使用。处于OSI七层模型第五层--会话层
@@ -214,4 +264,5 @@
 
     ![img](https://mmbiz.qpic.cn/mmbiz_png/libYRuvULTdVx8X5NPwkUl0kJzNPoo0jFW0icuPhVqHB0cJN5G3XBLibAAYLIGZ2vqO4OMHoC48oNHqItUCzzNgLQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
-  * 
+    
+  

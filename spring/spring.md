@@ -48,10 +48,20 @@
   1. 在Bean对象中尽量避免定义可变的成员变量（不太现实）。
   2. <span style="color:red">在类中定义一个ThreadLocal成员变量，将需要的可变成员变量保存在 ThreadLocal 中（推荐的一种方式）。</span>
 
+### [Bean初始化顺序](https://juejin.im/post/5d85a5ec6fb9a06ae57d2bfd#heading-4)
+
+Constructor --> *Aware --> BeanPostProcessor的before方法 --> @PostConstruct注解的方法 --> InitializingBean的afterPropertiesSet方法 --> init-method --> BeanPostProcessor的after方法
+
+Bean销毁的执行顺序：
+
+@PreDestroy注解的方法 -> DisposableBean的destroy方法
+
+
+
 ### Bean生命周期
 
 - Bean 容器找到配置文件中 Spring Bean 的定义。
-- Bean 容器利用 Java Reflection API 创建一个Bean的实例。
+- Bean 容器利用 **Java Reflection API 创建一个Bean的实例**。
 - 如果涉及到一些属性值 利用 `set()`方法设置一些属性值。
 - 如果 Bean 实现了 `BeanNameAware` 接口，调用 `setBeanName()`方法，传入Bean的名字。
   - 如果 Bean 实现了 `BeanClassLoaderAware` 接口，调用 `setBeanClassLoader()`方法，传入 `ClassLoader`对象的实例。

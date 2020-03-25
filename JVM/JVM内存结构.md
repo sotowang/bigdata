@@ -168,7 +168,7 @@ Java堆是垃圾收集器管理的主要区域，因此很多时候也被称做�
 
 ## 方法区
 
-### MetaSpace（JDK1.8）相比PermGen优势
+### [MetaSpace（JDK1.8）相比PermGen优势](https://www.cnblogs.com/paddix/p/5309550.html)
 
 * 字符串常量池存在永久代中，容易出现性能问题和内存溢出
 * 类和方法的信息大小难易确定，给永久代的大小指定带来困难
