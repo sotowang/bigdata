@@ -8,7 +8,7 @@
 * 简单说#{}是经过预编译的,是安全的,而${}是未经过预编译的,仅仅是取变量的值,是非安全的,存在sql注入。
 *   只能`${}的情况,order by、like 语句只能用${}`了,用#{}会多个' '导致sql语句失效.此外动态拼接sql也要用${}。
 
-# 一级缓存和二级缓存
+# [一级缓存和二级缓存](https://tech.meituan.com/2018/01/19/mybatis-cache.html)
 
 ![img](https://img-blog.csdn.net/20150726164148424?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
 
@@ -29,6 +29,10 @@
   * FIFO
 * 主要设计模式
   * 装饰器模式
+
+1. MyBatis的二级缓存相对于一级缓存来说，实现了`SqlSession`之间缓存数据的共享，同时粒度更加的细，能够到`namespace`级别，通过Cache接口实现类不同的组合，对Cache的可控性也更强。
+2. MyBatis在多表查询时，极大可能会出现脏数据，有设计上的缺陷，安全使用二级缓存的条件比较苛刻。
+3. 在分布式环境下，由于默认的MyBatis Cache实现都是基于本地的，分布式环境下必然会出现读取到脏数据，需要使用集中式缓存将MyBatis的Cache接口实现，有一定的开发成本，直接使用Redis、Memcached等分布式缓存可能成本更低，安全性也更高。
 
 # [分页](https://blog.csdn.net/chenbaige/article/details/70846902)
 

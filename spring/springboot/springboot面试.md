@@ -69,9 +69,12 @@ private final Map<String, Object> earlySingletonObjects = new HashMap<String, Ob
 
 * 指
   * `singletonObjects`单例对象Cache(一级)
-  * `singletonFactories`单例工厂Cache(三级)
+    * 完成初始化的单例对象的cache（一级缓存）
   * `earlySingletonObjects`提前曝光的单例对象cache(二级)
-
+  * 完成实例化但是尚未初始化的，提前暴光的单例对象的Cache （二级缓存）
+  * `singletonFactories`单例工厂Cache(三级)
+    * 进入实例化阶段的单例对象工厂的cache
+  
 * 三级缓存用法
 
   * `protected Object getSingleton(String beanName, boolean allowEarlyReference) `
@@ -82,3 +85,10 @@ private final Map<String, Object> earlySingletonObjects = new HashMap<String, Ob
 
 * 为何需要三级而不是二级
   * 将三级缓存放到二级缓存时，会是否有`SmartInstantiationAwareBeanPostProcessor`这样的后置处理器，这里是给用户提供接口扩展的（循环使用？）
+
+## [第二级缓存earlySingletonObjects的作用](https://juejin.im/post/5dbb9fdef265da4d4c202483#heading-10)
+
+* 既然有了三级缓存了，为什么还要设计二级缓存呢？
+* 可能很多人觉得二级缓存是个鸡肋，可有可无，其实这是Spring大量使用缓存提高性能的一点体现。每次都通过工厂去拿，需要遍历所有的后置处理器、判断是否创建代理对象，而判断是否创建代理对象本身也是一个复杂耗时的过程。设计二级缓存避免再次调用调用`getEarlyBeanReference`方法，提高bean加载流程。只能说，Spring是个海洋。
+
+## 缓存生命周期
