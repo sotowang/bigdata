@@ -224,7 +224,7 @@ switch 语句中的变量类型可以是：
 * sleep让线程阻塞,特定时间后转为非阻塞,重新获得CPU
 * wait调用时先获得该Object的锁,调用wait后将锁释放并阻塞.当调用notify/notifyAll后,可能获得CPU重新获得锁
 
-# Clone()
+# [Clone()](https://segmentfault.com/a/1190000010648514)
 
 * 声明为`protected Object clone() CloneNotSupportedException`
 * 无论浅拷贝还是深拷贝,都需要实现clone()方法以及`Cloneable`接口来完成操作
@@ -235,6 +235,11 @@ switch 语句中的变量类型可以是：
   * 实现方案
     * 序列化`serialization`这个对象,再反序列化回来,就可以得到新的对象
     * 利用`clone()`,对其内的引用类型的变量再进行一次`clone()`
+
+* 如果一个**对象内部只有基本数据类型**，那用 clone() 方法获取到的就是这个对象的**深拷贝**，而**如果其内部还有引用数据类型，那用 clone() 方法就是一次浅拷贝的操作**。
+
+  
+    
 
 # static
 
