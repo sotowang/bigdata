@@ -457,7 +457,7 @@ RDB和AOF的优缺点
 
 # [Redis的主从同步机制](https://github.com/AobingJava/JavaFamily/blob/master/docs/redis/集群高可用、哨兵、持久化、LRU.md)
 
-* 启动一台slave 的时候，他会发送一个**psync**命令给master ，如果是这个**slave第一次连接到master，他会触发一个全量复制**。master就会启动一个线程，生成**RDB**快照，还会把新的写请求都缓存在内存中，**RDB**文件生成后，master会将这个**RDB**发送给slave的，slave拿到之后做的第一件事情就是写进本地的磁盘，然后加载进内存，然后master会把内存里面缓存的那些新命名都发给slave。
+* 启动一台slave 的时候，他会发送一个**psync**命令给master ，如果是这个**slave第一次连接到master，他会触发一个全量复制**。master就会启动一个线程，生成**RDB**快照，还会把新的写请求都缓存在内存中，**RDB**文件生成后，master会将这个**RDB**发送给slave的，slave拿到之后做的第一件事情就是写进本地的磁盘，然后加载进内存，然后master会把内存里面缓存的那些新命令都发给slave。
   * 数据传输的时候断网了或者服务器挂了怎么办
     * 传输过程中有什么网络问题啥的，会自动重连的，并且连接之后会把缺少的数据补上的。
 
