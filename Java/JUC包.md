@@ -1,13 +1,14 @@
-# JUC包分类
+# [JUC中的应用场景](https://tech.meituan.com/2019/12/05/aqs-theory-and-apply.html)
 
-* 线程执行器executor
-* 锁locks
-* 原子变量类atomic
-* 并发工具类tools
-  * 闭锁 CountDownLatch
-  * 栅栏 CyclicBarrier
-  * 信号量 Semaphore
-  * 交换器 Exchanger
+| 同步工具               | 同步工具与AQS的关联                                          |
+| :--------------------- | :----------------------------------------------------------- |
+| ReentrantLock          | 使用AQS保存锁重复持有的次数。当一个线程获取锁时，ReentrantLock记录当前获得锁的线程标识，用于检测是否重复获取，以及错误线程试图解锁操作时异常情况的处理。 |
+| Semaphore              | 使用AQS同步状态来保存信号量的当前计数。tryRelease会增加计数，acquireShared会减少计数。 |
+| CountDownLatch         | 使用AQS同步状态来表示计数。计数为0时，所有的Acquire操作（CountDownLatch的await方法）才可以通过。 |
+| ReentrantReadWriteLock | 使用AQS同步状态中的16位保存写锁持有的次数，剩下的16位用于保存读锁的持有次数。 |
+| ThreadPoolExecutor     | Worker利用AQS同步状态实现对独占线程变量的设置（tryAcquire和tryRelease）。 |
+
+
 
 
 # 并发工具类
