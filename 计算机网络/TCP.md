@@ -331,7 +331,9 @@ ICMP是（Internet Control Message Protocol）Internet控制[报文](https://bai
   * recv() 接收消息
   * close() 关闭socket
 
-# TCP/IP协议栈分几层
+# [TCP/IP协议栈分几层](https://blog.csdn.net/Mary19920410/article/details/61931234)
+
+![img](https://img-blog.csdn.net/20170313215505756)
 
 * 应用层
   * FTP,SMTP HTTP
