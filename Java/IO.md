@@ -182,7 +182,7 @@
 
 # blocking与non-blocking区别
 
-* blocling会一直block对应的进程直到操作完成
+* blocking会一直block对应的进程直到操作完成
 * non-blocking在kernel(内核)还准备数据的情况下立刻返回
 
 # 同步IO与异步IO的区别
