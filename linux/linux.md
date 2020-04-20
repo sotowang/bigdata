@@ -271,8 +271,20 @@ cat words.txt |sort |uniq -c |sort -k1,1nr |head -10
 # [Linux操作系统网络服务器模型](https://yq.aliyun.com/articles/131978)
 
 * 并发服务器
+  
   * 并发服务器就是在同一个时刻可以处理来自多个客户端的请求;
 * 循环服务器
   * 循环服务器是指服务器在同一时刻指可以响应一个客户端的请求
 
   
+
+# [SIGINT SIGTERM SIGKILL区别](https://www.jianshu.com/p/f6dfbf51c541)
+
+* SIGINT SIGTERM SIGKILL都是结束/终止进程
+
+* **SIGINT信号为ctrl+c发送出来的信号，该信号只能结束前台进程**，信号被当前进程树接收到，也就是说，不仅当前进程会收到信号，它的子进程也会收到；
+
+* SIGTERM可以被阻塞，**kill不加任何参数的时候发送的就是这个信号，只有当前进程收到信号，子进程不会收到**。如果当前进程被kill了，那么它的子进程的父进程将会是init，也就是pid为1的进程；
+
+* **SIGKILL是不能被捕获的，程序收到这个信号后，一定会退出。这就是kill -9一定能保证将程序杀死的原因。**
+
