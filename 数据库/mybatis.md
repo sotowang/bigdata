@@ -99,11 +99,18 @@
   * MyBatis因sql写在xml里,Hibernate很多是自动生成的,无法直接维护sql
 * Hibernate安全性要好,MyBatis存在SQL注入问题
 
-# 有哪些执行器（Executor）
+# Mybatis使用规范
 
-# 分页插件的实现原理
+* 不能使用$语句,要替换$语句
+  * $语句在sql预编译前就进行了常量替换，存在sql注入风险；而#语句经过了预编译环节，可规避此风险
 
-# 如何编写一个自定义插件
+* 优先使用mybatis-generator (MBG) 
+  * MBG简介：mybatis 映射文件的生成器，可以读取数据表信息，自动生成对应的POJO,xml和mapper文件；
+  * 用法： 1) 在pom.xml中配置 MBG plugin 2) 编写generatorConfig.xml 配置文件 3) mvn mybatis-generator:generate
 
+* 手写的sql 要与MBG生成的分开
+  * 当MBG生成的API无法满足时，需要手工添加sql，这时，切记要将手写的sql放置到单独的文件中。否则，当MBG重新生成时，你手写的sql会被覆盖；
+  * 一般做法：新建 *ManualMapper.java 和 *ManualMapper.xml
 
-
+* count语句返回类型不能为int
+  * 原因：若返回类型是int，当数据表为空时，会抛出 BindingException
