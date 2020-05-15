@@ -348,5 +348,19 @@
   - `map = Collections.unmodifiableMap(map);`
   - `list = Collections.unmodifiableList(list);`
 
+## [`Collections.EMPTY_LIST `和 `Collections.emptyList()`](https://blog.csdn.net/liyuming0000/article/details/49474659)
 
+* **Collections.EMPTY_LIST返回的是一个空的List**。为什么需要空的List呢？有时候我们在函数中需要返回一个List，但是这个List是空的，**如果我们直接返回null的话，调用者还需要进行null的判断**，所以一般建议返回一个空的List。Collections.EMPTY_LIST返回的这个空的List是不能进行添加元素这类操作的。这时候你有可能会说，我直接返回一个new ArrayList()呗，但是**new ArrayList()在初始化时会占用一定的资源**，所以在这种场景下，还是建议返回Collections.EMPTY_LIST。
+* **Collections. emptyList()返回的也是一个空的List**，它与Collections.EMPTY_LIST的唯一区别是，Collections. emptyList()支持泛型，**所以在需要泛型的时候**，可以使用Collections. emptyList()。
+* 两个方法都无法在空list中添加元素
 
+# Guava Lists工具类
+
+## [`Lists.newArrayList`](https://blog.csdn.net/qq_2300688967/article/details/79490345)
+
+* 与new ArrayList()相同，但能自动推导<>类型
+
+## [`Lists.transform()`](https://www.jianshu.com/p/3e3bf25d7878)
+
+* 将list中的元素封装为新的model而不用遍历实现
+* 已经转换后得到的list会受到源list的改动而改变
