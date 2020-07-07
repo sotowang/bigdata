@@ -1,5 +1,3 @@
-
-
 # Solr与ES
 
 * 区别
@@ -140,3 +138,32 @@ To forever, study every day,good good up # 文档2包含内容
 * 高亮查询
   * highlight，fields，pre_tags，post_tags
 
+## 集成SpringBoot
+
+* 批处理插入
+
+  ```java
+  for(int i=0;i<userList.size();i++){
+    bulkRequest.add(new IndexRequest("aaa_index")
+                   .id(""+(i+1))
+                   .source(JSON.toJSONString(userList.get(i)),XContentType.JSON));
+  }
+  BulkResponse bulkResponse = client.bulk(bulkRequest,RequestOptions.DEFAULT);
+  ```
+
+* 查询
+
+  ```java
+  SearchRequest searchRequest = new SearchRequest("aaa_oindex");
+  //构建搜索条件
+  SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+  //查询条件，TermQueryBuilder精确匹配
+  TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("name","aaa");
+  sourceBuilder.query(termQueryBuilder);
+  
+  sourceBuilder.timeOut(new TimeValue(60,TimeUnit,SECONDS));
+  searchRequest.source(sourceBuilder);
+  
+  ```
+
+# Elasticsearch中数据是如何存储的
