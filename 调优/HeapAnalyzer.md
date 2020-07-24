@@ -20,7 +20,7 @@ java –Xmx[heapsize] –jar ha456.jar
 
 打开堆转储文件java_pid5192.hprof
 
-![img](https://images2018.cnblogs.com/blog/824490/201803/824490-20180323224404247-115762064.png)
+![img](https://i.loli.net/2020/07/24/AloUydpfeHwsL3a.png)
 
 可以看到，堆内存的96.64%的空间被Test$OOMObject占用。
 
