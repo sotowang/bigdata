@@ -115,7 +115,7 @@
 
 - 跳跃表最低层(第一层)是一个拥有跳跃表所有节点的普通链表,每次往跳跃表插入链表节点时一定会插入到最低层,至于是否会插入最高层,由抛硬币决定
 
-  ![img](https://segmentfault.com/img/remote/1460000013418478)
+  ![img](https://i.loli.net/2020/07/24/i2w1gdWPLrSC6eT.png)
 
 ### zset为什么不用红黑树
 
