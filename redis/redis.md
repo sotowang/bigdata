@@ -135,7 +135,7 @@
 
   但是这个的场景其实还是多少单一了一些，因为现在很多对象都是比较复杂的，比如你的商品对象可能里面就包含了很多属性，其中也有对象。我自己使用的场景用得不是那么多。
 
-![img](https://pic1.zhimg.com/80/v2-9f60b2278b9cedc0aaae7c22d2a02b34_hd.jpg)
+![img](https://i.loli.net/2020/07/26/hFSnPkrUAdg8D3j.jpg)
 
 
 
