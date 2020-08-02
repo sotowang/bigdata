@@ -35,11 +35,13 @@
   * loadClass
   * forName
 
-# 类的装载过程/生命周期
+# 类的加载过程/生命周期
+
+![img](https://i.loli.net/2020/08/01/CD1TkAag5B2wQGi.jpg)
 
 * 加载
   
-* 通过ClassLoader加载class文件字节码，生成class对象
+  * 通过ClassLoader加载class文件字节码，生成class对象
   
 * 链接
   * 校验
