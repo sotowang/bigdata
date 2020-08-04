@@ -147,9 +147,7 @@
 
 * 底层为数组+链表，java1.7和java1.8表现稍有不同
 
-![img](https://i.loli.net/2019/05/08/5cd1d2be77958.jpg)
-
-![img](https://i.loli.net/2019/05/08/5cd1d2be77958.jpg)
+![img](https://i.loli.net/2020/08/04/TQdRz8cnmaFUBjW.jpg)
 
 * 初始桶大小16，负载因子0.75，当数量达到`16x0.75=12`时扩容，扩容涉及到rehash，复制数据等操作，消耗性能，提前预估HashMap大小最好，减少扩容带来的性能损耗
 
@@ -199,6 +197,10 @@
    * 解决方案
       * `Collections.synchronizedMap()`
       * `ConcurrentHashMap`
+
+### [jdk7中的HashMap造成的死循环](https://blog.csdn.net/zhuqiuhui/article/details/51849692)
+
+*  
 
 ### put方法是尾插还是头插
 
