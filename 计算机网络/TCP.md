@@ -1,16 +1,3 @@
-# IP寻址
-
-* 本地网络寻址
-  * A通过hosts将B计算机名转换为ip地址
-  * 用自己的IP与子网掩码计算自己所处网段，比较B的IP与自己和子网掩码，发现处于相同网段
-  * 在自己ARP缓存中查找是否有B的mac地址
-  * 若没有，A启动ARP协议在本地网络arp广播来查询B的mac地址，获得后写入arp缓存
-* 非本地网络寻址
-  * A通过本机hosts或dns系统将B计算机名转为IP地址
-  * 用自己IP与子网掩码计算自己网段与B比较，发现处于不同网段
-  * A在自己arp缓存中查找是否有缺少网关（路由器本地接口）的MAC地址，若没找到则启动arp协议通过本地网络上的arp广播查询网关mac地址，获得后写入arp缓存表
-  * 数据到达路由器后根据目的IP查找路由表，发送到下一跳路由，直到达到目的的的网络与主机
-
 # [TCP三次握手](https://juejin.im/post/5b0119776fb9a07aaf357d77)
 
 * 请求端(客户端)发起第一个SYN，执行主动打开，表示想要连接服务端，同时指明初始序号(ISN,比如这里的141553152)
@@ -224,64 +211,6 @@
 * 其它
   * TCP不会将失序到达报文段丢了，会暂时保存并标为失序，直至失序报文段到齐
 
-# 子网掩码的计算及与子网数、主机数关系
-
-子网掩码是一个32位地址，是与IP地址结合使用的一种技术。它的主要作用有两个，**一是用于屏蔽IP地址的一部分以区别**[**网络标识**](http://baike.baidu.com/view/1120331.htm)**和**[**主机**](http://baike.baidu.com/view/23880.htm)**标识，并说明该IP地址是在**[**局域网**](http://baike.baidu.com/view/788.htm)**上，还是在远程网上。二是用于将一个大的IP网络划分为若干小的子网络。**
-
- 使用子网是为了减少IP的浪费。因为随着互联网的发展，越来越多的网络产生，有的网络多则几百台，有的只有区区几台，这样就浪费了很多IP地址，所以要划分子网。使用子网可以提高网络应用的效率。
-
-通过IP 地址的二进制与子网掩码的二进制进行与运算，确定某个设备的网络地址和主机号，也就是说通过子网掩码分辨一个网络的网络部分和主机部分。子网掩码一旦设置，网络地址和主机地址就固定了。
-
-1、利用子网数目计算子网掩码
-
-把B类地址172.16.0.0划分成30个子网络，它的子网掩码是多少？
-
-①将子网络数目30转换成二进制表示11110
-
-②统计一下这个二进制的数共有5位
-
-③注意：当二进制数中只有一个1的时候，所统计的位数需要减1（例如：10000要统计为4位）
-
-④将B类地址的子网掩码255.255.0.0主机地址部分的前5位变成1
-
-⑤这就得到了所要的子网掩码（11111111.11111111.11111000.00000000）255.255.248.0。
-
-# DHCP工作过程的六个主要步骤
-
-DHCP分为两个部分：一个是服务器端，另一个是客户端。
-
-所有客户机的IP地址设定资料都由DHCP服务器集中管理，并负责处理客户端的DHCP请求；而客户端则会使用从服务器分配下来的IP地址。
-
-## 1. DHCP服务器IP分配方式
-
-DHCP服务器提供三种IP分配方式：
-
-- 自动分配（Automatic Allocation） 自动分配是当DHCP客户端第一次成功地从DHCP服务器端分配到一个IP地址之后，就永远使用这个地址。
-- 动态分配（Dynamic Allocation） 动态分配是当DHCP客户端第一次从DHCP服务器分配到IP地址后，并非永久地使用该地址，每次使用完后，DHCP客户端就得释放这个IP地址，以给其他客户端使用。
-- 手动分配 手动分配是由DHCP服务器管理员专门为客户端指定IP地址。
-
-## 2. DHCP服务工作流程
-
-## 
-
-![img](https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=d19ffbc2d21373f0e13267cdc566209e/5ab5c9ea15ce36d3d5e5e08939f33a87e850b1a1.jpg)
-
-1. DHCP Client以广播的方式发出DHCP Discover报文。
-
-2. 所有的DHCP Server都能够接收到DHCP Client发送的DHCP Discover报文，所有的DHCP Server都会给出响应，向DHCP Client发送一个DHCP Offer报文。
-
-   DHCP Offer报文中“Your(Client) IP Address”字段就是DHCP Server能够提供给DHCP Client使用的IP地址，且DHCP Server会将自己的IP地址放在“option”字段中以便DHCP Client区分不同的DHCP Server。DHCP Server在发出此报文后会存在一个已分配IP地址的纪录。
-
-3. DHCP Client只能处理其中的一个DHCP Offer报文，一般的原则是DHCP Client处理最先收到的DHCP Offer报文。
-
-   DHCP Client会发出一个广播的DHCP Request报文，在选项字段中会加入选中的DHCP Server的IP地址和需要的IP地址。
-
-4. DHCP Server收到DHCP Request报文后，判断选项字段中的IP地址是否与自己的地址相同。如果不相同，DHCP Server不做任何处理只清除相应IP地址分配记录；如果相同，DHCP Server就会向DHCP Client响应一个DHCP ACK报文，并在选项字段中增加IP地址的使用租期信息。
-
-5. DHCP Client接收到DHCP ACK报文后，检查DHCP Server分配的IP地址是否能够使用。如果可以使用，则DHCP Client成功获得IP地址并根据IP地址使用租期自动启动续延过程；如果DHCP Client发现分配的IP地址已经被使用，则DHCP Client向DHCPServer发出DHCP Decline报文，通知DHCP Server禁用这个IP地址，然后DHCP Client开始新的地址申请过程。
-
-6. DHCP Client在成功获取IP地址后，随时可以通过发送DHCP Release报文释放自己的IP地址，DHCP Server收到DHCP Release报文后，会回收相应的IP地址并重新分配。
-
 # ICMP Internet控制[报文](https://baike.baidu.com/item/%E6%8A%A5%E6%96%87/3164352)协议
 
 ICMP是（Internet Control Message Protocol）Internet控制[报文](https://baike.baidu.com/item/%E6%8A%A5%E6%96%87/3164352)协议。它是[TCP/IP协议簇](https://baike.baidu.com/item/TCP%2FIP%E5%8D%8F%E8%AE%AE%E7%B0%87)的一个子协议，用于在IP[主机](https://baike.baidu.com/item/%E4%B8%BB%E6%9C%BA/455151)、[路由](https://baike.baidu.com/item/%E8%B7%AF%E7%94%B1)器之间传递控制消息。控制消息是指[网络通](https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E9%80%9A)不通、[主机](https://baike.baidu.com/item/%E4%B8%BB%E6%9C%BA/455151)是否可达、[路由](https://baike.baidu.com/item/%E8%B7%AF%E7%94%B1/363497)是否可用等网络本身的消息。这些控制消息虽然并不传输用户数据，但是对于用户数据的传递起着重要的作用。
@@ -319,3 +248,35 @@ ICMP是（Internet Control Message Protocol）Internet控制[报文](https://bai
   * ICMP IGMP
 * 网络接口层(物理层+链路层)
   * ARP
+
+# [TCP的拆包和粘包](https://zhuanlan.zhihu.com/p/77275039)
+
+* 粘包
+  * 在socket通讯过程中，如果通讯的一端一次性连续发送多条数据包，tcp协议会将多个数据包打包成一个tcp报文发送出去，这就是所谓的**粘包**
+
+* 拆包
+
+  * 如果通讯的一端发送的数据包超过一次tcp报文所能传输的最大值时，就会将一个数据包拆成多个最大tcp长度的tcp报文分开传输，这就叫做**拆包**。
+
+  ![img](https://i.loli.net/2020/08/05/GUIOPAY2fJE4hNc.jpg)
+
+## [总结出现粘包的原因](https://zhuanlan.zhihu.com/p/77275039)
+
+1. **要发送的数据小于TCP发送缓冲区的大小**，TCP将多次写入缓冲区的数据一次发送出去；
+2. 接收数据端的应用层**没有及时读取接收缓冲区中的数据**；
+3. **数据发送过快，数据包堆积导致缓冲区积压多个数据后才一次性发送出去**(如果客户端每发送一条数据就睡眠一段时间就不会发生粘包)；
+
+##  拆包
+
+如果数据包太大，超过MSS的大小，就会被拆包成多个TCP报文分开传输。
+
+## [TCP粘包/拆包解决策略](https://www.jianshu.com/p/8eb143c0a59a)
+
+* **消息定长。**每个发送的数据包大小固定，比如100字节，不足100字节的用空格补充，接受方取数据的时候根据这个长度来读取数据
+* **每次发送一个应用数据包前在前面加上四个字节的包长度值**，指明这个应用包的真实长度
+* **消息末尾增加换行符来表示一条完整的消息**。接收方读取的时候根据换行符来判断是否是一条完整的消息。如果消息的内容也包含换行符，那么这种方式就不合适了。
+
+* 将消息分为消息头和消息尾两部分，消息头指定数据长度，根据消息长度来读取完整的消息。例如UDP协议是这么设计的，用两个字节来表示消息长度，所以UDP不存在粘包和拆包问题。
+
+![img](https://i.loli.net/2020/08/05/LhrVQvc5Psf1iqg.jpg)
+

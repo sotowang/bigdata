@@ -27,7 +27,15 @@
   * `add(int index,E element)`
   * `addAll(Collection<? extends E> c)`
 
-* 扩容
+####  [ArrayList扩容](https://cloud.tencent.com/developer/news/594548)
+
+* <span style='color:red'>ArrayList是深拷贝还是浅拷贝</span>
+
+  * ```java
+    elementData = Arrays.copyOf(elementData, newCapacity);
+    ```
+
+  * 可以看出它比`add(index)`方法还要多一个`System.arraycopy`。`arraycopy()`这个实现数组之间复制的方法一定要看一下，下面就用到了`arraycopy()`方法实现数组自己复制自己。该`System.arraycopy()`拷贝确实是浅拷贝，不会进行递归拷贝，所以产生的结果是基本数据类型是值拷贝，对象只是引用拷贝。
 
   * 将老数组无数拷贝进新数组，容量为原容量的1.5倍，实际使用应避免数组扩张
   * 当可预知保存元素数量时，在构造`ArrayList`时就指定容量，以避免扩容，或根据实际需求，通过调用`ensureCapacity()`手动增加容量
@@ -44,6 +52,10 @@
       * 往一个 容器添加元素时不直接在容器添加，而是将当前容器Object[]进行copy复制出一个新容器`Object[] newElements`,然后在新容器中添加元素，添加完成后，将原容器引用指向新数组`setArray(newElements)`
       * 内部使用`ReentrantLock`加锁
       * 好处是可对容器进行并发读而不需加锁，读写分离的思想
+
+#### [ArrayList序列化问题](https://www.cnblogs.com/niaonao/p/9488953.html)
+
+* 存储容器`Object[] elementData` 用transient 关键字修饰，考虑到容器的存储空间在扩容后会产生很大闲置空间，扩容前容量越大这个问题越明显；序列化时会将空的对象空间也进行序列化，而真实存储的元素的数量为size，那样处理的话效率很低，所以这里不支持存储容器直接序列化，而写一个新的方法来只序列化size 个真实元素即可。
 
 #### Array与ArrayList的区别
 
@@ -251,6 +263,22 @@
 * 总结
   * 首先使用无锁操作CAS插入头节点，失败则循环重试
   * 若头节点已存在，则尝试获取头节点的同步锁，再进行操作
+
+### [Java8为何放弃分段锁](https://www.cnblogs.com/hi3254014978/p/12335100.html)
+
+`ConcurrentHashMap`有3个参数：
+
+1. initialCapacity：初始总容量，默认16
+2. loadFactor：加载因子，默认0.75
+3. **concurrencyLevel**：并发级别，默认16
+
+其中并发级别控制了Segment的个数，在一个<span style='color:red'>ConcurrentHashMap创建后Segment的个数是不能变的</span>，扩容过程过改变的是每个Segment的大小。当segment越来越大时，锁的粒度就变得越不越大
+
+缺点：分成很多段时会比较浪费内存空间(不连续，碎片化); 操作map时竞争同一个分段锁的概率非常小时，分段锁反而会造成更新等操作的长时间等待; 当某个段很大时，分段锁的性能会下降。
+
+### [为什么segment不把段大小设置为桶](https://www.cnblogs.com/hi3254014978/p/12335100.html)
+
+* 粒度比较小的情况下，如果用ReentrantLock，则需要继承AQS不获取同步支持，增加内存开销，而1.8中只有头节点需要进行同步，相对来说内存开销比较大，所以不把segment大小设置为一个桶
 
 ## TreeMap
 
