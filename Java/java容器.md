@@ -212,7 +212,29 @@
 
 ### [jdk7中的HashMap造成的死循环](https://blog.csdn.net/zhuqiuhui/article/details/51849692)
 
-*  
+*  现在有两个线程A和B，都要执行put操作，即向表中添加元素，即线程A和线程B都会看到图的状态快照
+
+  ![img](https://i.loli.net/2020/08/05/uG4T8cDvdBKI1bC.png)
+
+  1. 线程A执行到transfer函数中的`Entry<K,V> next = e.next; `处挂起，此时线程A的栈中 `e = 3,next = 7`
+
+  2. 线程B执行transfer函数中的while循环，即会把原来的table变成新一table（线程B自己的栈中），再写入到内存中。如下图（假设两个元素在新的hash函数下也会映射到同一个位置）
+
+     ​	![img](https://i.loli.net/2020/08/05/JzCZrpvEwWxPmNU.png)
+
+  3. 线程A解挂，接着执行（看到的仍是旧表），即从transfer代码（1）处接着执行，当前的 e = 3, next = 7, 上面已经描述。
+
+     1. 处理元素 3 ， 将 3 放入 线程A自己栈的新table中（新table是处于线程A自己栈中，是线程私有的，不肥线程2的影响），处理3后的图如下：
+
+        ![img](https://i.loli.net/2020/08/05/uZhQI2mAfTRzCaq.png)
+
+      2.   线程A再复制元素 7 ，当前 e = 7 ,而next值由于线程 B 修改了它的引用，所以next 为 3 ，处理后的新表如下图![img](https://i.loli.net/2020/08/05/tHqFM5JVWfps9Ia.png)
+
+      3.   由于上面取到的next = 3, 接着while循环，即当前处理的结点为3， next就为null ，退出while循环，执行完while循环后，新表中的内容如下图：`e.next = newTable[i];newTable[i] = e;e = next;`<span style='color:red'>这里3和7的位置应该是反的</span>![img](https://i.loli.net/2020/08/06/85GmarOc6u9giI7.png)
+     
+      4.  当操作完成，执行查找时，会陷入死循环！
+     
+        
 
 ### put方法是尾插还是头插
 

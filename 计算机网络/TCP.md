@@ -280,3 +280,17 @@ ICMP是（Internet Control Message Protocol）Internet控制[报文](https://bai
 
 ![img](https://i.loli.net/2020/08/05/LhrVQvc5Psf1iqg.jpg)
 
+# [ARP协议](https://zhuanlan.zhihu.com/p/107445582)
+
+![img](https://upload-images.jianshu.io/upload_images/272719-34671b71bb13c50a.PNG?imageMogr2/auto-orient/strip|imageView2/2/w/602/format/webp)
+
+* ARP协议就是起到在IP地址到对应的硬件地址之间提供映射作用的，所以ARP协议又叫**地址解析协议**。
+  * 主机发送信息时，将包含目标IP地址的ARP请求广播到网络上的所有主机，并接收返回消息，以此确定目标的物理地址；收到返回消息后将该IP地址和物理地址存入本机ARP缓存中并保留一定时间，下次请求时直接查询ARP缓存以节约资源。
+
+# [RARP协议](https://zhuanlan.zhihu.com/p/107445582)
+
+* 反向地址转换协议。反向地址转换协议（RARP）允许局域网的物理机器从网关服务器的 ARP 表或者缓存上请求其 IP 地址。
+
+* RARP协议的工作原理
+
+  RARP以与ARP相反的方式工作。RARP发出要反向解析的物理地址并希望返回其对应的IP地址，应答包括由能够提供所需信息的RARP服务器发出的IP地址。虽然发送方发出的是广播信息，RARP规定只有RARP服务器能产生应答。许多网络指定多个RARP服务器，这样做既是为了平衡负载也是为了作为出现问题时的备份。
