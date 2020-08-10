@@ -142,7 +142,7 @@
 - LinkedBlockingDeque
   - 一个由链表结构组成的**双向**阻塞队列
 
-### `LinkedBlockingQueue`和`ArrayBlockingQueue`的区别
+### [`LinkedBlockingQueue`和`ArrayBlockingQueue`的区别](https://blog.csdn.net/weixin_30580943/article/details/96595289?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.opensearch_close&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.opensearch_close)
 
 * 队列大小不同
   * LinkedBlockingQueue是无界的,ArrayBlockingQueue是有界的
@@ -196,13 +196,14 @@
       ```
    
 * put方法的逻辑
+  
   * 如果HashMap未被初始化过，则初始化
   * 对key求Hash值，然后再计算下标
   * 如果没有碰撞，直接放入桶中，如果碰撞，以链表形式插入后面(尾插)
   * 链表长度=8，就把链表转成红黑树;链表长度低于6，就把红黑树转回链表
   * 节点已经存在就替换旧值
-  * 如果桶满了（容量16*负载因子0.75），就需要resize（扩容2倍后重排）
-
+* 如果桶满了（容量16*负载因子0.75），就需要resize（扩容2倍后重排）
+  
 * 线程不安全
 
    * 扩容时会形成环形链表，造成死循环
@@ -246,10 +247,16 @@
 
 * 可以为null，不能为可变对象，会导致对象属性改变，hashCode也会改变，查不到已在Map中数据
 
-### 为何容量必须为2的幂
+### [为何容量必须为2的幂](https://juejin.im/post/6844903921190699022#heading-8)
 
 * HashMap是取模操作为`hash & (length-1)`(jdk7)
   * 当length为`2^n`时,对应的二进制为`10000...`,减1后为`1111..`,以时hash为32位二进制int数,按位与(&)时,能快速拿到数组下标,且分布均匀
+
+### [**为什么要先高16位异或低16位再取模运算**](https://juejin.im/post/6844903921190699022)
+
+* 为了降低hash冲突的几率
+* ![img](https://user-gold-cdn.xitu.io/2019/8/21/16cb3dc140938fa4?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+* 可以看到: 扰动函数优化前：1954974080 % 16 = 1954974080 & (16 - 1) = 0 扰动函数优化后：1955003654 % 16 = 1955003654 & (16 - 1) = 6 很显然，减少了碰撞的几率。
 
 ## HashTable
 
