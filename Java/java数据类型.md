@@ -22,11 +22,14 @@
 
 # 基本数据类型
 
-* int 4字节
-* char 2字节
-* byte 1字节
-* short 2字节
-* long 8字节
-* double 8字节
-* float 4字节
-* boolean 1字节
+|      |         |       |
+| ---- | ------- | ----- |
+| 1    | int     | 4字节 |
+| 2    | char    | 2字节 |
+| 3    | byte    | 1字节 |
+| 4    | short   | 2字节 |
+| 5    | long    | 8字节 |
+| 6    | double  | 8字节 |
+| 7    | float   | 4字节 |
+| 8    | boolean | 1字节 |
+
