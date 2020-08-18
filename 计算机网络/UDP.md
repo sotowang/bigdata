@@ -40,5 +40,13 @@
 
 目前有如下开源程序利用udp实现了可靠的数据传输。分别为***RUDP、RTP、UDT\***。
 
+# [UDP的头部](https://blog.csdn.net/dangzhangjing97/article/details/80991965)
 
+![这里写图片描述](https://i.loli.net/2020/08/18/SHyDfXUhJ98zY6E.png)
 
+`source port`: 源端口号，占16位，2个字节
+`dest port`: 目的端口号，占16位，2个字节
+`length`: 此字段标记了整个数据报（UDP的首部+UDP数据）的最大长度
+`checksum`: 检验和，此字段用处是用来检查收到地数据的对错的
+**ps：如果校验和出错，就会直接丢弃**
+`Application data`: 数据部分（如果有的话）

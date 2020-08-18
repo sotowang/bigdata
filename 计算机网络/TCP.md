@@ -320,3 +320,13 @@ ICMP是（Internet Control Message Protocol）Internet控制[报文](https://bai
 * RARP协议的工作原理
 
   RARP以与ARP相反的方式工作。RARP发出要反向解析的物理地址并希望返回其对应的IP地址，应答包括由能够提供所需信息的RARP服务器发出的IP地址。虽然发送方发出的是广播信息，RARP规定只有RARP服务器能产生应答。许多网络指定多个RARP服务器，这样做既是为了平衡负载也是为了作为出现问题时的备份。
+
+# [TCP首部内容](https://blog.csdn.net/dangzhangjing97/article/details/80991965)
+
+![这里写图片描述](https://i.loli.net/2020/08/18/8a9tPFjCdMKYHR6.png)
+
+# [为什么UDP需要有长度字段，而TCP不需要长度字段呢](https://www.zhihu.com/question/25399270)
+
+* 从信息冗余的角度来看，UDP的长度信息是不需要的。
+
+* 因为IPv4的头部已经包含了数据的长度信息，这里的数据如果当前的通讯协议是UDP，那么这个长度就包含了UDP的头部和UDP的数据，因为UDP的头部长度固定为8字节，那么这样就很容易的算出UDP的数据的长度了。
