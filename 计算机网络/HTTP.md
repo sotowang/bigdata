@@ -45,14 +45,11 @@
 * 3xx**一般表示重定向**
 
   * 301 请求的资源已分配了新的URI中，URL地址改变了。【永久重定向】
-
-  * 302 请求的资源临时分配了新的URI中，URL地址没变【临时重定向/转发】
-
+* 302 请求的资源临时分配了新的URI中，URL地址没变【临时重定向/转发】
   * 303 与302相同的功能，但明确客户端应该采用GET方式来获取资源
-
-  * 304 发送了附带请求，但不符合条件【返回未过期的缓存数据】
-
-  * 307 与302相同，但不会把POST请求变成GET
+* 304 发送了附带请求，但不符合条件【返回未过期的缓存数据】
+  * [305](https://juejin.im/post/6844903983874572295) 被请求的资源必须通过指定的代理才能被访问。Location 域中将给出指定的代理所在的 URI 信息，接收者需要重复发送一个单独的请求，通过这个代理才能访问相应资源。只有原始服务器才能建立305响应。
+* 307 与302相同，但不会把POST请求变成GET
 * 4xx **客户端错误**--请求有语法错误或请求无法实现
 
   * 400 BadRequest--客户端请求有语法错误,不能被服务器所理解
@@ -291,7 +288,7 @@
 ## [防范手段]([https://github.com/CyC2018/CS-Notes/blob/master/notes/%E6%94%BB%E5%87%BB%E6%8A%80%E6%9C%AF.md](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md))
 
 * 设置 Cookie 为 HttpOnly
-  * 设置了 HttpOnly 的 Cookie 可以防止 JavaScript 脚本调用，就无法通过 document.cookie 获取用户 Cookie 信息。
+  * 设置了 HttpOnly 的 Cookie 可以防止 JavaScript 脚本调用，就无法通过 `document.cookie` 获取用户 Cookie 信息。
 
 * 过滤特殊字符
   * 例如将 `<` 转义为 `<`，将 `>` 转义为 `>`，从而避免 HTML 和 Jascript 代码的运行。

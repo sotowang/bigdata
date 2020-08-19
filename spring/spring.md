@@ -212,7 +212,7 @@ String transient4; // not persistent because of @Transient
 
 # IOC
 
-## 依赖注入方式
+## [依赖注入方式](https://blog.csdn.net/liberty12345678/article/details/82224956?utm_medium=distribute.pc_relevant.none-task-blog-baidulandingword-2&spm=1001.2101.3001.4242)
 
 * Setter
 * Interface
