@@ -197,15 +197,16 @@ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
 * CPU写数据到磁盘时，先将数据存入buffer
 * CPU读数据时，先将数据存入cache
 
-# CPU占用过高分析
+# [CPU占用过高分析](https://blog.csdn.net/u011277123/article/details/103495338)
 
-* `top`命令查出占用过高进程
-* `ps -ef|grep java`定位到具体Java程序
-* `ps -mp PID -o THREAD,tid,time`定位到具体线程
-  * `-m`显示所有进程
-  * `-p`pid进程使用cpu的时间
-  * `-o`用户自定义格式
-* `jstack 进程ID |grep tid(16进制线程ID小写英文)-A60`
+* **定位进程**
+  * 登录服务器，执行top命令，查看CPU占用情况
+  * 通过以上命令，我们可以看到，进程ID为1893的Java进程的CPU占用率达到了181%，基本可以定位到是我们的Java应用导致整个服务器的CPU占用率飙升。
+* **定位线程**
+  * 通过top -Hp 1893命令，我们可以发现，当前1893这个进程中，ID为4519的线程占用CPU最高。
+* **定位代码**
+  * 通过jstack命令，查看栈信息
+  * 通过以上代码，我们可以清楚的看到，BeanValidator.java的第30行是有可能存在问题的。
 
 
 
