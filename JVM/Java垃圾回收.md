@@ -82,11 +82,11 @@
 
 # [触发Full GC的条件](https://blog.csdn.net/qq_23410909/article/details/90211521)
 
-* 老年代空间不足
+* **老年代空间不足**
 * 永久代(JDK 8已无)空间不足
 * CMS GC时出现promotion failed,concurrent mode failure
-* Minor GC晋升到老年代的平均大小大于老年代的剩余空间
-* 调用`System.gc()`
+* **Minor GC晋升到老年代的平均大小大于老年代的剩余空间**
+* **调用`System.gc()`**
 * 使用RMI来进行RPC或管理JDK应用,每小时执行一次FullGC
 
 # Stop the World
@@ -180,6 +180,12 @@
 |      | G1能充分利用多CPU、多核环境下的硬件优势，使用多个CPU来缩短Stop-the-world停顿的时间，部分其他收集器原来需要停顿Java线程执行的GC操作，G1收集器仍然可以通过**并发**的方式让Java程序继续运行。 |      |
 |      | 更精确预测GC停顿时间                                         |      |
 |      | G1不会产生内存碎片                                           |      |
+
+# [空间分配担保](https://www.nowcoder.com/discuss/504211?type=0&order=0&pos=179&page=0&source_id=discuss_center_0&channel=666)
+
+* 在发生 Minor GC 之前， **虚拟机先检查老年代最大可用的连续空间是否大于新生代所有对象总空间**，如果条件成立的话，那么 Minor GC 可以确认是安全的。
+* **老年代最大可用的连续空间小于新生代所有对象总空间**，如果不成立的话虚拟机会查看 HandlePromotionFailure 的值是否允许担保失败，
+  如果允许那么就会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试着进行一次 Minor GC；
 
 # finalize()方法
 
